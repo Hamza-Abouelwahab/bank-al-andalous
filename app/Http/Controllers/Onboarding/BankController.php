@@ -23,13 +23,17 @@ class BankController extends Controller
             'source_of_funds'   => 'required|string',
         ]);
 
-        $request->user()->update([
-            'account_type'      => $request->account_type,
-            'employment_status' => $request->employment_status,
-            'occupation'        => $request->occupation,
-            'monthly_income'    => $request->monthly_income,
-            'source_of_funds'   => $request->source_of_funds,
-        ]);
+        $request->user()->financialProfile()->updateOrCreate(
+            ['user_id' => $request->user()->id],
+            [
+                'employment_status' => $request->employment_status,
+                'occupation'        => $request->occupation,
+                'monthly_income'    => $request->monthly_income,
+                'source_of_funds'   => $request->source_of_funds,
+            ]
+        );
+
+        session(['onboarding.account_type' => $request->account_type]);
 
         return redirect()->route('onboarding.confirm');
     }

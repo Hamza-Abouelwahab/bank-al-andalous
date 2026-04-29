@@ -13,9 +13,12 @@ class EnsureOnboardingComplete
     {
         $user = $request->user();
 
-        // If any required onboarding field is missing, redirect back
-        if ($user && (is_null($user->phone) || is_null($user->date_of_birth) || is_null($user->address))) {
+        if ($user && !$user->profile) {
             return redirect()->route('onboarding.profile');
+        }
+
+        if ($user && !$user->bankAccount) {
+            return redirect()->route('onboarding.confirm');
         }
 
         return $next($request);

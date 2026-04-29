@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Onboarding;
 
 use App\Http\Controllers\Controller;
@@ -16,15 +17,18 @@ class ProfileController extends Controller
     {
         $request->validate([
             'date_of_birth' => 'required|date',
-            'phone' => 'required',
-            'address' => 'required',
+            'phone'         => 'required|string|max:20',
+            'address'       => 'required|string',
         ]);
 
-        $request->user()->update([
-            'date_of_birth' => $request->date_of_birth,
-            'phone' => $request->phone,
-            'address' => $request->address,
-        ]);
+        $request->user()->profile()->updateOrCreate(
+            ['user_id' => $request->user()->id],
+            [
+                'date_of_birth' => $request->date_of_birth,
+                'phone'         => $request->phone,
+                'address'       => $request->address,
+            ]
+        );
 
         return redirect()->route('onboarding.bank');
     }

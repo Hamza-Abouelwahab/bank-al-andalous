@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['name', 'email', 'password', 'date_of_birth', 'phone', 'address', 'account_type', 'employment_status', 'occupation', 'monthly_income', 'source_of_funds' , 'role'])]
+#[Fillable(['name', 'email', 'password',  'role'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -31,5 +32,20 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
 
         ];
+    }
+
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    public function bankAccount(): HasOne
+    {
+        return $this->hasOne(BankAccount::class);
+    }
+
+    public function financialProfile(): HasOne
+    {
+        return $this->hasOne(FinancialProfile::class);
     }
 }

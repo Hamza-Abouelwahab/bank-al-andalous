@@ -17,23 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-
-            // step one for banking info 
-            $table->date('date_of_birth')->nullable();
-            $table->string('phone', 20)->nullable();
-            $table->string('address')->nullable();
-
-            // step two for banking info 
-            $table->string('account_type')->nullable();        // savings / current
-            $table->string('employment_status')->nullable();   // employed / student...
-            $table->string('occupation')->nullable();
-            $table->string('monthly_income')->nullable();      // range e.g. "5000-10000"
-            $table->string('source_of_funds')->nullable();
-
-            // the role 
-
             $table->string('role')->default('user');
-            
+
             $table->rememberToken();
             $table->timestamps();
         });
