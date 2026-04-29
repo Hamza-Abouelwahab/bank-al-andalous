@@ -37,9 +37,14 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user()->load(['profile', 'bankAccount', 'financialProfile']);
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => $request->session()->get('status'),
+            'mustVerifyEmail'  => $request->user() instanceof MustVerifyEmail,
+            'status'           => $request->session()->get('status'),
+            'profile'          => $user->profile,
+            'bankAccount'      => $user->bankAccount,
+            'financialProfile' => $user->financialProfile,
         ]);
     }
 
@@ -48,13 +53,28 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $validated = $request->validated();
+
+        $request->user()->fill([
+            'name'  => $validated['name'],
+            'email' => $validated['email'],
+        ]);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
         $request->user()->save();
+
+        if (isset($validated['phone']) || isset($validated['address'])) {
+            $request->user()->profile()->updateOrCreate(
+                ['user_id' => $request->user()->id],
+                array_filter([
+                    'phone'   => $validated['phone'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                ], fn($v) => $v !== null)
+            );
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
