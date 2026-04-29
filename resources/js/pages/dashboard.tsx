@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { usePage } from '@inertiajs/react';
-import { dashboard } from '@/routes';
 import { useState } from 'react';
+import { dashboard } from '@/routes';
 
 
 interface BankAccount {

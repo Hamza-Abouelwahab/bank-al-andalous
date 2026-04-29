@@ -22,7 +22,9 @@ const labels: Record<string, string> = {
     '25000+': '25,000+ MAD',
 };
 
-function fmt(v: string) { return labels[v] ?? v ?? '—'; }
+function fmt(v: string) {
+ return labels[v] ?? v ?? '—'; 
+}
 
 function Row({ label, value }: { label: string; value: string }) {
     return (
@@ -40,7 +42,11 @@ export default function Confirm() {
 
     const submit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!agreed) return;
+
+        if (!agreed) {
+return;
+}
+
         post('/onboarding/confirm');
     };
 
