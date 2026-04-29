@@ -131,7 +131,7 @@ export default function Welcome({
                         <div className="flex items-center gap-3">
                             {auth?.user ? (
                                 <Link
-                                    href={dashboard()}
+                                    href="/dashboard"
                                     className="rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-400"
                                 >
                                     Dashboard
@@ -139,14 +139,14 @@ export default function Welcome({
                             ) : (
                                 <>
                                     <Link
-                                        href={login()}
+                                        href="/login"
                                         className="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
                                     >
                                         Login
                                     </Link>
                                     {canRegister && (
                                         <Link
-                                            href={register()}
+                                            href="/register"
                                             className="rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-400"
                                         >
                                             Get Started
@@ -180,12 +180,24 @@ export default function Welcome({
                         </p>
 
                         <div className="mt-9 flex flex-wrap gap-4">
-                            <Link
-                                href={login()}
+                            {
+                                auth?.user ? (
+                                    <Link
+                                href="/dashboard"
+                                className="flex items-center gap-3 rounded-xl bg-orange-500 px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
+                            >
+                                Go To Dashboard <ArrowRight size={18} />
+                            </Link>
+                                ) : (
+                                <Link
+                                href="/login"
                                 className="flex items-center gap-3 rounded-xl bg-orange-500 px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
                             >
                                 Login to Your Account <ArrowRight size={18} />
                             </Link>
+                                )
+                            }
+
                             <a
                                 href="#features"
                                 className="rounded-xl border border-slate-200 px-8 py-4 font-bold text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
