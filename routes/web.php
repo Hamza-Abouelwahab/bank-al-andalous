@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Onboarding\ProfileController;
@@ -24,7 +26,8 @@ Route::middleware(['auth'])->group(function () {
 
 // Main app — remove the first dashboard, keep only this one
 Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 });
 
 // admin route 
@@ -32,6 +35,9 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::inertia('/admin', 'Admin/Dashboard')->name('admin.dashboard');
 });
+
+Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])
+    ->name('account.show');
 
 
 

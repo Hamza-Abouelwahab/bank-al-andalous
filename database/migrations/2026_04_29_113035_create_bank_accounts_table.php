@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('account_number')->unique();
+            $table->string('rip')->unique();
             $table->string('account_type'); // savings / current
             $table->decimal('balance', 15, 2)->default(0.00);
             $table->timestamps();

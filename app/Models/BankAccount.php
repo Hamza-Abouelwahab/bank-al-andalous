@@ -10,6 +10,7 @@ class BankAccount extends Model
     protected $fillable = [
         'user_id',
         'account_number',
+        'rip',
         'account_type',
         'balance',
     ];
