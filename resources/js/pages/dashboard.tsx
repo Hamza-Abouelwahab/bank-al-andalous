@@ -33,8 +33,20 @@ interface AuthUser {
     financial_profile: FinancialProfile | null;
 }
 
+interface Transaction {
+    id: number;
+    type: 'credit' | 'debit';
+    category: string;
+    amount: number;
+    balance_after: number;
+    description: string;
+    reference: string;
+    status: string;
+    created_at: string;
+}
+
 export default function Dashboard() {
-    const { auth } = usePage().props as any;
+    const { auth, transactions } = usePage().props as any;
     const user: AuthUser = auth.user;
     const isAdmin = user.role === 'admin';
     const [balanceVisible, setBalanceVisible] = useState(true);
@@ -50,17 +62,12 @@ export default function Dashboard() {
         { icon: '💳', label: 'Cards', color: '#10B981', route: '/account' },
     ];
 
-    const recentTransactions = [
-        { type: 'credit', desc: 'Salary Deposit', date: 'Today, 09:15', amount: '+3,500.00', status: 'Completed' },
-        { type: 'debit', desc: 'ATM Withdrawal', date: 'Today, 12:30', amount: '-500.00', status: 'Completed' },
-        { type: 'debit', desc: 'Grocery Shopping', date: 'Today, 15:45', amount: '-120.75', status: 'Completed' },
-        { type: 'credit', desc: 'Online Transfer', date: 'Yesterday, 21:10', amount: '+200.00', status: 'Completed' },
-    ];
+
 
     return (
         <>
             <Head title="Dashboard" />
-            <div className="min-h-full bg-[#FFFCF9]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <div className="bg-[#FFFCF9]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
 
                 {/* Admin banner */}
                 {isAdmin && (
@@ -160,28 +167,65 @@ export default function Dashboard() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
                         {/* Recent transactions */}
+
+
                         <div className="lg:col-span-2 bg-white border border-[#EDE8E0] rounded-2xl p-5">
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-xs font-bold text-[#0F0D0B] uppercase tracking-[2px]" style={{ fontFamily: "'Syne', sans-serif" }}>Recent Transactions</h3>
-                                <button className="text-xs text-[#E8632A] font-medium hover:underline">View all →</button>
+                                <h3 className="text-xs font-bold text-[#0F0D0B] uppercase tracking-[2px]"
+                                    style={{ fontFamily: "'Syne', sans-serif" }}>
+                                    Recent Transactions
+                                </h3>
+                                <a href="/transactions" className="text-xs text-[#E8632A] font-medium hover:underline">
+                                    View all →
+                                </a>
                             </div>
-                            <div className="space-y-3">
-                                {recentTransactions.map((tx, i) => (
-                                    <div key={i} className="flex items-center gap-4 py-2 border-b border-[#F5F0EA] last:border-0">
-                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${tx.type === 'credit' ? 'bg-green-50' : 'bg-red-50'}`}>
-                                            {tx.type === 'credit' ? '⬇️' : '⬆️'}
+
+                            {transactions && transactions.length > 0 ? (
+                                <div className="space-y-1">
+                                    {transactions.map((tx: Transaction) => (
+                                        <div key={tx.id} className="flex items-center gap-4 py-3 border-b border-[#F5F0EA] last:border-0">
+
+                                            {/* Icon */}
+                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${tx.type === 'credit' ? 'bg-green-50' : 'bg-red-50'
+                                                }`}>
+                                                {tx.category === 'deposit' ? '💵' :
+                                                    tx.category === 'withdrawal' ? '🏧' :
+                                                        tx.category === 'transfer_out' || tx.category === 'transfer_in' ? '↔️' :
+                                                            tx.category === 'bill_payment' ? '📄' : '💳'}
+                                            </div>
+
+                                            {/* Info */}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-[#0F0D0B] truncate">{tx.description}</p>
+                                                <p className="text-xs text-[#9C978F]">
+                                                    {new Date(tx.created_at).toLocaleDateString('en-GB', {
+                                                        day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                                                    })}
+                                                    {' · '}
+                                                    <span className="capitalize">{tx.category.replace('_', ' ')}</span>
+                                                </p>
+                                            </div>
+
+                                            {/* Amount */}
+                                            <div className="text-right flex-shrink-0">
+                                                <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-600' : 'text-red-500'
+                                                    }`}>
+                                                    {tx.type === 'credit' ? '+' : '-'}
+                                                    {Number(tx.amount).toLocaleString('en-MA', { minimumFractionDigits: 2 })} MAD
+                                                </p>
+                                                <p className="text-[10px] text-[#9C978F] capitalize">{tx.status}</p>
+                                            </div>
+
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-[#0F0D0B] truncate">{tx.desc}</p>
-                                            <p className="text-xs text-[#9C978F]">{tx.date}</p>
-                                        </div>
-                                        <div className="text-right flex-shrink-0">
-                                            <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-600' : 'text-red-500'}`}>{tx.amount} MAD</p>
-                                            <p className="text-[10px] text-[#9C978F]">{tx.status}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-10 text-center">
+                                    <span className="text-4xl mb-3">📭</span>
+                                    <p className="text-sm font-medium text-[#0F0D0B]">No transactions yet</p>
+                                    <p className="text-xs text-[#9C978F] mt-1">Make a deposit to get started</p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Account info */}
