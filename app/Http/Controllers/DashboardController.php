@@ -15,7 +15,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        
+
         if ($user->role === 'admin') {
             return Inertia::render('Admin/Dashboard', [
                 'auth' => [
@@ -30,7 +30,7 @@ class DashboardController extends Controller
             ]);
         }
 
-        
+
         return Inertia::render('dashboard', [
             'auth' => [
                 'user' => $user->load([
@@ -39,6 +39,11 @@ class DashboardController extends Controller
                     'financialProfile'
                 ]),
             ],
+
+            'transactions' => Auth::user()->bankAccount->transactions()
+                ->latest()
+                ->take(5)
+                ->get(),
         ]);
     }
 }

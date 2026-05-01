@@ -7,6 +7,11 @@ use Laravel\Fortify\Features;
 use App\Http\Controllers\Onboarding\ProfileController;
 use App\Http\Controllers\Onboarding\BankController;
 use App\Http\Controllers\Onboarding\ConfirmController;
+use App\Http\Controllers\Banking\WithdrawController;
+use App\Http\Controllers\Banking\DepositController;
+use App\Http\Controllers\Banking\TransferController;
+use App\Http\Controllers\Banking\BillController;
+use App\Http\Controllers\Banking\TransactionController;
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -38,6 +43,24 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])
     ->name('account.show');
+
+    // route for money 
+
+    Route::middleware(['auth', 'onboarding'])->group(function () {
+    Route::get('/withdraw',     [WithdrawController::class,    'create'])->name('withdraw');
+    Route::post('/withdraw',    [WithdrawController::class,    'store'])->name('withdraw.store');
+
+    Route::get('/deposit',      [DepositController::class,     'create'])->name('deposit');
+    Route::post('/deposit',     [DepositController::class,     'store'])->name('deposit.store');
+
+    Route::get('/transfer',     [TransferController::class,    'create'])->name('transfer');
+    Route::post('/transfer',    [TransferController::class,    'store'])->name('transfer.store');
+
+    Route::get('/bills',        [BillController::class,        'create'])->name('bills');
+    Route::post('/bills',       [BillController::class,        'store'])->name('bills.store');
+
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
+});
 
 
 

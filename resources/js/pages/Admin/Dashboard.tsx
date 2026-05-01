@@ -1,4 +1,7 @@
 import { Head, usePage } from '@inertiajs/react';
+import type { PageProps as InertiaPageProps } from '@inertiajs/core';
+
+
 
 interface User {
     id: number;
@@ -16,7 +19,7 @@ interface User {
     } | null;
 }
 
-interface PageProps {
+interface PageProps extends InertiaPageProps {
     auth: { user: User };
     users: User[];
     stats: {
@@ -25,6 +28,8 @@ interface PageProps {
         total_balance: number;
     };
 }
+
+
 
 export default function Dashboard() {
     const { auth, users, stats } = usePage<PageProps>().props;
@@ -40,7 +45,7 @@ export default function Dashboard() {
     return (
         <>
             <Head title="Admin Dashboard" />
-            <div className="min-h-screen bg-[#FFFCF9]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <div className="bg-[#FFFCF9]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                 <div className="p-6 lg:p-8 max-w-7xl mx-auto">
 
                     {/* Header */}
@@ -67,7 +72,7 @@ export default function Dashboard() {
                                 </div>
                                 <p className="text-[10px] text-[#9C978F] uppercase tracking-[2px] mb-1">{card.label}</p>
                                 <p className="text-xl font-extrabold text-[#0F0D0B]" style={{ fontFamily: "'Syne', sans-serif" }}>{card.value}</p>
-                                
+
                             </div>
                         ))}
                     </div>
