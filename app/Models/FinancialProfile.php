@@ -9,6 +9,7 @@ class FinancialProfile extends Model
 {
     protected $fillable = [
         'user_id',
+        'account_type' ,
         'employment_status',
         'occupation',
         'monthly_income',

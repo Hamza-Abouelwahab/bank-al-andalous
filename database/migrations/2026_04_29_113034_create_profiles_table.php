@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('cin')->unique() ;
             $table->date('date_of_birth')->nullable();
-            $table->string('phone', 20)->nullable();
+            $table->string('phone', 20)->unique();
             $table->string('address')->nullable();
             $table->timestamps();
         });

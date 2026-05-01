@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Models\BankAccount; 
+use App\Models\BankAccount;
 
 class ConfirmController extends Controller
 {
@@ -16,6 +16,7 @@ class ConfirmController extends Controller
 
         return Inertia::render('Onboarding/Confirm', [
             'profile' => [
+                'cin' => $user->profile?->cin,
                 'date_of_birth' => $user->profile?->date_of_birth,
                 'phone'         => $user->profile?->phone,
                 'address'       => $user->profile?->address,
@@ -32,7 +33,7 @@ class ConfirmController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $accountNumber = $this->generateAccountNumber();
         $rip = $this->generateRip();
 

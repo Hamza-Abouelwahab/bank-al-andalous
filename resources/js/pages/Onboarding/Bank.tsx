@@ -1,13 +1,14 @@
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 
 export default function Bank() {
+    const {bank} = usePage().props as any
     const { data, setData, post, processing, errors } = useForm({
-        account_type: '',
-        employment_status: '',
-        occupation: '',
-        monthly_income: '',
-        source_of_funds: '',
+        account_type: bank?.account_type ??  '',
+        employment_status: bank?.employment_status ?? '',
+        occupation: bank?.occupation ?? '',
+        monthly_income: bank?.monthly_income ?? '',
+        source_of_funds: bank?.source_of_funds ?? '',
     });
 
     const submit = (e: FormEvent<HTMLFormElement>) => {
@@ -117,7 +118,7 @@ export default function Bank() {
                                     style={selectStyle}>
                                     <option value="">Select...</option>
                                     <option value="employed">Employed</option>
-                                    <option value="self_employed">Self-employed</option>
+                                    <option value="self_employed">Self employed</option>
                                     <option value="business_owner">Business owner</option>
                                     <option value="student">Student</option>
                                     <option value="retired">Retired</option>
@@ -142,11 +143,11 @@ export default function Bank() {
                                     className="w-full h-11 border-[1.5px] border-[#E8E3DA] rounded-xl px-3 text-sm text-[#0F0D0B] focus:outline-none focus:border-[#E8632A] bg-white transition-colors appearance-none"
                                     style={selectStyle}>
                                     <option value="">Select...</option>
-                                    <option value="0-3000">Under 3,000 MAD</option>
-                                    <option value="3000-6000">3,000–6,000 MAD</option>
-                                    <option value="6000-12000">6,000–12,000 MAD</option>
-                                    <option value="12000-25000">12,000–25,000 MAD</option>
-                                    <option value="25000+">25,000+ MAD</option>
+                                    <option value="3000">Under 3,000 MAD</option>
+                                    <option value="6000">3,000–6,000 MAD</option>
+                                    <option value="12000">6,000–12,000 MAD</option>
+                                    <option value="25000">12,000–25,000 MAD</option>
+                                    <option value="30000">25,000+ MAD</option>
                                 </select>
                                 {errors.monthly_income && <p className="text-red-500 text-xs mt-1.5">{errors.monthly_income}</p>}
                             </div>
@@ -160,7 +161,8 @@ export default function Bank() {
                                     <option value="business">Business</option>
                                     <option value="investments">Investments</option>
                                     <option value="savings">Savings</option>
-                                    <option value="family">Family support</option>
+                                    <option value="freelance">freelance</option>
+                                    <option value="family_support">Family support</option>
                                     <option value="other">Other</option>
                                 </select>
                                 {errors.source_of_funds && <p className="text-red-500 text-xs mt-1.5">{errors.source_of_funds}</p>}

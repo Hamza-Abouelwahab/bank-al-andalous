@@ -136,10 +136,11 @@ export default function Security({
                                 />
                             </div>
 
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center  gap-4">
                                 <Button
                                     disabled={processing}
                                     data-test="update-password-button"
+                                    className='bg-orange-500 hover:bg-orange-400 cursor-pointer'
                                 >
                                     Save password
                                 </Button>
@@ -171,6 +172,7 @@ export default function Security({
                                             variant="destructive"
                                             type="submit"
                                             disabled={processing}
+                                            className='bg-orange-500 hover:bg-orange-400 cursor-pointer'
                                         >
                                             Disable 2FA
                                         </Button>
@@ -197,6 +199,7 @@ export default function Security({
                                 {hasSetupData ? (
                                     <Button
                                         onClick={() => setShowSetupModal(true)}
+                                        className='bg-orange-500 hover:bg-orange-400 cursor-pointer'
                                     >
                                         <ShieldCheck />
                                         Continue setup
@@ -212,6 +215,7 @@ export default function Security({
                                             <Button
                                                 type="submit"
                                                 disabled={processing}
+                                                className='bg-orange-500 hover:bg-orange-400 cursor-pointer'
                                             >
                                                 Enable 2FA
                                             </Button>

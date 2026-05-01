@@ -30,7 +30,7 @@ class ProfileController extends Controller
             'address'       => $request->address,
         ]);
 
-        return redirect()->route('onboarding.profile'); 
+        return redirect()->route('onboarding.profile');
     }
     /**
      * Show the user's profile settings page.
@@ -47,7 +47,7 @@ class ProfileController extends Controller
             'financialProfile' => $user->financialProfile,
         ]);
     }
-
+    
     /**
      * Update the user's profile information.
      */

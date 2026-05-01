@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('financial_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('account_type')->nullable();
             $table->string('employment_status')->nullable();
             $table->string('occupation')->nullable();
-            $table->string('monthly_income')->nullable();
+            $table->decimal('monthly_income', 10, 2)->nullable();
             $table->string('source_of_funds')->nullable();
             $table->timestamps();
         });

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 interface Props {
-    profile: { date_of_birth: string; phone: string; address: string };
+    profile: {cin:string ; date_of_birth: string; phone: string; address: string };
     bank: {
         account_type: string; employment_status: string;
         occupation: string; monthly_income: string; source_of_funds: string;
@@ -23,7 +23,7 @@ const labels: Record<string, string> = {
 };
 
 function fmt(v: string) {
- return labels[v] ?? v ?? '—'; 
+ return labels[v] ?? v ?? '—';
 }
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -70,7 +70,7 @@ return;
                         { num: '✓', label: 'Financial profile', state: 'done' },
                         { num: '03', label: 'Confirmation', state: 'active' },
                     ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-3 mb-4">
+                        <div key={i} className="flex items-center  gap-3 mb-4">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                                 s.state === 'done' ? 'bg-[#E8632A] text-white' : 'bg-white text-[#0F0D0B]'
                             }`} style={{ fontFamily: "'Syne', sans-serif" }}>{s.num}</div>
@@ -108,6 +108,7 @@ return;
                                 <span className="text-xs font-bold text-[#0F0D0B] uppercase tracking-[1.5px]" style={{ fontFamily: "'Syne', sans-serif" }}>Personal info</span>
                                 <a href="/onboarding/profile" className="text-[11px] text-[#E8632A] font-medium hover:underline">Edit</a>
                             </div>
+                            <Row label="cin" value={profile?.cin ?? '—'} />
                             <Row label="Date of birth" value={profile?.date_of_birth ?? '—'} />
                             <Row label="Phone" value={profile?.phone ?? '—'} />
                             <Row label="Address" value={profile?.address ?? '—'} />
