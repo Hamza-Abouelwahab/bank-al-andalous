@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+
 
 class BillController extends Controller
 {
@@ -14,6 +16,9 @@ class BillController extends Controller
     {
         $account = Auth::user()->bankAccount;
 
+        if (!$account) {
+            return redirect()->route('onboarding.bank');
+        }
         return Inertia::render('Banking/Bills', [
             'balance'        => $account->balance,
             'account_number' => $account->account_number,
@@ -21,32 +26,40 @@ class BillController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'bill_type'  => 'required|string',
-            'reference'  => 'required|string|max:50',
-            'amount'     => 'required|numeric|min:10|max:50000',
+{
+    $request->validate([
+        'bill_type'  => 'required|in:electricity,water,internet,phone,insurance,tax',
+        'reference'  => 'required|string|max:50',
+        'amount'     => 'required|numeric|min:10|max:50000',
+    ]);
+
+    $account = Auth::user()->bankAccount;
+
+    if (!$account) {
+        return redirect()->route('onboarding.bank');
+    }
+
+    if ($request->amount > $account->balance) {
+        return back()->withErrors([
+            'amount' => 'Insufficient balance. Available: ' . number_format($account->balance, 2) . ' MAD.',
         ]);
+    }
 
-        $account = Auth::user()->bankAccount;
+    $labels = [
+        'electricity' => 'Electricity (ONEE)',
+        'water'       => 'Water (ONEE)',
+        'internet'    => 'Internet Bill',
+        'phone'       => 'Phone Top-up',
+        'insurance'   => 'Insurance Premium',
+        'tax'         => 'Tax Payment',
+    ];
 
-        if ($request->amount > $account->balance) {
-            return back()->withErrors([
-                'amount' => 'Insufficient balance. Available: ' . number_format($account->balance, 2) . ' MAD.',
-            ]);
-        }
-
+    DB::transaction(function () use ($account, $request, $labels) {
         $newBalance = $account->balance - $request->amount;
-        $account->update(['balance' => $newBalance]);
 
-        $labels = [
-            'electricity' => 'Electricity (ONEE)',
-            'water'       => 'Water (ONEE)',
-            'internet'    => 'Internet Bill',
-            'phone'       => 'Phone Top-up',
-            'insurance'   => 'Insurance Premium',
-            'tax'         => 'Tax Payment',
-        ];
+        $account->update([
+            'balance' => $newBalance,
+        ]);
 
         Transaction::create([
             'bank_account_id' => $account->id,
@@ -58,6 +71,7 @@ class BillController extends Controller
             'reference'       => Transaction::generateReference('BILL'),
             'status'          => 'completed',
         ]);
+    });
 
         return redirect()->route('dashboard')->with('success', 'Bill paid successfully.');
     }
