@@ -17,36 +17,34 @@ Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-// Onboarding routes
+// Onboarding
 Route::middleware(['auth'])->group(function () {
-    Route::get('/onboarding/profile', [ProfileController::class, 'create'])->name('onboarding.profile');
+    Route::get('/onboarding/profile',  [ProfileController::class, 'create'])->name('onboarding.profile');
     Route::post('/onboarding/profile', [ProfileController::class, 'store'])->name('onboarding.profile.store');
 
-    Route::get('/onboarding/bank', [BankController::class, 'create'])->name('onboarding.bank');
-    Route::post('/onboarding/bank', [BankController::class, 'store'])->name('onboarding.bank.store');
+    Route::get('/onboarding/bank',     [BankController::class, 'create'])->name('onboarding.bank');
+    Route::post('/onboarding/bank',    [BankController::class, 'store'])->name('onboarding.bank.store');
 
-    Route::get('/onboarding/confirm', [ConfirmController::class, 'create'])->name('onboarding.confirm');
+    Route::get('/onboarding/confirm',  [ConfirmController::class, 'create'])->name('onboarding.confirm');
     Route::post('/onboarding/confirm', [ConfirmController::class, 'store'])->name('onboarding.confirm.store');
 });
 
-// Main app — remove the first dashboard, keep only this one
+// User dashboard
 Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// admin route 
-
+// Admin
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::inertia('/admin', 'Admin/Dashboard')->name('admin.dashboard');
+    Route::delete('/admin/users/{user}', [DashboardController::class, 'destroy'])->name('admin.users.destroy');
 });
 
-Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])
-    ->name('account.show');
+// Account card
+Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])->name('account.show');
 
-    // route for money 
-
-    Route::middleware(['auth', 'onboarding'])->group(function () {
+// Banking
+Route::middleware(['auth', 'onboarding'])->group(function () {
     Route::get('/withdraw',     [WithdrawController::class,    'create'])->name('withdraw');
     Route::post('/withdraw',    [WithdrawController::class,    'store'])->name('withdraw.store');
 
@@ -61,7 +59,5 @@ Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
 });
-
-
 
 require __DIR__ . '/settings.php';

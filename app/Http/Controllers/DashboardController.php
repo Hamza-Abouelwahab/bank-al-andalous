@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use App\Models\BankAccount;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -46,4 +47,29 @@ class DashboardController extends Controller
                 ->get(),
         ]);
     }
+
+
+    public function destroy(User $user)
+{
+    if ($user->id === Auth::id()) {
+        return back()->withErrors([
+            'user' => 'You cannot delete your own account.',
+        ]);
+    }
+
+    DB::transaction(function () use ($user) {
+
+        if ($user->bankAccount) {
+            $user->bankAccount->transactions()->delete();
+            $user->bankAccount->delete();
+        }
+
+        $user->profile()?->delete();
+        $user->financialProfile()?->delete();
+
+        $user->delete(); // 
+    });
+
+    return back()->with('success', 'User deleted successfully.');
+}
 }

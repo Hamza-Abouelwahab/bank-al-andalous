@@ -24,7 +24,7 @@ class TransferController extends Controller
     public function store(Request $request)
     {
 
-
+        
         $request->validate([
             'recipient_account' => 'required|string',
             'amount'            => 'required|numeric|min:10|max:100000',
