@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AIChatController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -18,6 +19,15 @@ use Inertia\Inertia;
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
+
+// her for chat ai 
+
+Route::middleware(['auth'])->post('/ai-chat/ask', [AIChatController::class, 'ask'])
+    ->name('ai.chat.ask');
+
+Route::middleware(['auth', 'onboarding'])->get('/ai-chat', function () {
+    return Inertia::render('Banking/chat/AIChat');
+})->name('ai-chat');
 
 // Onboarding
 Route::middleware(['auth'])->group(function () {

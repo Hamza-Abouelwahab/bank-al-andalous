@@ -1,166 +1,234 @@
 import { useState } from 'react';
 import { Bot, Send, Sparkles } from 'lucide-react';
-import { router, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+
 interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'ai';
-  timestamp: string;
+    id: string;
+    text: string;
+    sender: 'user' | 'ai';
+    timestamp: string;
 }
 
 export default function AIChat() {
-  const {url} = usePage()
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! I\'m your AI Financial Advisor. I can help you with budgeting, savings strategies, investment advice, and financial planning. How can I assist you today?',
-      sender: 'ai',
-      timestamp: new Date().toLocaleTimeString(),
-    },
-  ]);
-  const [inputText, setInputText] = useState('');
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            id: '1',
+            text: 'Hello! I am your Nestora Bank AI assistant. I can help with savings goals, budgeting, transactions, loans, appointments, and account support. How can I help you today?',
+            sender: 'ai',
+            timestamp: '',
+        },
+    ]);
 
-  const aiResponses: Record<string, string> = {
-    save: 'Great question! I recommend following the 50/30/20 rule: 50% for needs, 30% for wants, and 20% for savings. Based on your current balance, you could save around 1,500 DH per month.',
-    invest: 'For investment advice, I suggest diversifying your portfolio. Consider low-risk options like savings accounts or bonds, and gradually explore mutual funds. Always consult with a certified financial advisor before making major investment decisions.',
-    budget: 'Creating a budget is essential! Track your expenses, categorize them, and identify areas where you can reduce spending. Use the savings simulator feature to see how small daily savings can add up over time.',
-    loan: 'Before taking a loan, make sure you understand the interest rates, repayment terms, and total cost. Only borrow what you can comfortably repay. Our bank offers competitive rates - contact customer support for more details.',
-    default: 'That\'s an interesting question! I recommend reviewing your transaction history to understand your spending patterns. You can also use our savings simulator to plan your financial goals. Is there a specific aspect of your finances you\'d like to improve?',
-  };
+    const [inputText, setInputText] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!inputText.trim()) return;
+    const getTime = () =>
+        new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText,
-      sender: 'user',
-      timestamp: new Date().toLocaleTimeString(),
+    const handleSend = async () => {
+        if (!inputText.trim() || isLoading) return;
+
+        const messageToSend = inputText.trim();
+
+        const userMessage: Message = {
+            id: crypto.randomUUID(),
+            text: messageToSend,
+            sender: 'user',
+            timestamp: getTime(),
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+        setInputText('');
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/ai-chat/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') || '',
+                },
+                body: JSON.stringify({
+                    message: messageToSend,
+                }),
+            });
+
+            const text = await response.text();
+
+            let data: { answer?: string; message?: string };
+
+            try {
+                data = JSON.parse(text);
+            } catch {
+                throw new Error(text || 'Invalid server response.');
+            }
+
+            if (!response.ok) {
+                throw new Error(data.answer || data.message || 'Request failed.');
+            }
+
+            const aiMessage: Message = {
+                id: crypto.randomUUID(),
+                text: data.answer || 'Sorry, I could not answer right now.',
+                sender: 'ai',
+                timestamp: getTime(),
+            };
+
+            setMessages(prev => [...prev, aiMessage]);
+        } catch (error: any) {
+            const errorMessage: Message = {
+                id: crypto.randomUUID(),
+                text:
+                    error.message ||
+                    'Sorry, the AI assistant is not available right now.',
+                sender: 'ai',
+                timestamp: getTime(),
+            };
+
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    setMessages([...messages, userMessage]);
+    const quickQuestions = [
+        'How much should I save monthly?',
+        'Tips for budgeting?',
+        'Investment advice for beginners',
+        'Should I take a loan?',
+    ];
 
-    setTimeout(() => {
-      const lowerInput = inputText.toLowerCase();
-      let response = aiResponses.default;
+    return (
+        <div className="flex h-[100dvh] min-w-0 overflow-hidden bg-gray-50">
+            <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                {/* Header */}
+                <header className="shrink-0 border-b border-gray-200 bg-white">
+                    <div className="px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
+                        <div className="flex min-w-0 items-center gap-3">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-orange-600">
+                                <Bot className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                            </div>
 
-      if (lowerInput.includes('save') || lowerInput.includes('saving')) {
-        response = aiResponses.save;
-      } else if (lowerInput.includes('invest')) {
-        response = aiResponses.invest;
-      } else if (lowerInput.includes('budget')) {
-        response = aiResponses.budget;
-      } else if (lowerInput.includes('loan')) {
-        response = aiResponses.loan;
-      }
+                            <div className="min-w-0">
+                                <h1 className="truncate text-base font-semibold text-gray-900 sm:text-xl">
+                                    AI Financial Advisor
+                                </h1>
+                                <p className="mt-0.5 truncate text-sm text-gray-500 sm:text-base">
+                                    Get personalized financial advice
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response,
-        sender: 'ai',
-        timestamp: new Date().toLocaleTimeString(),
-      };
+                {/* Chat Body */}
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+                        {messages.length === 1 && (
+                            <div className="mb-5">
+                                <div className="mb-3 flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+                                    <p className="text-sm text-gray-700 sm:text-base">
+                                        Quick questions to get started:
+                                    </p>
+                                </div>
 
-      setMessages(prev => [...prev, aiMessage]);
-    }, 1000);
+                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
+                                    {quickQuestions.map((question, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => setInputText(question)}
+                                            className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-left text-sm text-gray-700 transition-colors hover:border-primary hover:bg-orange-50 sm:text-base"
+                                        >
+                                            {question}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
-    setInputText('');
-  };
+                        <div className="space-y-4">
+                            {messages.map(message => (
+                                <div
+                                    key={message.id}
+                                    className={`flex ${
+                                        message.sender === 'user'
+                                            ? 'justify-end'
+                                            : 'justify-start'
+                                    }`}
+                                >
+                                    <div
+                                        className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm sm:max-w-[78%] sm:px-5 sm:text-base ${
+                                            message.sender === 'user'
+                                                ? 'bg-gradient-to-r from-[#1f1a17] to-orange-600 text-white'
+                                                : 'border border-gray-200 bg-white text-gray-800'
+                                        }`}
+                                    >
+                                        <p className="whitespace-pre-line break-words">
+                                            {message.text}
+                                        </p>
 
-  const quickQuestions = [
-    'How much should I save monthly?',
-    'Tips for budgeting?',
-    'Investment advice for beginners',
-    'Should I take a loan?',
-  ];
+                                        {message.timestamp && (
+                                            <p
+                                                className={`mt-2 text-xs ${
+                                                    message.sender === 'user'
+                                                        ? 'text-orange-100'
+                                                        : 'text-gray-500'
+                                                }`}
+                                            >
+                                                {message.timestamp}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
 
-  return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+                            {isLoading && (
+                                <div className="flex justify-start">
+                                    <div className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm text-gray-500 shadow-sm sm:text-base">
+                                        Thinking...
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
-      <main className="flex-1 overflow-hidden flex flex-col">
-        <header className="bg-white border-b border-gray-200">
-          <div className="px-8 py-6">
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-primary to-orange-600 rounded-xl p-2.5">
-                <Bot className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-gray-800">AI Financial Advisor</h1>
-                <p className="text-gray-500 mt-1">Get personalized financial advice</p>
-              </div>
-            </div>
-          </div>
-        </header>
+                    {/* Input */}
+                    <div className="shrink-0 border-t border-gray-200 bg-white/95 px-3 py-3 backdrop-blur sm:px-6 sm:py-4 lg:px-8">
+                        <div className="mx-auto flex max-w-5xl items-center gap-2 rounded-2xl border border-gray-200 bg-white p-2 shadow-sm sm:gap-3 sm:p-3">
+                            <input
+                                type="text"
+                                value={inputText}
+                                onChange={e => setInputText(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter') {
+                                        handleSend();
+                                    }
+                                }}
+                                placeholder="Ask about savings, transactions, loans..."
+                                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-primary sm:px-4 sm:text-base"
+                            />
 
-        <div className="flex-1 overflow-y-auto px-8 py-6 flex flex-col">
-          {/* Quick Questions */}
-          {messages.length === 1 && (
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-5 h-5 text-primary" />
-                <p className="text-gray-700">Quick questions to get started:</p>
-              </div>
-              <div className="grid md:grid-cols-2 gap-3">
-                {quickQuestions.map((question, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setInputText(question)}
-                    className="text-left px-4 py-3 bg-white border border-gray-200 rounded-xl hover:border-primary hover:bg-orange-50 transition-colors"
-                  >
-                    {question}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-5 py-3 ${
-                    message.sender === 'user'
-                      ? 'bg-gradient-to-r from-primary to-orange-600 text-white'
-                      : 'bg-white border border-gray-200 text-gray-800'
-                  }`}
-                >
-                  <p className="mb-1">{message.text}</p>
-                  <p className={`text-xs ${message.sender === 'user' ? 'text-orange-100' : 'text-gray-500'}`}>
-                    {message.timestamp}
-                  </p>
+                            <button
+                                onClick={handleSend}
+                                disabled={!inputText.trim() || isLoading}
+                                className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1f1a17] to-orange-600 px-4 text-white transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
+                            >
+                                <Send className="h-5 w-5" />
+                                <span className="hidden font-medium sm:inline">
+                                    {isLoading ? 'Sending...' : 'Send'}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Input */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Ask me anything about your finances..."
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50"
-              />
-              <button
-                onClick={handleSend}
-                disabled={!inputText.trim()}
-                className="bg-gradient-to-r from-primary to-orange-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <Send className="w-5 h-5" />
-                <span>Send</span>
-              </button>
-            </div>
-          </div>
+            </main>
         </div>
-      </main>
-    </div>
-  );
+    );
 }
