@@ -23,3 +23,4 @@ class SavingChallenge extends Model
         'end_date' => 'date',
     ];
 }
+

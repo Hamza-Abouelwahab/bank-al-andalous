@@ -7,6 +7,7 @@ import {
     EyeOff,
     FileText,
     Send,
+    Sparkles,
     Target,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -410,11 +411,10 @@ export default function Dashboard() {
                   })}
                 </div>
               </div>
-            </div>
-            </div>
+
+
             {/* Saving Challenges */}
-                  <div className="grid grid-cols-3 my-6 gap-6">
-                <div className="col-span-2 space-y-7">
+                  <div className="">
 
             <div className="rounded-2xl border border-gray-200 bg-white px-6 shadow-sm">
                 <div className="flex justify-between items-center  py-6 ">
@@ -448,8 +448,73 @@ export default function Dashboard() {
         </div>
     ))}
 </div>
+</div>
                     </div>
+            {/* Right Column - AI & Alerts */}
+            <div className="space-y-6">
+              {/* AI Insights */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
+                    <Sparkles className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <h3 className="text-gray-800">AI Insights</h3>
+                </div>
+
+                <div className="space-y-4">
+                  {ai_insights.map((insight:any) => {
+                    const Icon = insight.icon;
+                    return (
+                        <div
+                        key={insight.id}
+                        className={`p-4 rounded-xl border ${
+                          insight.color === 'green'
+                            ? 'bg-green-50 border-green-200'
+                            : 'bg-blue-50 border-blue-200'
+                        }`}
+                      >
+                        <div className="flex items-start gap-0">
+                          <Icon
+                            className={` mt-0.5 ${
+                              insight.color === 'green' ? 'text-green-600' : 'text-blue-600'
+                            }`}
+                          />
+                          <div>
+                            <p
+                              className={`mb-1 ${
+                                insight.color === 'green' ? 'text-green-800' : 'text-blue-800'
+                              }`}
+                            >
+                                <div className="flex gap-2 ">
+
+                              <p className=''>{Icon}</p>
+                              {insight.title}
+                                </div>
+                            </p>
+                            <p
+                              className={`text-sm  pl-8 ${
+                                  insight.color === 'green' ? 'text-green-600' : 'text-blue-600'
+                                }`}
+                                >
+                              {insight.message}
+                            </p>
+                          </div>
                         </div>
+                      </div>
+
+);
+})}
+                </div>
+
+                <button
+                  onClick={() => router.visit('/saving-challenges/create') }
+                  className="w-full mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl hover:shadow-lg transition-all"
+                >
+                  Ask AI Advisor
+                </button>
+              </div>
+                  </div>
+                  </div>
 
                         {/* Bottom row */}
                         <div
@@ -735,6 +800,7 @@ export default function Dashboard() {
                                 ))}
                             </div>
                         </div>
+
                     </div>
                 </main>
             </div>

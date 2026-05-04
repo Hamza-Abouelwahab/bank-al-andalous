@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { bills, dashboard, deposit, transactions, transfer, withdraw } from '@/routes';
 import type { NavItem } from '@/types';
-import account from '@/routes/account';
+// import account from '@/routes/account';
 
 const mainNavItems: NavItem[] = [
     {
@@ -60,7 +60,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Ai Advisor ',
-        href: '#',
+        href: 'ai-chat',
         icon: Bot,
     },
     {

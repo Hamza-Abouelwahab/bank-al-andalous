@@ -13,6 +13,7 @@ use App\Http\Controllers\Banking\TransferController;
 use App\Http\Controllers\Banking\BillController;
 use App\Http\Controllers\Banking\SavingChallengeController;
 use App\Http\Controllers\Banking\TransactionController;
+use Inertia\Inertia;
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -62,6 +63,10 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
 
     Route::get('saving-challenges/create' , [SavingChallengeController::class , 'create'])->name('saving-challenges.create') ;
     Route::post('/saving-challenges', [SavingChallengeController::class, 'store'])->name('saving-challenges.store');
+
+    Route::middleware(['auth', 'onboarding'])->get('/ai-chat', function () {
+    return Inertia::render('Banking/chat/AIChat');
+})->name('ai-chat');
 });
 
 require __DIR__ . '/settings.php';

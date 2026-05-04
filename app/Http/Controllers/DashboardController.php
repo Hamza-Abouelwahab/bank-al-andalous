@@ -72,7 +72,7 @@ class DashboardController extends Controller
         $insights = [
             ['icon' => '💡', 'title' => 'Savings Rate', 'message' => $savingsRate >= 20 ? "Great job! You're saving {$savingsRate}% of your income." : "Try to save at least 20% of your income. Currently at {$savingsRate}%."],
             ['icon' => '📊', 'title' => 'Top Spending', 'message' => $topCategory ? "Your highest spending category is '{$topCategory->category}' at " . number_format($topCategory->total, 2) . ' MAD.' : 'No spending data yet. Start tracking your expenses.'],
-            ['icon' => '🎯', 'title' => 'Smart Tip', 'message' => $balance > $monthlyIncome * 3 ? 'You have a healthy emergency fund. Consider investing the surplus.' : 'Build an emergency fund of 3× your monthly income for financial security.'],
+            // ['icon' => '🎯', 'title' => 'Smart Tip', 'message' => $balance > $monthlyIncome * 3 ? 'You have a healthy emergency fund. Consider investing the surplus.' : 'Build an emergency fund of 3× your monthly income for financial security.'],
         ];
 
         // ── Goals (static demo — replace with DB model when ready) ────
