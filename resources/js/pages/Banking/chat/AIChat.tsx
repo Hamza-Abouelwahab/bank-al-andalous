@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { Bot, Send, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 
 interface Message {
     id: string;
@@ -28,7 +28,9 @@ export default function AIChat() {
         });
 
     const handleSend = async () => {
-        if (!inputText.trim() || isLoading) return;
+        if (!inputText.trim() || isLoading) {
+return;
+}
 
         const messageToSend = inputText.trim();
 

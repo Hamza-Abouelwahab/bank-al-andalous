@@ -3,7 +3,7 @@ import {  ArrowDownToLine, ArrowUpFromLine, Bot, CreditCard, FileText, Headphone
 import AppLogo from '@/components/app-logo';
 // import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+
 import {
     Sidebar,
     SidebarContent,
@@ -60,12 +60,12 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Ai Advisor ',
-        href: 'ai-chat',
+        href: '/ai-chat',
         icon: Bot,
     },
     {
         title: 'Support',
-        href: '#',
+        href: '/support',
         icon: Headphones,
     },
 ];
@@ -91,9 +91,7 @@ export function AppSidebar() {
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavUser />
-            </SidebarFooter>
+            
         </Sidebar>
     );
 }

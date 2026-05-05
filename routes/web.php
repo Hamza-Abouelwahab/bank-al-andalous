@@ -16,7 +16,14 @@ use App\Http\Controllers\Banking\SavingGoalController;
 use App\Http\Controllers\Banking\SavingGroupController;
 use App\Http\Controllers\Banking\TransactionController;
 use App\Http\Controllers\Banking\SavingsController;
+use App\Http\Controllers\SupportController;
 use Inertia\Inertia;
+
+
+
+Route::get('/two-factor-challenge', function () {
+    return Inertia::render('auth/two-factor-challenge');
+})->name('two-factor.login');
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -105,6 +112,20 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
     Route::middleware(['auth', 'onboarding'])->get('/ai-chat', function () {
         return Inertia::render('Banking/chat/AIChat');
     })->name('ai-chat');
+});
+
+
+// the sepport pages
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/support', [SupportController::class, 'index'])->name('support');
+    Route::get('/support/security', [SupportController::class, 'security'])->name('support.security');
+    Route::get('/support/locked', [SupportController::class, 'locked'])->name('support.locked');
+    Route::get('/support/unlock', [SupportController::class, 'unlock'])->name('support.unlock');
+    Route::get('/support/unlocked', [SupportController::class, 'unlocked'])->name('support.unlocked');
+
+    Route::post('/support/report', [SupportController::class, 'report'])->name('support.report');
+    Route::post('/support/verify', [SupportController::class, 'verify'])->name('support.verify');
 });
 
 require __DIR__ . '/settings.php';

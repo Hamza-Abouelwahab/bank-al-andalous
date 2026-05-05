@@ -40,14 +40,29 @@ class ProfileController extends Controller
         $user = $request->user()->load(['profile', 'bankAccount', 'financialProfile']);
 
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail'  => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail'  => $user instanceof MustVerifyEmail,
             'status'           => $request->session()->get('status'),
+
+            // existing data
             'profile'          => $user->profile,
             'bankAccount'      => $user->bankAccount,
             'financialProfile' => $user->financialProfile,
+
+            // 🔐 ADD THIS
+            'user' => [
+                'two_factor_secret' => $user->two_factor_secret,
+                'two_factor_confirmed_at' => $user->two_factor_confirmed_at,
+                'two_factor_qr_code' => $user->two_factor_secret
+                    ? $user->twoFactorQrCodeSvg()
+                    : null,
+
+                'two_factor_recovery_codes' => $user->two_factor_recovery_codes
+                    ? json_decode(decrypt($user->two_factor_recovery_codes), true)
+                    : [],
+            ],
         ]);
     }
-    
+
     /**
      * Update the user's profile information.
      */

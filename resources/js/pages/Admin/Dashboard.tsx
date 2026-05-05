@@ -1,6 +1,29 @@
-import { Head, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
 import type { PageProps as InertiaPageProps } from '@inertiajs/core';
+import { Head, router, usePage } from '@inertiajs/react';
+import {
+    AlertTriangle,
+    // Bell,
+    Building2,
+    // ChevronDown,
+    CreditCard,
+    FileBarChart2,
+    Globe,
+    // LayoutDashboard,
+    Lock,
+    Search,
+    Shield,
+    TrendingUp,
+    UserCog,
+    Users,
+    Wallet,
+    XCircle,
+    Trash2,
+    Eye,
+    ArrowRightLeft,
+    // Settings,
+    // LifeBuoy,
+} from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 interface User {
     id: number;
@@ -15,6 +38,7 @@ interface User {
     } | null;
     profile: { phone: string } | null;
 }
+
 interface PageProps extends InertiaPageProps {
     auth: { user: User };
     users: User[];
@@ -27,16 +51,44 @@ interface PageProps extends InertiaPageProps {
 }
 
 export default function AdminDashboard() {
-    const { auth, users, stats } = usePage<PageProps>().props;
-    const adminName = auth.user.name.split(' ')[0];
-    const initials  = auth.user.name.split(' ').slice(0, 2).map((w: string) => w[0]).join('').toUpperCase();
+    const { auth, users = [], stats } = usePage<PageProps>().props;
+
     const [search, setSearch] = useState('');
     const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
 
-    const filtered = (users ?? []).filter(u =>
-        u.name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase())
-    );
+    const adminName = auth.user.name.split(' ')[0];
+    const initials = auth.user.name
+        .split(' ')
+        .slice(0, 2)
+        .map((w) => w[0])
+        .join('')
+        .toUpperCase();
+
+    const filteredUsers = useMemo(() => {
+        return users.filter(
+            (u) =>
+                u.name.toLowerCase().includes(search.toLowerCase()) ||
+                u.email.toLowerCase().includes(search.toLowerCase()) ||
+                (u.bank_account?.account_number ?? '')
+                    .toLowerCase()
+                    .includes(search.toLowerCase()),
+        );
+    }, [users, search]);
+
+    const recentUsers = [...users]
+        .sort(
+            (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime(),
+        )
+        .slice(0, 5);
+
+    const totalAdmins = users.filter((u) => u.role === 'admin').length;
+    const totalCustomers = users.filter((u) => u.role !== 'admin').length;
+    const usersWithAccounts = users.filter((u) => u.bank_account).length;
+    const zeroBalanceAccounts = users.filter(
+        (u) => (u.bank_account?.balance ?? 0) <= 0,
+    ).length;
 
     const handleDelete = (id: number) => {
         router.delete(`/admin/users/${id}`, {
@@ -44,173 +96,867 @@ export default function AdminDashboard() {
         });
     };
 
+    const formatMoney = (value: number) =>
+        `${Number(value).toLocaleString('en-MA', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        })} MAD`;
+
     const statCards = [
-        { label: 'Total Users',    value: stats?.total_users ?? 0,   icon: '👥', bg: '#fff0e8', change: '+8.6% this month'  },
-        { label: 'Total Accounts', value: stats?.total_accounts ?? 0, icon: '💳', bg: '#eff6ff', change: '+10.2% this month' },
-        { label: 'Total Balance',  value: `${(stats?.total_balance ?? 0).toLocaleString('en-MA', { minimumFractionDigits: 2 })} MAD`, icon: '💰', bg: '#f0fdf4', change: '+12.7% this month' },
-        { label: 'Transactions',   value: stats?.total_transactions ?? 0, icon: '↔️', bg: '#f5f3ff', change: '+15.3% this month' },
+        {
+            label: 'Total Users',
+            value: stats?.total_users ?? 0,
+            icon: Users,
+            tone: 'orange',
+            change: '+8.6% vs last month',
+        },
+        {
+            label: 'Active Accounts',
+            value: stats?.total_accounts ?? 0,
+            icon: CreditCard,
+            tone: 'amber',
+            change: '+6.3% vs last month',
+        },
+        {
+            label: 'Total Balance',
+            value: formatMoney(stats?.total_balance ?? 0),
+            icon: Wallet,
+            tone: 'green',
+            change: '+5.7% vs last month',
+        },
+        {
+            label: "Today's Transactions",
+            value: stats?.total_transactions ?? 0,
+            icon: ArrowRightLeft,
+            tone: 'blue',
+            change: '+12.4% vs yesterday',
+        },
+        {
+            label: 'Pending Reports',
+            value: zeroBalanceAccounts,
+            icon: FileBarChart2,
+            tone: 'orange',
+            change: '-10 vs yesterday',
+        },
+        {
+            label: 'Locked Accounts',
+            value: 0,
+            icon: Lock,
+            tone: 'red',
+            change: '+0 vs yesterday',
+        },
     ];
+
+    // const sidebarItems = [
+    //     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', active: true },
+    //     { icon: Users, label: 'Users', href: '/admin' },
+    //     { icon: CreditCard, label: 'Accounts', href: '/admin' },
+    //     { icon: ArrowRightLeft, label: 'Transactions', href: '/admin' },
+    //     { icon: Shield, label: 'Security Center', href: '/admin' },
+    //     { icon: FileBarChart2, label: 'Reports', href: '/admin' },
+    //     { icon: LifeBuoy, label: 'Support Tickets', href: '/admin' },
+    //     { icon: Settings, label: 'Settings', href: '/admin' },
+    // ];
+
+    const toneClasses: Record<
+        string,
+        { bg: string; text: string; border: string; soft: string }
+    > = {
+        orange: {
+            bg: 'bg-orange-500',
+            text: 'text-orange-600',
+            border: 'border-orange-200',
+            soft: 'bg-orange-50',
+        },
+        amber: {
+            bg: 'bg-amber-500',
+            text: 'text-amber-600',
+            border: 'border-amber-200',
+            soft: 'bg-amber-50',
+        },
+        green: {
+            bg: 'bg-green-500',
+            text: 'text-green-600',
+            border: 'border-green-200',
+            soft: 'bg-green-50',
+        },
+        blue: {
+            bg: 'bg-blue-500',
+            text: 'text-blue-600',
+            border: 'border-blue-200',
+            soft: 'bg-blue-50',
+        },
+        red: {
+            bg: 'bg-red-500',
+            text: 'text-red-600',
+            border: 'border-red-200',
+            soft: 'bg-red-50',
+        },
+    };
 
     return (
         <>
             <Head title="Admin Dashboard" />
-            <div style={{ minHeight: '100vh', background: '#F8F6F1', fontFamily: "'DM Sans', sans-serif" }}>
 
-                {/* Top bar */}
-
-
-                <div style={{ padding: '28px', maxWidth: 1400, margin: '0 auto' }}>
-
-                    {/* Welcome banner */}
-                    <div style={{ background: 'linear-gradient(135deg, #0F0D0B 0%, #1a1715 100%)', borderRadius: 20, padding: '28px 32px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: -40, right: 200, width: 200, height: 200, background: '#E8632A', borderRadius: '50%', opacity: .06 }} />
-                        <div style={{ position: 'absolute', bottom: -30, right: 100, width: 150, height: 150, background: '#E8632A', borderRadius: '50%', opacity: .04 }} />
-                        <div style={{ position: 'relative' }}>
-                            <p style={{ color: 'rgba(255,255,255,.5)', fontSize: 13, margin: '0 0 4px' }}>Admin Panel</p>
-                            <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 800, margin: '0 0 8px', fontFamily: "'Syne', sans-serif" }}>
-                                Welcome back, <span style={{ color: '#E8632A' }}>{adminName}!</span> 👋
-                            </h1>
-                            <p style={{ color: 'rgba(255,255,255,.4)', fontSize: 13, margin: 0 }}>
-                                You are logged in as Super Admin. Manage users, accounts, transactions, and monitor performance.
-                            </p>
-                        </div>
-                        <a href="/dashboard" style={{ background: '#E8632A', color: '#fff', fontSize: 13, fontWeight: 700, padding: '12px 24px', borderRadius: 12, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, position: 'relative' }}>
-                            Go to Dashboard →
-                        </a>
-                    </div>
-
-                    {/* Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-                        {statCards.map((card, i) => (
-                            <div key={i} style={{ background: '#fff', border: '1px solid #EDE8E0', borderRadius: 20, padding: 20 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                                    <div style={{ width: 40, height: 40, background: card.bg, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{card.icon}</div>
-                                    <span style={{ fontSize: 10, color: '#16a34a', fontWeight: 600, background: '#dcfce7', padding: '3px 8px', borderRadius: 20 }}>{card.change}</span>
+            <div className="min-h-screen bg-[#F8F6F1] text-[#171412]">
+                <div className="flex min-h-screen">
+                    {/* Sidebar */}
+                    {/* <aside className="hidden w-[290px] shrink-0 border-r border-[#ECE7DF] bg-white xl:block">
+                        <div className="flex h-full flex-col">
+                            <div className="flex items-center gap-3 px-6 py-6">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-sm">
+                                    <Shield className="h-6 w-6" />
                                 </div>
-                                <p style={{ fontSize: 10, color: '#9C978F', textTransform: 'uppercase', letterSpacing: 2, margin: '0 0 4px' }}>{card.label}</p>
-                                <p style={{ fontSize: 22, fontWeight: 800, color: '#0F0D0B', margin: 0, fontFamily: "'Syne', sans-serif" }}>{card.value}</p>
+                                <div>
+                                    <h2 className="text-[15px] font-extrabold tracking-tight">
+                                        GlobalTrust Bank
+                                    </h2>
+                                    <p className="text-sm text-[#9A948C]">
+                                        Admin Console
+                                    </p>
+                                </div>
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Quick actions */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-                        {[
-                            { icon: '👥', label: 'Manage Users',      desc: 'Add, edit, or remove users',     color: '#E8632A', bg: '#fff0e8' },
-                            { icon: '💳', label: 'Manage Accounts',   desc: 'View all customer accounts',     color: '#3B82F6', bg: '#eff6ff' },
-                            { icon: '↔️', label: 'View Transactions', desc: 'Monitor all transactions',       color: '#8B5CF6', bg: '#f5f3ff' },
-                            { icon: '📊', label: 'Reports',           desc: 'Generate reports and analytics', color: '#16a34a', bg: '#f0fdf4' },
-                        ].map((action, i) => (
-                            <button key={i} style={{ background: '#fff', border: '1.5px solid #EDE8E0', borderRadius: 16, padding: 20, textAlign: 'left', cursor: 'pointer', transition: 'all .15s' }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = action.color; (e.currentTarget as HTMLElement).style.background = action.bg; }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#EDE8E0'; (e.currentTarget as HTMLElement).style.background = '#fff'; }}>
-                                <div style={{ fontSize: 28, marginBottom: 10 }}>{action.icon}</div>
-                                <p style={{ fontSize: 14, fontWeight: 700, color: '#0F0D0B', margin: '0 0 4px', fontFamily: "'Syne', sans-serif" }}>{action.label}</p>
-                                <p style={{ fontSize: 12, color: '#9C978F', margin: 0 }}>{action.desc}</p>
-                            </button>
-                        ))}
-                    </div>
+                            <div className="px-4 pb-4">
+                                <nav className="space-y-1.5">
+                                    {sidebarItems.map((item) => {
+                                        const Icon = item.icon;
 
-                    {/* Users table */}
-                    <div style={{ background: '#fff', border: '1px solid #EDE8E0', borderRadius: 20, overflow: 'hidden' }}>
-                        <div style={{ padding: '16px 20px', borderBottom: '1px solid #EDE8E0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-                            <h3 style={{ fontSize: 13, fontWeight: 700, color: '#0F0D0B', textTransform: 'uppercase', letterSpacing: 2, margin: 0, fontFamily: "'Syne', sans-serif" }}>All Users</h3>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                <span style={{ fontSize: 12, color: '#9C978F' }}>{filtered.length} total</span>
-                                <input
-                                    type="text"
-                                    placeholder="Search users..."
-                                    value={search}
-                                    onChange={e => setSearch(e.target.value)}
-                                    style={{ height: 36, border: '1.5px solid #EDE8E0', borderRadius: 10, padding: '0 12px', fontSize: 13, color: '#0F0D0B', outline: 'none', width: 220, fontFamily: "'DM Sans', sans-serif" }}
-                                />
+                                        return (
+                                            <Link
+                                                key={item.label}
+                                                href={item.href}
+                                                className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-[15px] font-medium transition ${
+                                                    item.active
+                                                        ? 'bg-orange-50 text-orange-600'
+                                                        : 'text-[#4D4944] hover:bg-[#F8F6F1]'
+                                                }`}
+                                            >
+                                                <Icon className="h-5 w-5" />
+                                                <span>{item.label}</span>
+                                            </Link>
+                                        );
+                                    })}
+                                </nav>
+                            </div>
+
+                            <div className="mt-auto p-4">
+                                <div className="rounded-3xl border border-[#ECE7DF] bg-[#FCFBF9] p-4">
+                                    <div className="mb-3 flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-green-50 text-green-600">
+                                            <Shield className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-semibold">
+                                                System Status
+                                            </p>
+                                            <p className="text-sm text-green-600">
+                                                All Systems Operational
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-[#9A948C]">
+                                        Last updated: 2 min ago
+                                    </p>
+                                </div>
+
+                                <div className="mt-4 text-xs text-[#9A948C]">
+                                    © 2026 GlobalTrust Bank
+                                </div>
                             </div>
                         </div>
-                        <div style={{ overflowX: 'auto' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ background: '#F8F6F1' }}>
-                                        {['User', 'Email', 'Account Number', 'Type', 'Balance', 'Role', 'Joined', 'Actions'].map(h => (
-                                            <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontSize: 10, fontWeight: 700, color: '#9C978F', textTransform: 'uppercase', letterSpacing: 1.5, whiteSpace: 'nowrap' }}>{h}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filtered.length > 0 ? filtered.map((u, i) => (
-                                        <tr key={u.id} style={{ borderTop: '1px solid #F5F0EA', background: i % 2 === 0 ? '#fff' : '#FDFAF7' }}
-                                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#FFFCF9'}
-                                            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = i % 2 === 0 ? '#fff' : '#FDFAF7'}>
-                                            <td style={{ padding: '14px 16px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                                    <div style={{ width: 34, height: 34, background: '#E8632A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
-                                                        {u.name.charAt(0).toUpperCase()}
-                                                    </div>
-                                                    <span style={{ fontSize: 14, fontWeight: 600, color: '#0F0D0B' }}>{u.name}</span>
+                    </aside> */}
+
+                    {/* Content */}
+                    <main className="min-w-0 flex-1">
+                        {/* Top Bar */}
+                        {/* <header className="sticky top-0 z-30 border-b border-[#ECE7DF] bg-white/90 backdrop-blur">
+                            <div className="flex flex-wrap items-center gap-4 px-5 py-4 lg:px-6">
+                                <div className="min-w-[280px] flex-1">
+                                    <div className="flex items-center gap-3 rounded-2xl border border-[#ECE7DF] bg-[#FCFBF9] px-4 py-3">
+                                        <Search className="h-5 w-5 text-[#9A948C]" />
+                                        <input
+                                            type="text"
+                                            value={search}
+                                            onChange={(e) =>
+                                                setSearch(e.target.value)
+                                            }
+                                            placeholder="Search users, accounts, transactions, reports..."
+                                            className="w-full bg-transparent text-sm outline-none placeholder:text-[#9A948C]"
+                                        />
+                                        <span className="hidden rounded-lg border border-[#ECE7DF] px-2 py-1 text-xs text-[#9A948C] sm:inline-block">
+                                            ⌘ K
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="ml-auto flex items-center gap-3">
+                                    <button className="relative flex items-center gap-2 rounded-2xl px-3 py-2 text-sm font-medium text-[#4D4944] hover:bg-[#F8F6F1]">
+                                        <Bell className="h-5 w-5" />
+                                        <span className="hidden md:inline">
+                                            Alerts
+                                        </span>
+                                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                            8
+                                        </span>
+                                    </button>
+
+                                    <button className="relative flex items-center gap-2 rounded-2xl px-3 py-2 text-sm font-medium text-[#4D4944] hover:bg-[#F8F6F1]">
+                                        <Shield className="h-5 w-5" />
+                                        <span className="hidden md:inline">
+                                            Security
+                                        </span>
+                                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                            3
+                                        </span>
+                                    </button>
+
+                                    
+                                    <button className="flex items-center gap-3 rounded-2xl px-2 py-1.5 hover:bg-[#F8F6F1]">
+                                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F2EFEB] font-bold text-[#171412]">
+                                            {initials}
+                                        </div>
+                                        <div className="hidden text-left lg:block">
+                                            <p className="text-sm font-semibold">
+                                                {auth.user.name}
+                                            </p>
+                                            <p className="text-xs text-[#9A948C]">
+                                                Super Administrator
+                                            </p>
+                                        </div>
+                                        <ChevronDown className="hidden h-4 w-4 text-[#9A948C] lg:block" />
+                                    </button>
+                                </div>
+                            </div>
+                        </header> */}
+
+                        <div className="space-y-6 p-5 lg:p-6">
+                            {/* Stats */}
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-6">
+                                {statCards.map((card) => {
+                                    const Icon = card.icon;
+                                    const tone = toneClasses[card.tone];
+
+                                    return (
+                                        <div
+                                            key={card.label}
+                                            className="rounded-3xl border border-[#ECE7DF] bg-white p-5 shadow-sm"
+                                        >
+                                            <div className="mb-4 flex items-start justify-between">
+                                                <div
+                                                    className={`flex h-12 w-12 items-center justify-center rounded-2xl ${tone.soft} ${tone.text}`}
+                                                >
+                                                    <Icon className="h-6 w-6" />
                                                 </div>
-                                            </td>
-                                            <td style={{ padding: '14px 16px', fontSize: 13, color: '#5C5751' }}>{u.email}</td>
-                                            <td style={{ padding: '14px 16px', fontSize: 12, color: '#5C5751', fontFamily: 'monospace' }}>{u.bank_account?.account_number ?? '—'}</td>
-                                            <td style={{ padding: '14px 16px' }}>
-                                                {u.bank_account ? (
-                                                    <span style={{ fontSize: 11, fontWeight: 600, background: '#FFF0E8', color: '#E8632A', padding: '4px 10px', borderRadius: 20, textTransform: 'capitalize' }}>
-                                                        {u.bank_account.account_type}
-                                                    </span>
-                                                ) : <span style={{ fontSize: 12, color: '#9C978F' }}>—</span>}
-                                            </td>
-                                            <td style={{ padding: '14px 16px', fontSize: 13, fontWeight: 700, color: '#0F0D0B' }}>
-                                                {u.bank_account ? `${Number(u.bank_account.balance).toLocaleString('en-MA', { minimumFractionDigits: 2 })} MAD` : '—'}
-                                            </td>
-                                            <td style={{ padding: '14px 16px' }}>
-                                                <span style={{ fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 20, background: u.role === 'admin' ? '#0F0D0B' : '#F5F0EA', color: u.role === 'admin' ? '#fff' : '#5C5751' }}>
-                                                    {u.role}
-                                                </span>
-                                            </td>
-                                            <td style={{ padding: '14px 16px', fontSize: 13, color: '#9C978F' }}>
-                                                {new Date(u.created_at).toLocaleDateString('en-GB')}
-                                            </td>
-                                            <td style={{ padding: '14px 16px' }}>
-                                                {u.role !== 'admin' && (
-                                                    <button onClick={() => setDeleteConfirm(u.id)}
-                                                        style={{ background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-                                                        🗑 Delete
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    )) : (
-                                        <tr>
-                                            <td colSpan={8} style={{ padding: '40px', textAlign: 'center', fontSize: 14, color: '#9C978F' }}>No users found</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                            </div>
 
-                    {/* Status bar */}
-                    <div style={{ marginTop: 16, background: '#fff', border: '1px solid #EDE8E0', borderRadius: 14, padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 8, height: 8, background: '#16a34a', borderRadius: '50%' }} />
-                        <p style={{ fontSize: 12, color: '#5C5751', margin: 0 }}>
-                            You are in control! All systems are running smoothly. · Last login: {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </p>
-                    </div>
+                                            <p className="text-sm text-[#7B756E]">
+                                                {card.label}
+                                            </p>
+                                            <p className="mt-1 text-[30px] font-extrabold leading-none tracking-tight text-[#171412]">
+                                                {card.value}
+                                            </p>
+                                            <p className="mt-3 text-sm text-[#7B756E]">
+                                                <span className="font-semibold text-green-600">
+                                                    ↗
+                                                </span>{' '}
+                                                {card.change}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Middle Grid */}
+                            <div className="grid grid-cols-1 gap-6 2xl:grid-cols-12">
+                                {/* Security Center */}
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm 2xl:col-span-4">
+                                    <div className="flex items-center justify-between border-b border-[#F2EEEA] px-6 py-5">
+                                        <div className="flex items-center gap-2">
+                                            <Shield className="h-5 w-5 text-[#171412]" />
+                                            <h3 className="text-lg font-bold">
+                                                Security Center
+                                            </h3>
+                                        </div>
+                                        <button className="text-sm font-semibold text-orange-600">
+                                            View All
+                                        </button>
+                                    </div>
+
+                                    <div className="divide-y divide-[#F2EEEA]">
+                                        {[
+                                            {
+                                                icon: AlertTriangle,
+                                                title: 'Suspicious Activity Reports',
+                                                desc: 'New reports requiring review',
+                                                value: 24,
+                                                tone: 'red',
+                                                delta: '+20%',
+                                            },
+                                            {
+                                                icon: Lock,
+                                                title: 'Failed Login Attempts',
+                                                desc: 'Last 24 hours',
+                                                value: 1287,
+                                                tone: 'amber',
+                                                delta: '+15%',
+                                            },
+                                            {
+                                                icon: ArrowRightLeft,
+                                                title: 'Large Transfers',
+                                                desc: 'Over threshold detected',
+                                                value: 36,
+                                                tone: 'orange',
+                                                delta: '+8%',
+                                            },
+                                            {
+                                                icon: UserCog,
+                                                title: 'Pending Identity Verification',
+                                                desc: 'Waiting document review',
+                                                value: 89,
+                                                tone: 'blue',
+                                                delta: '+5%',
+                                            },
+                                        ].map((item) => {
+                                            const Icon = item.icon;
+                                            const tone = toneClasses[item.tone];
+
+                                            return (
+                                                <div
+                                                    key={item.title}
+                                                    className="flex items-center gap-4 px-6 py-5"
+                                                >
+                                                    <div
+                                                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${tone.soft} ${tone.text}`}
+                                                    >
+                                                        <Icon className="h-5 w-5" />
+                                                    </div>
+
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="truncate font-semibold text-[#171412]">
+                                                            {item.title}
+                                                        </p>
+                                                        <p className="text-sm text-[#9A948C]">
+                                                            {item.desc}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="text-right">
+                                                        <p className="text-xl font-bold text-[#171412]">
+                                                            {item.value}
+                                                        </p>
+                                                        <p className="text-xs text-red-500">
+                                                            ↑ {item.delta}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
+
+                                {/* Recent Activity */}
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm 2xl:col-span-4">
+                                    <div className="flex items-center justify-between border-b border-[#F2EEEA] px-6 py-5">
+                                        <div className="flex items-center gap-2">
+                                            <ArrowRightLeft className="h-5 w-5 text-[#171412]" />
+                                            <h3 className="text-lg font-bold">
+                                                Recent Users
+                                            </h3>
+                                        </div>
+                                        <button className="text-sm font-semibold text-orange-600">
+                                            View All Users
+                                        </button>
+                                    </div>
+
+                                    <div className="divide-y divide-[#F2EEEA]">
+                                        {recentUsers.map((user) => (
+                                            <div
+                                                key={user.id}
+                                                className="flex items-center gap-4 px-6 py-4"
+                                            >
+                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#FFF1E9] font-semibold text-orange-600">
+                                                    {user.name.charAt(0).toUpperCase()}
+                                                </div>
+
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate font-semibold">
+                                                        {user.name}
+                                                    </p>
+                                                    <p className="truncate text-sm text-[#9A948C]">
+                                                        {user.email}
+                                                    </p>
+                                                </div>
+
+                                                <div className="text-right">
+                                                    <p className="text-sm font-medium text-[#171412]">
+                                                        {user.bank_account?.account_type ??
+                                                            'No account'}
+                                                    </p>
+                                                    <p className="text-xs text-[#9A948C]">
+                                                        {user.bank_account
+                                                            ? formatMoney(
+                                                                Number(
+                                                                    user
+                                                                        .bank_account
+                                                                        .balance,
+                                                                ),
+                                                            )
+                                                            : '—'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {recentUsers.length === 0 && (
+                                            <div className="px-6 py-10 text-center text-sm text-[#9A948C]">
+                                                No recent users found
+                                            </div>
+                                        )}
+                                    </div>
+                                </section>
+
+                                {/* User Summary */}
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm 2xl:col-span-4">
+                                    <div className="flex items-center justify-between border-b border-[#F2EEEA] px-6 py-5">
+                                        <div className="flex items-center gap-2">
+                                            <UserCog className="h-5 w-5 text-[#171412]" />
+                                            <h3 className="text-lg font-bold">
+                                                User Summary
+                                            </h3>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 p-6">
+                                        {[
+                                            {
+                                                label: 'Branch / Admin Users',
+                                                value: totalAdmins,
+                                                tone: 'blue',
+                                            },
+                                            {
+                                                label: 'Customer Users',
+                                                value: totalCustomers,
+                                                tone: 'green',
+                                            },
+                                            {
+                                                label: 'Users With Accounts',
+                                                value: usersWithAccounts,
+                                                tone: 'orange',
+                                            },
+                                            {
+                                                label: 'Accounts With Zero Balance',
+                                                value: zeroBalanceAccounts,
+                                                tone: 'red',
+                                            },
+                                        ].map((item) => {
+                                            const tone = toneClasses[item.tone];
+
+                                            return (
+                                                <div
+                                                    key={item.label}
+                                                    className={`rounded-2xl border p-4 ${tone.border} ${tone.soft}`}
+                                                >
+                                                    <p className="text-sm text-[#7B756E]">
+                                                        {item.label}
+                                                    </p>
+                                                    <p className={`mt-1 text-2xl font-extrabold ${tone.text}`}>
+                                                        {item.value}
+                                                    </p>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
+                            </div>
+
+                            {/* User table */}
+                            <section className="overflow-hidden rounded-3xl border border-[#ECE7DF] bg-white shadow-sm">
+                                <div className="flex flex-col gap-4 border-b border-[#F2EEEA] px-6 py-5 md:flex-row md:items-center md:justify-between">
+                                    <div>
+                                        <h3 className="text-lg font-bold">
+                                            User Management
+                                        </h3>
+                                        <p className="text-sm text-[#9A948C]">
+                                            Manage customers, account holders,
+                                            and admin access.
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-sm text-[#9A948C]">
+                                            {filteredUsers.length} users
+                                        </span>
+
+                                        <div className="flex items-center gap-2 rounded-2xl border border-[#ECE7DF] bg-[#FCFBF9] px-3 py-2">
+                                            <Search className="h-4 w-4 text-[#9A948C]" />
+                                            <input
+                                                type="text"
+                                                value={search}
+                                                onChange={(e) =>
+                                                    setSearch(e.target.value)
+                                                }
+                                                placeholder="Search users..."
+                                                className="bg-transparent text-sm outline-none placeholder:text-[#9A948C]"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full border-collapse">
+                                        <thead>
+                                            <tr className="bg-[#FCFBF9]">
+                                                {[
+                                                    'User',
+                                                    'Account Number',
+                                                    'Type',
+                                                    'Balance',
+                                                    'Role',
+                                                    'Joined',
+                                                    'Actions',
+                                                ].map((head) => (
+                                                    <th
+                                                        key={head}
+                                                        className="whitespace-nowrap px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.16em] text-[#9A948C]"
+                                                    >
+                                                        {head}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {filteredUsers.length > 0 ? (
+                                                filteredUsers.map((u, index) => (
+                                                    <tr
+                                                        key={u.id}
+                                                        className={`border-t border-[#F2EEEA] ${index % 2 === 0
+                                                                ? 'bg-white'
+                                                                : 'bg-[#FFFCFA]'
+                                                            }`}
+                                                    >
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF1E9] font-semibold text-orange-600">
+                                                                    {u.avatar ? (
+                                                                        // ✅ IMAGE
+                                                                        <div className="h-10 w-10 rounded-full overflow-hidden">
+                                                                            <img
+                                                                                src={`/storage/${u.avatar}`}
+                                                                                alt={u.name}
+                                                                                className="w-full h-full object-cover"
+                                                                            />
+                                                                        </div>
+                                                                    ) : (
+                                                                        // ✅ INITIALS FALLBACK
+                                                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF1E9] font-semibold text-orange-600">
+                                                                            {u.name
+                                                                                .split(' ')
+                                                                                .map((n) => n[0])
+                                                                                .join('')
+                                                                                .toUpperCase()
+                                                                                .slice(0, 2)}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <p className="truncate font-semibold text-[#171412]">
+                                                                        {u.name}
+                                                                    </p>
+                                                                    <p className="truncate text-sm text-[#7B756E]">
+                                                                        {u.email}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <td className="px-6 py-4 text-sm font-mono text-[#4D4944]">
+                                                            {u.bank_account
+                                                                ?.account_number ??
+                                                                '—'}
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            {u.bank_account ? (
+                                                                <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold capitalize text-orange-600">
+                                                                    {
+                                                                        u
+                                                                            .bank_account
+                                                                            .account_type
+                                                                    }
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-sm text-[#9A948C]">
+                                                                    —
+                                                                </span>
+                                                            )}
+                                                        </td>
+
+                                                        <td className="px-6 py-4 text-sm font-semibold text-[#171412]">
+                                                            {u.bank_account
+                                                                ? formatMoney(
+                                                                    Number(
+                                                                        u
+                                                                            .bank_account
+                                                                            .balance,
+                                                                    ),
+                                                                )
+                                                                : '—'}
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            <span
+                                                                className={`rounded-full px-3 py-1 text-xs font-semibold ${u.role ===
+                                                                        'admin'
+                                                                        ? 'bg-[#171412] text-white'
+                                                                        : 'bg-green-50 text-green-700'
+                                                                    }`}
+                                                            >
+                                                                {u.role}
+                                                            </span>
+                                                        </td>
+
+                                                        <td className="px-6 py-4 text-sm text-[#7B756E]">
+                                                            {new Date(
+                                                                u.created_at,
+                                                            ).toLocaleDateString(
+                                                                'en-GB',
+                                                            )}
+                                                        </td>
+
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex items-center gap-2">
+                                                                <button className="rounded-xl border border-[#ECE7DF] p-2 text-[#4D4944] hover:bg-[#F8F6F1]">
+                                                                    <Eye className="h-4 w-4" />
+                                                                </button>
+
+                                                                <button className="rounded-xl border border-[#ECE7DF] p-2 text-[#4D4944] hover:bg-[#F8F6F1]">
+                                                                    <Shield className="h-4 w-4" />
+                                                                </button>
+
+                                                                {u.role !==
+                                                                    'admin' && (
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                setDeleteConfirm(
+                                                                                    u.id,
+                                                                                )
+                                                                            }
+                                                                            className="rounded-xl border border-red-200 p-2 text-red-600 hover:bg-red-50"
+                                                                        >
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                        </button>
+                                                                    )}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td
+                                                        colSpan={7}
+                                                        className="px-6 py-14 text-center text-sm text-[#9A948C]"
+                                                    >
+                                                        No users found
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            {/* Bottom widgets */}
+                            <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                                {/* Risk overview */}
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm">
+                                    <div className="mb-5 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <AlertTriangle className="h-5 w-5" />
+                                            <h3 className="text-lg font-bold">
+                                                Risk & Compliance
+                                            </h3>
+                                        </div>
+                                        <button className="rounded-xl border border-[#ECE7DF] px-3 py-2 text-sm font-medium">
+                                            Last 30 Days
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {[
+                                            {
+                                                label: 'High Risk Alerts',
+                                                value: 128,
+                                                change: '+18%',
+                                                color: 'text-red-500',
+                                            },
+                                            {
+                                                label: 'Compliance Reviews',
+                                                value: 342,
+                                                change: '+12%',
+                                                color: 'text-green-600',
+                                            },
+                                            {
+                                                label: 'Policy Violations',
+                                                value: 23,
+                                                change: '+9%',
+                                                color: 'text-red-500',
+                                            },
+                                            {
+                                                label: 'Sanctions Matches',
+                                                value: 7,
+                                                change: '+13%',
+                                                color: 'text-green-600',
+                                            },
+                                        ].map((item) => (
+                                            <div
+                                                key={item.label}
+                                                className="flex items-center justify-between rounded-2xl bg-[#FCFBF9] px-4 py-3"
+                                            >
+                                                <div>
+                                                    <p className="text-sm text-[#7B756E]">
+                                                        {item.label}
+                                                    </p>
+                                                    <p className="text-lg font-bold">
+                                                        {item.value}
+                                                    </p>
+                                                </div>
+                                                <p
+                                                    className={`text-sm font-semibold ${item.color}`}
+                                                >
+                                                    {item.change}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+
+                                {/* Global operations */}
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm">
+                                    <div className="mb-5 flex items-center gap-2">
+                                        <Globe className="h-5 w-5" />
+                                        <h3 className="text-lg font-bold">
+                                            Global Operations
+                                        </h3>
+                                    </div>
+
+                                    <div className="flex h-[260px] items-center justify-center rounded-3xl bg-[#FCFBF9]">
+                                        <div className="text-center">
+                                            <Building2 className="mx-auto h-12 w-12 text-orange-500" />
+                                            <p className="mt-4 font-semibold">
+                                                Global Branch Overview
+                                            </p>
+                                            <p className="mt-1 text-sm text-[#9A948C]">
+                                                42 branches across regions
+                                            </p>
+                                            <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
+                                                <div className="rounded-2xl bg-white px-4 py-3">
+                                                    North America: 12
+                                                </div>
+                                                <div className="rounded-2xl bg-white px-4 py-3">
+                                                    Europe: 9
+                                                </div>
+                                                <div className="rounded-2xl bg-white px-4 py-3">
+                                                    Asia Pacific: 11
+                                                </div>
+                                                <div className="rounded-2xl bg-white px-4 py-3">
+                                                    MENA: 10
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                {/* System summary */}
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm">
+                                    <div className="mb-5 flex items-center gap-2">
+                                        <TrendingUp className="h-5 w-5" />
+                                        <h3 className="text-lg font-bold">
+                                            System Summary
+                                        </h3>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {[
+                                            {
+                                                label: 'System Uptime',
+                                                value: '99.98%',
+                                                sub: 'All systems healthy',
+                                            },
+                                            {
+                                                label: 'Active Sessions',
+                                                value: '2,847',
+                                                sub: '+7% vs yesterday',
+                                            },
+                                            {
+                                                label: 'Data Storage',
+                                                value: '68%',
+                                                sub: '2.04TB / 3TB used',
+                                            },
+                                            {
+                                                label: 'API Requests (24h)',
+                                                value: '1.32M',
+                                                sub: '+9% vs yesterday',
+                                            },
+                                        ].map((item) => (
+                                            <div
+                                                key={item.label}
+                                                className="rounded-2xl bg-[#FCFBF9] p-4"
+                                            >
+                                                <p className="text-sm text-[#7B756E]">
+                                                    {item.label}
+                                                </p>
+                                                <p className="mt-1 text-[32px] font-extrabold leading-none">
+                                                    {item.value}
+                                                </p>
+                                                <p className="mt-2 text-sm text-[#7B756E]">
+                                                    {item.sub}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </main>
                 </div>
             </div>
 
-            {/* Delete Confirm Modal */}
+            {/* Delete Modal */}
             {deleteConfirm !== null && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.5)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-                    <div style={{ background: '#fff', borderRadius: 20, padding: 28, maxWidth: 400, width: '100%' }}>
-                        <div style={{ width: 56, height: 56, background: '#fee2e2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, margin: '0 auto 16px' }}>🗑</div>
-                        <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F0D0B', textAlign: 'center', margin: '0 0 8px', fontFamily: "'Syne', sans-serif" }}>Delete User</h3>
-                        <p style={{ fontSize: 14, color: '#9C978F', textAlign: 'center', margin: '0 0 24px', lineHeight: 1.6 }}>
-                            Are you sure? This will also delete their bank account and all transactions. <strong style={{ color: '#dc2626' }}>This cannot be undone.</strong>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4">
+                    <div className="w-full max-w-md rounded-[28px] bg-white p-7 shadow-2xl">
+                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
+                            <XCircle className="h-8 w-8" />
+                        </div>
+
+                        <h3 className="text-center text-2xl font-extrabold text-[#171412]">
+                            Delete User
+                        </h3>
+
+                        <p className="mt-3 text-center text-sm leading-6 text-[#7B756E]">
+                            Are you sure you want to delete this user? This will
+                            also remove the linked bank account and all related
+                            transactions.
+                            <span className="font-semibold text-red-600">
+                                {' '}
+                                This action cannot be undone.
+                            </span>
                         </p>
-                        <div style={{ display: 'flex', gap: 10 }}>
-                            <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, height: 44, border: '1.5px solid #EDE8E0', borderRadius: 12, background: '#fff', fontSize: 14, fontWeight: 600, color: '#5C5751', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+
+                        <div className="mt-6 flex gap-3">
+                            <button
+                                onClick={() => setDeleteConfirm(null)}
+                                className="flex-1 rounded-2xl border border-[#ECE7DF] px-4 py-3 font-semibold text-[#4D4944] transition hover:bg-[#F8F6F1]"
+                            >
                                 Cancel
                             </button>
-                            <button onClick={() => handleDelete(deleteConfirm)} style={{ flex: 1, height: 44, border: 'none', borderRadius: 12, background: '#dc2626', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+
+                            <button
+                                onClick={() => handleDelete(deleteConfirm)}
+                                className="flex-1 rounded-2xl bg-red-600 px-4 py-3 font-semibold text-white transition hover:bg-red-700"
+                            >
                                 Yes, Delete
                             </button>
                         </div>

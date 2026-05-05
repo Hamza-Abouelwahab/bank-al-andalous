@@ -1,14 +1,21 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowDownToLine,
     ArrowUpFromLine,
+    // Bell,
+    Bot,
+    // ChevronDown,
     CreditCard,
     Eye,
     EyeOff,
     FileText,
+    LayoutGrid,
+    // Menu,
+    PiggyBank,
     Send,
     Sparkles,
     Target,
+    Wallet,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -17,17 +24,20 @@ interface BankAccount {
     account_type: string;
     balance: number;
 }
+
 interface Profile {
     date_of_birth: string;
     phone: string;
     address: string;
 }
+
 interface FinancialProfile {
     employment_status: string;
     occupation: string;
     monthly_income: string;
     source_of_funds: string;
 }
+
 interface AuthUser {
     id: number;
     name: string;
@@ -37,6 +47,7 @@ interface AuthUser {
     bank_account: BankAccount | null;
     financial_profile: FinancialProfile | null;
 }
+
 interface Transaction {
     id: number;
     type: 'credit' | 'debit';
@@ -48,850 +59,604 @@ interface Transaction {
     status: string;
     created_at: string;
 }
-interface Summary {
-    total_credit: number;
-    total_debit: number;
-}
 
-const NAV = [
-    { icon: '⊞', label: 'Dashboard', href: '/dashboard', active: true },
-    { icon: '↔', label: 'Transactions', href: '/transactions', active: false },
-    { icon: '⬇', label: 'Deposit', href: '/deposit', active: false },
-    { icon: '⬆', label: 'Withdraw', href: '/withdraw', active: false },
-    { icon: '→', label: 'Transfer', href: '/transfer', active: false },
-    { icon: '📄', label: 'Pay Bills', href: '/bills', active: false },
-    { icon: '💳', label: 'My Card', href: '/account', active: false },
+const navItems = [
+    { icon: LayoutGrid, label: 'Dashboard', href: '/dashboard', active: true },
+    { icon: ArrowDownToLine, label: 'Deposit', href: '/deposit' },
+    { icon: ArrowUpFromLine, label: 'Withdraw', href: '/withdraw' },
+    { icon: Send, label: 'Transfer', href: '/transfer' },
+    { icon: FileText, label: 'Pay Bills', href: '/bills' },
+    { icon: CreditCard, label: 'My Card', href: '/account' },
+    { icon: Target, label: 'Saving Challenges', href: '/saving-challenges/create' },
+    { icon: Bot, label: 'AI Advisor', href: '/ai-chat' },
 ];
 
-const CAT_ICON: Record<string, string> = {
-    deposit: '⬇',
-    withdrawal: '⬆',
-    transfer_out: '→',
-    transfer_in: '←',
-    bill_payment: '📄',
+const transactionIcon: Record<string, any> = {
+    deposit: ArrowDownToLine,
+    withdrawal: ArrowUpFromLine,
+    transfer_out: Send,
+    transfer_in: Send,
+    bill_payment: FileText,
 };
 
 export default function Dashboard() {
+    // const {
+    //     auth,
+    //     transactions,
+    //     summary,
+    //     goals,
+    //     challenges,
+    //     auto_saving,
+    //     ai_insights,
+    //     smart_alerts,
+    // console.log('fix author');
+
     const {
         auth,
-        transactions,
-        summary,
-        goals,
-        challenges,
-        auto_saving,
-        ai_insights,
-        smart_alerts,
+        transactions = [],
+        summary = {},
+        goals = [],
+        challenges = [],
+        ai_insights = [],
     } = usePage<any>().props;
 
     const user: AuthUser = auth.user;
-    const [balanceVisible, setBalanceVisible] = useState(true);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-
     const account = user.bank_account;
-    const balance = account?.balance ?? 0;
+
+    const [balanceVisible, setBalanceVisible] = useState(true);
+
+    const balance = Number(account?.balance ?? 0);
+    const income = Number(summary?.total_credit ?? 0);
+    const expenses = Number(summary?.total_debit ?? 0);
+    const savings = Math.max(income - expenses, 0);
+
     const firstName = user.name.split(' ')[0];
+
     const initials = user.name
         .split(' ')
         .slice(0, 2)
-        .map((w: string) => w[0])
+        .map((word: string) => word[0])
         .join('')
         .toUpperCase();
-    const income = summary?.total_credit ?? 0;
-    const expenses = summary?.total_debit ?? 0;
 
-    const hour = new Date().getHours();
-    const greeting =
-        hour < 12
-            ? 'Good morning'
-            : hour < 17
-              ? 'Good afternoon'
-              : 'Good evening';
-    const activeGoals = goals ?? [];
+    const formatMoney = (value: number) =>
+        `${Number(value).toLocaleString('en-MA', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        })} MAD`;
+
+    const statCards = [
+        {
+            label: 'Total Balance',
+            value: balanceVisible ? formatMoney(balance) : '•••••• MAD',
+            icon: Wallet,
+            bg: 'bg-orange-50',
+            iconColor: 'text-orange-600',
+            change: '+12.5%',
+            changeColor: 'text-green-600',
+        },
+        {
+            label: 'Income',
+            value: formatMoney(income),
+            icon: ArrowDownToLine,
+            bg: 'bg-green-50',
+            iconColor: 'text-green-600',
+            change: '+8.2%',
+            changeColor: 'text-green-600',
+        },
+        {
+            label: 'Expenses',
+            value: formatMoney(expenses),
+            icon: ArrowUpFromLine,
+            bg: 'bg-red-50',
+            iconColor: 'text-red-600',
+            change: '+3.7%',
+            changeColor: 'text-red-600',
+        },
+        {
+            label: 'Savings',
+            value: formatMoney(savings),
+            icon: PiggyBank,
+            bg: 'bg-purple-50',
+            iconColor: 'text-purple-600',
+            change: '+15.3%',
+            changeColor: 'text-green-600',
+        },
+    ];
+
+    const quickActions = [
+        {
+            label: 'Deposit',
+            href: '/deposit',
+            icon: ArrowDownToLine,
+            bg: 'bg-green-50',
+            color: 'text-green-600',
+        },
+        {
+            label: 'Withdraw',
+            href: '/withdraw',
+            icon: ArrowUpFromLine,
+            bg: 'bg-orange-50',
+            color: 'text-orange-600',
+        },
+        {
+            label: 'Transfer',
+            href: '/transfer',
+            icon: Send,
+            bg: 'bg-blue-50',
+            color: 'text-blue-600',
+        },
+        {
+            label: 'Pay Bills',
+            href: '/bills',
+            icon: FileText,
+            bg: 'bg-purple-50',
+            color: 'text-purple-600',
+        },
+        {
+            label: 'My Card',
+            href: '/account',
+            icon: CreditCard,
+            bg: 'bg-indigo-50',
+            color: 'text-indigo-600',
+        },
+        {
+            label: 'AI Advisor',
+            href: '/ai-chat',
+            icon: Bot,
+            bg: 'bg-pink-50',
+            color: 'text-pink-600',
+        },
+    ];
+
+
+
+
     return (
         <>
             <Head title="Dashboard" />
-            <div
-                style={{
-                    display: 'flex',
-                    minHeight: '100vh',
-                    background: '#F8F6F1',
-                    fontFamily: "'DM Sans', sans-serif",
-                }}
-            >
-                {/* ── Sidebar ── */}
 
-                {/* ── Main ── */}
-                <main
-                    style={{
-                        marginLeft: sidebarOpen ? 0 : 0,
-                        flex: 1,
-                        transition: 'margin-left .25s',
-                        display: 'flex',
-                        flexDirection: 'column',
-                    }}
-                >
-                    <div style={{ padding: '28px 28px', flex: 1 }}>
-                        {/* Welcome */}
-                        <div style={{ marginBottom: 24 }}>
-                            <p
-                                style={{
-                                    color: '#9C978F',
-                                    fontSize: 14,
-                                    marginBottom: 4,
-                                }}
-                            >
-                                {greeting} 👋
-                            </p>
-                            <h1
-                                style={{
-                                    fontSize: 26,
-                                    fontWeight: 800,
-                                    color: '#0F0D0B',
-                                    fontFamily: "'Syne', sans-serif",
-                                    margin: 0,
-                                }}
-                            >
-                                Welcome back, {firstName}!
-                            </h1>
-                        </div>
+            <div className="min-h-screen bg-[#F8F6F1] font-sans text-[#0F0D0B]">
+                <div className="flex min-h-screen">
 
-                        {/* Top row */}
-                        <div
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr',
-                                gap: 16,
-                                marginBottom: 24,
-                            }}
-                        >
-                            {/* Balance card */}
-                            {/* <div style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #E8632A 0%, #C4501F 100%)', borderRadius: 20, padding: 24, position: 'relative', overflow: 'hidden' }}>
-                                <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, background: 'rgba(255,255,255,.1)', borderRadius: '50%' }} />
-                                <div style={{ position: 'absolute', bottom: -20, left: -20, width: 80, height: 80, background: 'rgba(255,255,255,.07)', borderRadius: '50%' }} />
-                                <div style={{ position: 'relative' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                                        <p style={{ color: 'rgba(255,255,255,.7)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 2, margin: 0 }}>Total Balance</p>
-                                        <button onClick={() => setBalanceVisible(!balanceVisible)} style={{ background: 'rgba(255,255,255,.2)', border: 'none', borderRadius: 8, padding: '4px 8px', color: '#fff', cursor: 'pointer', fontSize: 14 }}>
-                                            {balanceVisible ? '👁' : '🙈'}
+
+
+                    {/* Main */}
+                    <main className="min-w-0 flex-1">
+
+
+                        <div className="px-4 py-6 sm:px-6 lg:px-8">
+                            {/* Welcome */}
+                            <div className="mb-6">
+                                <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                                    Welcome back, {firstName}
+                                </h1>
+                                <p className="mt-1 text-sm text-[#5C5751] sm:text-base">
+                                    Here&apos;s what&apos;s happening with your finances today.
+                                </p>
+
+                            </div>
+
+
+
+                            {/* Stats */}
+                            <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                {statCards.map((card) => {
+                                    const Icon = card.icon;
+
+                                    return (
+                                        <div
+                                            key={card.label}
+                                            className="rounded-3xl border border-[#EDE8E0] bg-white p-5 shadow-sm"
+                                        >
+                                            <div className="mb-5 flex items-start justify-between">
+                                                <div>
+                                                    <p className="text-sm font-medium text-[#5C5751]">
+                                                        {card.label}
+                                                    </p>
+                                                    <h3 className="mt-3 text-2xl font-extrabold">
+                                                        {card.value}
+                                                    </h3>
+                                                </div>
+
+                                                <div
+                                                    className={`flex h-14 w-14 items-center justify-center rounded-2xl ${card.bg}`}
+                                                >
+                                                    <Icon className={`h-6 w-6 ${card.iconColor}`} />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-1 text-sm">
+                                                <span className={`font-bold ${card.changeColor}`}>
+                                                    {card.change}
+                                                </span>
+                                                <span className="text-[#5C5751]">from last month</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Main grid */}
+                            <div className="grid gap-6 xl:grid-cols-3">
+                                {/* Spending chart */}
+                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm xl:col-span-2">
+                                    <div className="mb-6 flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-lg font-bold">Spending Overview</h3>
+                                            <p className="mt-1 text-sm text-[#9C978F]">This Month</p>
+                                        </div>
+
+                                        <button className="rounded-xl border border-[#EDE8E0] px-3 py-2 text-sm font-semibold">
+                                            This Month
                                         </button>
                                     </div>
-                                    <h2 style={{ color: '#fff', fontSize: 32, fontWeight: 800, margin: '0 0 4px', fontFamily: "'Syne', sans-serif" }}>
-                                        {balanceVisible ? `${balance.toLocaleString('en-MA', { minimumFractionDigits: 2 })} MAD` : '•••••• MAD'}
-                                    </h2>
-                                    <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 12, margin: '0 0 16px', fontFamily: 'monospace' }}>{account?.account_number ?? '—'}</p>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <span style={{ background: 'rgba(255,255,255,.2)', color: '#fff', fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 20, textTransform: 'uppercase' }}>{account?.account_type ?? 'N/A'}</span>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                            <div style={{ width: 8, height: 8, background: '#4ade80', borderRadius: '50%' }} />
-                                            <span style={{ color: 'rgba(255,255,255,.8)', fontSize: 12 }}>Active</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
 
-                            <div className="rounded-3xl bg-gradient-to-br from-primary via-orange-500 to-orange-600 p-8 text-white shadow-xl">
-                                <div className="mb-6 flex items-start justify-between">
-                                    <div>
-                                        <p className="mb-2 text-orange-100">
-                                            Total Balance
-                                        </p>
-                                        <div className="flex items-center gap-4">
-                                            <h1 className="text-5xl">
-                                                {balanceVisible
-                                                    ? `${balance.toFixed(2)} MAD`
-                                                    : '••••••'}
-                                            </h1>
-                                            <button
-                                                onClick={() =>
-                                                    setBalanceVisible(
-                                                        !balanceVisible,
-                                                    )
-                                                }
-                                                className="hover:bg-opacity-20 rounded-lg p-2 transition-all hover:cursor-pointer"
-                                            >
-                                                {balanceVisible ? (
-                                                    <EyeOff className="h-8 w-8 text-black" />
-                                                ) : (
-                                                    <Eye className="h-8 w-8 text-black" />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="mb-1 text-sm text-orange-100">
-                                            Account Number
-                                        </p>
-                                        <p className="font-mono text-white">
-                                            {account?.account_number ?? '—'}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="border-opacity-20 mt-8 grid grid-cols-2 gap-6 border-t border-white pt-6">
-                                    <div>
-                                        <p className="mb-1 text-sm text-orange-100">
-                                            Available Balance
-                                        </p>
-                                        <p className="text-2xl">50 MAD</p>
-                                    </div>
-                                    <div>
-                                        <p className="mb-1 text-sm text-orange-100">
-                                            In Savings Goals
-                                        </p>
-                                        <p className="text-2xl">50 MAD</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Quick Actions */}
-                        <div
-                            style={{
-                                background: '#fff',
-                                border: '1px solid #EDE8E0',
-                                borderRadius: 20,
-                                padding: 20,
-                                marginBottom: 24,
-                            }}
-                        >
-                            <h3
-                                style={{
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    color: '#0F0D0B',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: 2,
-                                    margin: '0 0 16px',
-                                    fontFamily: "'Syne', sans-serif",
-                                }}
-                            >
-                                Quick Actions
-                            </h3>
-                            <div
-                                style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(5, 1fr)',
-                                    gap: 12,
-                                }}
-                            >
-                                {[
-                                    {
-                                        icon: <ArrowDownToLine />,
-                                        label: 'Deposit',
-                                        href: '/deposit',
-                                        bg: '#f0fdf4',
-                                        color: 'green',
-                                    },
-                                    {
-                                        icon: <ArrowUpFromLine />,
-                                        label: 'Withdraw',
-                                        href: '/withdraw',
-                                        bg: '#fff7ed',
-                                        color: 'orange',
-                                    },
-                                    {
-                                        icon: <Send />,
-                                        label: 'Transfer',
-                                        href: '/transfer',
-                                        bg: '#eff6ff',
-                                        color: '#3B82F6',
-                                    },
-                                    {
-                                        icon: <FileText />,
-                                        label: 'Pay Bills',
-                                        href: '/bills',
-                                        bg: '#f5f3ff',
-                                        color: '#8B5CF6',
-                                    },
-                                    {
-                                        icon: <CreditCard />,
-                                        label: 'My Card',
-                                        href: '/account',
-                                        bg: '#EEF2FF',
-                                        color: '#4F46E5',
-                                    },
-                                ].map((a) => (
-                                    <a
-                                        key={a.label}
-                                        className="transition-all hover:shadow-lg"
-                                        href={a.href}
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            gap: 8,
-                                            padding: 24,
-                                            borderRadius: 14,
-                                            border: '1.5px solid #EDE8E0',
-                                            textDecoration: 'none',
-                                            transition: 'all .15s',
-                                            background: '#fff',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            (
-                                                e.currentTarget as HTMLElement
-                                            ).style.background = a.bg;
-                                            (
-                                                e.currentTarget as HTMLElement
-                                            ).style.borderColor = a.color;
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            (
-                                                e.currentTarget as HTMLElement
-                                            ).style.background = '#fff';
-                                            (
-                                                e.currentTarget as HTMLElement
-                                            ).style.borderColor = '#EDE8E0';
-                                        }}
-                                    >
-                                        <div
-                                            className="transition-transform group-hover:scale-110"
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: 12,
-                                            }}
+                                    <div className="relative h-72 overflow-hidden rounded-2xl bg-gradient-to-b from-orange-50/80 to-white">
+                                        <svg
+                                            viewBox="0 0 700 260"
+                                            className="h-full w-full"
+                                            preserveAspectRatio="none"
                                         >
-                                            <span
-                                                style={{
-                                                    fontSize: 24,
-                                                    color: a.color,
-                                                }}
-                                            >
-                                                {a.icon}
-                                            </span>
-                                            <span
-                                                style={{
-                                                    fontSize: 12,
-                                                    fontWeight: 600,
-                                                    color: '#5C5751',
-                                                }}
-                                            >
-                                                {a.label}
-                                            </span>
-                                        </div>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
+                                            <defs>
+                                                <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stopColor="#F97316" stopOpacity="0.28" />
+                                                    <stop offset="100%" stopColor="#F97316" stopOpacity="0" />
+                                                </linearGradient>
+                                            </defs>
 
-                        <div className="grid grid-cols-3 gap-6">
-                            {/* Left Column - Savings Features */}
-                            <div className="col-span-2 space-y-6">
-                                {/* Savings Goals */}
-                                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                                    <div className="mb-6 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="rounded-xl bg-purple-50 p-2">
-                                                <Target className="h-5 w-5 text-purple-600" />
-                                            </div>
-                                            <h3 className="text-gray-800">
-                                                Savings Goals
-                                            </h3>
+                                            {[40, 90, 140, 190, 240].map((y) => (
+                                                <line
+                                                    key={y}
+                                                    x1="0"
+                                                    y1={y}
+                                                    x2="700"
+                                                    y2={y}
+                                                    stroke="#EDE8E0"
+                                                    strokeWidth="1"
+                                                />
+                                            ))}
+
+                                            <path
+                                                d="M0 220 C70 120, 110 140, 160 150 C230 160, 250 80, 310 100 C370 125, 390 170, 450 130 C500 95, 540 120, 580 70 C630 30, 660 130, 700 110 L700 260 L0 260 Z"
+                                                fill="url(#area)"
+                                            />
+
+                                            <path
+                                                d="M0 220 C70 120, 110 140, 160 150 C230 160, 250 80, 310 100 C370 125, 390 170, 450 130 C500 95, 540 120, 580 70 C630 30, 660 130, 700 110"
+                                                fill="none"
+                                                stroke="#F97316"
+                                                strokeWidth="4"
+                                                strokeLinecap="round"
+                                            />
+                                        </svg>
+
+                                        <div className="absolute bottom-4 left-4 right-4 flex justify-between text-xs text-[#9C978F]">
+                                            <span>1 Jun</span>
+                                            <span>7 Jun</span>
+                                            <span>14 Jun</span>
+                                            <span>21 Jun</span>
+                                            <span>30 Jun</span>
                                         </div>
+                                    </div>
+                                </div>
+
+                                {/* Recent transactions */}
+                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
+                                    <div className="mb-6 flex items-center justify-between">
+                                        <h3 className="text-lg font-bold">Recent Transactions</h3>
+                                        <Link
+                                            href="/transactions"
+                                            className="rounded-xl border border-[#EDE8E0] px-3 py-2 text-sm font-semibold hover:bg-[#F8F6F1]"
+                                        >
+                                            View All
+                                        </Link>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {transactions.length > 0 ? (
+                                            transactions.slice(0, 5).map((tx: Transaction) => {
+                                                const Icon = transactionIcon[tx.category] ?? CreditCard;
+                                                const isCredit = tx.type === 'credit';
+
+                                                return (
+                                                    <div key={tx.id} className="flex items-center gap-4">
+                                                        <div
+                                                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${isCredit ? 'bg-green-50' : 'bg-red-50'
+                                                                }`}
+                                                        >
+                                                            <Icon
+                                                                className={`h-5 w-5 ${isCredit ? 'text-green-600' : 'text-red-600'
+                                                                    }`}
+                                                            />
+                                                        </div>
+
+                                                        <div className="min-w-0 flex-1">
+                                                            <p className="truncate font-semibold">
+                                                                {tx.description}
+                                                            </p>
+                                                            <p className="text-sm text-[#9C978F]">
+                                                                {new Date(tx.created_at).toLocaleDateString('en-GB', {
+                                                                    day: 'numeric',
+                                                                    month: 'short',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                })}
+                                                            </p>
+                                                        </div>
+
+                                                        <p
+                                                            className={`shrink-0 font-bold ${isCredit ? 'text-green-600' : 'text-red-600'
+                                                                }`}
+                                                        >
+                                                            {isCredit ? '+' : '-'}
+                                                            {formatMoney(Number(tx.amount))}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className="rounded-2xl bg-[#F8F6F1] p-6 text-center">
+                                                <p className="text-3xl">📭</p>
+                                                <p className="mt-2 font-semibold">No transactions yet</p>
+                                                <p className="mt-1 text-sm text-[#9C978F]">
+                                                    Make a deposit to get started.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Bottom grid */}
+                            <div className="mt-6 grid gap-6 xl:grid-cols-3">
+                                {/* Bank card */}
+                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
+                                    <div className="mb-5 flex items-center justify-between">
+                                        <h3 className="text-lg font-bold">Account Summary</h3>
                                         <button
-                                            onClick={() =>
-                                                router.visit('/dashboard')
-                                            }
-                                            className="text-sm text-primary hover:text-orange-600"
+                                            onClick={() => setBalanceVisible(!balanceVisible)}
+                                            className="rounded-xl p-2 hover:bg-[#F8F6F1]"
+                                        >
+                                            {balanceVisible ? (
+                                                <EyeOff className="h-5 w-5" />
+                                            ) : (
+                                                <Eye className="h-5 w-5" />
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1f1a17] via-[#8a2f0b] to-orange-600 p-6 text-white shadow-lg">
+                                        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10" />
+                                        <div className="absolute -bottom-12 -left-12 h-36 w-36 rounded-full bg-white/10" />
+
+                                        <div className="relative">
+                                            <div className="mb-10 flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <PiggyBank className="h-5 w-5" />
+                                                    <span className="font-bold">Nestora Bank</span>
+                                                </div>
+                                                <CreditCard className="h-6 w-6" />
+                                            </div>
+
+                                            <p className="font-mono text-lg tracking-widest">
+                                                **** **** ****{' '}
+                                                {account?.account_number
+                                                    ? account.account_number.slice(-4)
+                                                    : '4242'}
+                                            </p>
+
+                                            <div className="mt-8">
+                                                <p className="text-sm text-white/70">Balance</p>
+                                                <p className="mt-1 text-3xl font-extrabold">
+                                                    {balanceVisible ? formatMoney(balance) : '•••••• MAD'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Savings goals */}
+                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
+                                    <div className="mb-6 flex items-center justify-between">
+                                        <h3 className="text-lg font-bold">Financial Goals</h3>
+                                        <button
+                                            onClick={() => router.visit('/saving-challenges/create')}
+                                            className="rounded-xl border border-[#EDE8E0] px-3 py-2 text-sm font-semibold hover:bg-[#F8F6F1]"
                                         >
                                             View All
                                         </button>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        {activeGoals
-                                            .slice(0, 2)
-                                            .map((goal: any) => {
+                                    {/* importent Financial Goals */}
+
+                                    <div className="space-y-5">
+                                        {goals.length > 0 ? (
+                                            goals.slice(0, 3).map((goal: any) => {
                                                 const progress =
-                                                    goal.target > 0
-                                                        ? (goal.saved /
-                                                              goal.target) *
-                                                          100
+                                                    Number(goal.target) > 0
+                                                        ? Math.min(
+                                                            (Number(goal.saved) / Number(goal.target)) * 100,
+                                                            100,
+                                                        )
                                                         : 0;
+
                                                 return (
-                                                    <div
-                                                        key={goal.id}
-                                                        className="rounded-xl border border-gray-200 p-4"
-                                                    >
-                                                        <div className="mb-3 flex items-center justify-between">
-                                                            <p className="text-gray-800">
-                                                                {goal.name}
-                                                            </p>
-                                                            <p className="text-sm text-gray-600">
-                                                                {progress.toFixed(
-                                                                    0,
-                                                                )}
-                                                                %
-                                                            </p>
+                                                    <div key={goal.id}>
+                                                        <div className="mb-2 flex items-center justify-between gap-3">
+                                                            <div className="flex min-w-0 items-center gap-3">
+                                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-purple-50">
+                                                                    <Target className="h-5 w-5 text-purple-600" />
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <p className="truncate font-semibold">
+                                                                        {goal.name}
+                                                                    </p>
+                                                                    <p className="text-sm text-[#9C978F]">
+                                                                        {formatMoney(Number(goal.saved))} /{' '}
+                                                                        {formatMoney(Number(goal.target))}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <span className="text-sm font-bold">
+                                                                {progress.toFixed(0)}%
+                                                            </span>
                                                         </div>
-                                                        <div className="mb-2 h-2.5 w-full rounded-full bg-gray-100">
+
+                                                        <div className="h-2 rounded-full bg-[#F1EEE9]">
                                                             <div
-                                                                className="h-2.5 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all"
-                                                                style={{
-                                                                    width: `${progress}%`,
-                                                                }}
+                                                                className="h-2 rounded-full bg-orange-500"
+                                                                style={{ width: `${progress}%` }}
                                                             />
-                                                        </div>
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <span className="text-gray-600">
-                                                                {Number(
-                                                                    goal.saved,
-                                                                ).toFixed(
-                                                                    2,
-                                                                )}{' '}
-                                                                MAD
-                                                            </span>
-                                                            <span className="text-gray-500">
-                                                                of{' '}
-                                                                {Number(
-                                                                    goal.target,
-                                                                ).toFixed(
-                                                                    2,
-                                                                )}{' '}
-                                                                MAD
-                                                            </span>
                                                         </div>
                                                     </div>
                                                 );
-                                            })}
+                                            })
+                                        ) : (
+                                            <div className="rounded-2xl bg-[#F8F6F1] p-6 text-center">
+                                                <Target className="mx-auto h-8 w-8 text-orange-600" />
+                                                <p className="mt-2 font-semibold">No goals yet</p>
+                                                <p className="text-sm text-[#9C978F]">
+                                                    Create a saving goal to track progress.
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Saving Challenges */}
-                                <div className="">
-                                    <div className="rounded-2xl border border-gray-200 bg-white px-6 shadow-sm">
-                                        <div className="flex items-center justify-between py-6">
-                                            <h3 className="text-gray-800">
-                                                Saving Challenges
-                                            </h3>
-                                            <button
-                                                onClick={() =>
-                                                    router.visit(
-                                                        '/saving-challenges/create',
-                                                    )
-                                                }
-                                                className="rounded-lg bg-orange-500 px-3 py-2 text-sm font-semibold text-white hover:bg-orange-600"
-                                            >
-                                                New Challenge
-                                            </button>
+                                {/* Quick actions */}
+                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
+                                    <h3 className="mb-6 text-lg font-bold">Quick Actions</h3>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {quickActions.map((action) => {
+                                            const Icon = action.icon;
+
+                                            return (
+                                                <Link
+                                                    key={action.label}
+                                                    href={action.href}
+                                                    className="rounded-2xl border border-[#EDE8E0] p-4 text-center transition hover:-translate-y-1 hover:shadow-md"
+                                                >
+                                                    <div
+                                                        className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl ${action.bg}`}
+                                                    >
+                                                        <Icon className={`h-5 w-5 ${action.color}`} />
+                                                    </div>
+                                                    <p className="text-sm font-bold">{action.label}</p>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* AI and challenges */}
+                            <div className="mt-6 grid gap-6 xl:grid-cols-3">
+                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm xl:col-span-2">
+                                    <div className="mb-5 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50">
+                                                <Target className="h-5 w-5 text-orange-600" />
+                                            </div>
+                                            <h3 className="text-lg font-bold">Saving Challenges</h3>
                                         </div>
-                                        {challenges
-                                            ?.slice(0, 2)
-                                            .map((challenge: any) => (
+
+                                        <button
+                                            onClick={() => router.visit('/saving-challenges/create')}
+                                            className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-700"
+                                        >
+                                            New Challenge
+                                        </button>
+                                    </div>
+
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        {challenges.length > 0 ? (
+                                            challenges.slice(0, 2).map((challenge: any) => (
                                                 <div
                                                     key={challenge.id}
-                                                    className="mb-4 rounded-xl border border-gray-200 p-4"
+                                                    className="rounded-2xl border border-[#EDE8E0] p-4"
                                                 >
-                                                    <div className="mb-2 flex items-center justify-between">
-                                                        <p className="text-gray-800">
-                                                            Save{' '}
-                                                            {challenge.name} MAD
-                                                        </p>
-                                                        <p className="text-sm text-gray-600">
-                                                            {challenge.progress}
-                                                            %
+                                                    <div className="mb-3 flex items-center justify-between">
+                                                        <p className="font-bold">{challenge.name}</p>
+                                                        <p className="text-sm font-bold text-orange-600">
+                                                            {challenge.progress}%
                                                         </p>
                                                     </div>
 
-                                                    <div className="mb-2 h-2.5 w-full rounded-full bg-gray-100">
+                                                    <div className="mb-3 h-2 rounded-full bg-[#F1EEE9]">
                                                         <div
-                                                            className="h-2.5 rounded-full bg-orange-500"
+                                                            className="h-2 rounded-full bg-orange-500"
                                                             style={{
                                                                 width: `${challenge.progress}%`,
                                                             }}
                                                         />
                                                     </div>
 
-                                                    <div className="flex justify-between text-sm text-gray-500">
-                                                        <span>
-                                                            {
-                                                                challenge.days_left
-                                                            }{' '}
-                                                            days left
-                                                        </span>
-                                                        <span>
-                                                            {challenge.reward}
-                                                        </span>
+                                                    <div className="flex items-center justify-between text-sm text-[#9C978F]">
+                                                        <span>{challenge.days_left} days left</span>
+                                                        <span>{challenge.reward}</span>
                                                     </div>
                                                 </div>
-                                            ))}
+                                            ))
+                                        ) : (
+                                            <div className="rounded-2xl bg-[#F8F6F1] p-6 md:col-span-2">
+                                                <p className="font-semibold">No active challenges</p>
+                                                <p className="text-sm text-[#9C978F]">
+                                                    Start a challenge to build saving habits.
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
-                            {/* Right Column - AI & Alerts */}
-                            <div className="space-y-6">
-                                {/* AI Insights */}
-                                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                                    <div className="mb-6 flex items-center gap-3">
-                                        <div className="rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 p-2">
+
+                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
+                                    <div className="mb-5 flex items-center gap-3">
+                                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-50">
                                             <Sparkles className="h-5 w-5 text-purple-600" />
                                         </div>
-                                        <h3 className="text-gray-800">
-                                            AI Insights
-                                        </h3>
+                                        <h3 className="text-lg font-bold">AI Insights</h3>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        {ai_insights.map((insight: any) => {
-                                            const Icon = insight.icon;
-                                            return (
+                                    <div className="space-y-3">
+                                        {ai_insights.length > 0 ? (
+                                            ai_insights.slice(0, 2).map((insight: any) => (
                                                 <div
                                                     key={insight.id}
-                                                    className={`rounded-xl border p-4 ${
-                                                        insight.color ===
-                                                        'green'
-                                                            ? 'border-green-200 bg-green-50'
-                                                            : 'border-blue-200 bg-blue-50'
-                                                    }`}
+                                                    className="rounded-2xl border border-blue-100 bg-blue-50 p-4"
                                                 >
-                                                    <div className="flex items-start gap-0">
-                                                        <Icon
-                                                            className={`mt-0.5 ${
-                                                                insight.color ===
-                                                                'green'
-                                                                    ? 'text-green-600'
-                                                                    : 'text-blue-600'
-                                                            }`}
-                                                        />
-                                                        <div>
-                                                            <p
-                                                                className={`mb-1 ${
-                                                                    insight.color ===
-                                                                    'green'
-                                                                        ? 'text-green-800'
-                                                                        : 'text-blue-800'
-                                                                }`}
-                                                            >
-                                                                <div className="flex gap-2">
-                                                                    <p className="">
-                                                                        {Icon}
-                                                                    </p>
-                                                                    {
-                                                                        insight.title
-                                                                    }
-                                                                </div>
-                                                            </p>
-                                                            <p
-                                                                className={`pl-8 text-sm ${
-                                                                    insight.color ===
-                                                                    'green'
-                                                                        ? 'text-green-600'
-                                                                        : 'text-blue-600'
-                                                                }`}
-                                                            >
-                                                                {
-                                                                    insight.message
-                                                                }
-                                                            </p>
-                                                        </div>
-                                                    </div>
+                                                    <p className="font-bold text-blue-800">
+                                                        {insight.title}
+                                                    </p>
+                                                    <p className="mt-1 text-sm text-blue-600">
+                                                        {insight.message}
+                                                    </p>
                                                 </div>
-                                            );
-                                        })}
+                                            ))
+                                        ) : (
+                                            <div className="rounded-2xl border border-orange-100 bg-orange-50 p-4">
+                                                <p className="font-bold text-orange-800">
+                                                    Smart saving tip
+                                                </p>
+                                                <p className="mt-1 text-sm text-orange-600">
+                                                    Try saving 10% of each deposit automatically.
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
 
-                                    <button
-                                        onClick={() =>
-                                            router.visit(
-                                                '/saving-challenges/create',
-                                            )
-                                        }
-                                        className="mt-4 w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 py-3 text-white transition-all hover:shadow-lg"
+                                    <Link
+                                        href="/ai-chat"
+                                        className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 py-3 font-bold text-white transition hover:shadow-lg"
                                     >
+                                        <Bot className="h-5 w-5" />
                                         Ask AI Advisor
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Bottom row */}
-                        <div
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '2fr 1fr',
-                                gap: 20,
-                            }}
-                        >
-                            {/* Transactions */}
-                            <div
-                                style={{
-                                    background: '#fff',
-                                    border: '1px solid #EDE8E0',
-                                    borderRadius: 20,
-                                    padding: 20,
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        marginBottom: 16,
-                                    }}
-                                >
-                                    <h3
-                                        style={{
-                                            fontSize: 13,
-                                            fontWeight: 700,
-                                            color: '#0F0D0B',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: 2,
-                                            margin: 0,
-                                            fontFamily: "'Syne', sans-serif",
-                                        }}
-                                    >
-                                        Recent Transactions
-                                    </h3>
-                                    <a
-                                        href="/transactions"
-                                        style={{
-                                            fontSize: 12,
-                                            color: '#E8632A',
-                                            fontWeight: 600,
-                                            textDecoration: 'none',
-                                        }}
-                                    >
-                                        View all →
-                                    </a>
-                                </div>
-                                {transactions && transactions.length > 0 ? (
-                                    transactions.map((tx: Transaction) => (
-                                        <div
-                                            key={tx.id}
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 12,
-                                                padding: '12px 0',
-                                                borderBottom:
-                                                    '1px solid #F5F0EA',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    width: 40,
-                                                    height: 40,
-                                                    borderRadius: 12,
-                                                    background:
-                                                        tx.type === 'credit'
-                                                            ? '#dcfce7'
-                                                            : '#fee2e2',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    fontSize: 16,
-                                                    flexShrink: 0,
-                                                }}
-                                            >
-                                                {CAT_ICON[tx.category] ?? '💳'}
-                                            </div>
-                                            <div
-                                                style={{ flex: 1, minWidth: 0 }}
-                                            >
-                                                <p
-                                                    style={{
-                                                        fontSize: 14,
-                                                        fontWeight: 600,
-                                                        color: '#0F0D0B',
-                                                        margin: 0,
-                                                        overflow: 'hidden',
-                                                        textOverflow:
-                                                            'ellipsis',
-                                                        whiteSpace: 'nowrap',
-                                                    }}
-                                                >
-                                                    {tx.description}
-                                                </p>
-                                                <p
-                                                    style={{
-                                                        fontSize: 11,
-                                                        color: '#9C978F',
-                                                        margin: 0,
-                                                    }}
-                                                >
-                                                    {new Date(
-                                                        tx.created_at,
-                                                    ).toLocaleDateString(
-                                                        'en-GB',
-                                                        {
-                                                            day: 'numeric',
-                                                            month: 'short',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                        },
-                                                    )}
-                                                    {' · '}
-                                                    {tx.category.replace(
-                                                        '_',
-                                                        ' ',
-                                                    )}
-                                                </p>
-                                            </div>
-                                            <div
-                                                style={{
-                                                    textAlign: 'right',
-                                                    flexShrink: 0,
-                                                }}
-                                            >
-                                                <p
-                                                    style={{
-                                                        fontSize: 14,
-                                                        fontWeight: 700,
-                                                        color:
-                                                            tx.type === 'credit'
-                                                                ? '#16a34a'
-                                                                : '#dc2626',
-                                                        margin: 0,
-                                                    }}
-                                                >
-                                                    {tx.type === 'credit'
-                                                        ? '+'
-                                                        : '-'}
-                                                    {Number(
-                                                        tx.amount,
-                                                    ).toLocaleString('en-MA', {
-                                                        minimumFractionDigits: 2,
-                                                    })}{' '}
-                                                    MAD
-                                                </p>
-                                                <span
-                                                    style={{
-                                                        fontSize: 10,
-                                                        background: '#F5F0EA',
-                                                        color: '#9C978F',
-                                                        padding: '2px 8px',
-                                                        borderRadius: 20,
-                                                        fontWeight: 500,
-                                                    }}
-                                                >
-                                                    {tx.status}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div
-                                        style={{
-                                            textAlign: 'center',
-                                            padding: '40px 0',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                fontSize: 40,
-                                                marginBottom: 8,
-                                            }}
-                                        >
-                                            📭
-                                        </div>
-                                        <p
-                                            style={{
-                                                fontSize: 14,
-                                                color: '#5C5751',
-                                                fontWeight: 600,
-                                                margin: '0 0 4px',
-                                            }}
-                                        >
-                                            No transactions yet
-                                        </p>
-                                        <p
-                                            style={{
-                                                fontSize: 12,
-                                                color: '#9C978F',
-                                                margin: 0,
-                                            }}
-                                        >
-                                            Make a deposit to get started
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Account Info */}
-                            <div
-                                style={{
-                                    background: '#fff',
-                                    border: '1px solid #EDE8E0',
-                                    borderRadius: 20,
-                                    padding: 20,
-                                }}
-                            >
-                                <h3
-                                    style={{
-                                        fontSize: 13,
-                                        fontWeight: 700,
-                                        color: '#0F0D0B',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: 2,
-                                        margin: '0 0 16px',
-                                        fontFamily: "'Syne', sans-serif",
-                                    }}
-                                >
-                                    Account Info
-                                </h3>
-                                {[
-                                    { label: 'Full Name', value: user.name },
-                                    { label: 'Email', value: user.email },
-                                    {
-                                        label: 'Phone',
-                                        value: user.profile?.phone ?? '—',
-                                    },
-                                    {
-                                        label: 'Account No.',
-                                        value: account?.account_number ?? '—',
-                                    },
-                                    {
-                                        label: 'Occupation',
-                                        value:
-                                            user.financial_profile
-                                                ?.occupation ?? '—',
-                                    },
-                                    {
-                                        label: 'Employment',
-                                        value:
-                                            user.financial_profile
-                                                ?.employment_status ?? '—',
-                                    },
-                                ].map((item, i) => (
-                                    <div
-                                        key={i}
-                                        style={{
-                                            padding: '10px 0',
-                                            borderBottom: '1px solid #F5F0EA',
-                                        }}
-                                    >
-                                        <p
-                                            style={{
-                                                fontSize: 10,
-                                                color: '#9C978F',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: 1.5,
-                                                margin: '0 0 2px',
-                                            }}
-                                        >
-                                            {item.label}
-                                        </p>
-                                        <p
-                                            style={{
-                                                fontSize: 13,
-                                                color: '#0F0D0B',
-                                                fontWeight: 600,
-                                                margin: 0,
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap',
-                                            }}
-                                        >
-                                            {item.value}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </main>
+                    </main>
+                </div>
             </div>
         </>
     );

@@ -3,8 +3,19 @@ import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/register';
+import { useState } from 'react';
+import { useRef } from 'react';
+
+
+
+
 
 export default function Register() {
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const [preview, setPreview] = useState<string | null>(null);
+
     return (
         <>
             <Head title="Register" />
@@ -16,6 +27,44 @@ export default function Register() {
             >
                 {({ processing, errors }) => (
                     <>
+                        <div className="flex flex-col items-center gap-3">
+
+                            {/* PREVIEW (CLICKABLE) */}
+                            <div
+                                onClick={() => fileInputRef.current?.click()}
+                                className="w-20 h-20 rounded-full bg-slate-100 overflow-hidden border cursor-pointer hover:opacity-80 transition"
+                            >
+                                {preview ? (
+                                    <img src={preview} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="flex items-center justify-center h-full text-slate-400 text-sm">
+                                        Photo
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* HIDDEN INPUT */}
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                name="avatar"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setPreview(URL.createObjectURL(file));
+                                    }
+                                }}
+                            />
+
+                            {/* OPTIONAL TEXT */}
+                            <span className="text-xs text-slate-500">
+                                Click image to upload
+                            </span>
+
+                        </div>
+
                         <div className="grid gap-5">
                             <div className="grid gap-2">
                                 <label htmlFor="name" className="text-sm font-medium text-slate-700">Full name</label>

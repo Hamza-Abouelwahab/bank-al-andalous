@@ -1,24 +1,35 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
-import type { User } from '@/types';
+import { User } from 'lucide-react';
+import type { User as UserType } from '@/types';
 
 export function UserInfo({
     user,
     showEmail = false,
 }: {
-    user: User;
+    user: UserType;
     showEmail?: boolean;
 }) {
     const getInitials = useInitials();
 
     return (
         <>
-            <Avatar className="h-8 w-8 overflow-hidden rounded-full">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                    {getInitials(user.name)}
-                </AvatarFallback>
-            </Avatar>
+            {user.avatar ? (
+                <Avatar className="h-10 w-10 overflow-hidden rounded-xl border border-slate-200">
+                    <AvatarImage
+                        src={`/storage/${user.avatar}`}
+                        alt={user.name}
+                        className="object-cover"
+                    />
+                    <AvatarFallback className="bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                        {getInitials(user.name)}
+                    </AvatarFallback>
+                </Avatar>
+            ) : (
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                    <User size={18} className="text-orange-400" />
+                </div>
+            )}
             <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 {showEmail && (

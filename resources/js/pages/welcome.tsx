@@ -1,6 +1,4 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { dashboard, login, register } from '@/routes';
-import logo from '../assets/sucerity-logo.png'
 import {
     Landmark,
     ShieldCheck,
@@ -31,6 +29,8 @@ import {
     Instagram,
     Linkedin,
 } from 'lucide-react';
+// import { dashboard, login, register } from '@/routes';
+import logo from '../assets/sucerity-logo.png'
 
 export default function Welcome({
     canRegister = true,
@@ -456,6 +456,7 @@ export default function Welcome({
                         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                             {features.map((feature) => {
                                 const Icon = feature.icon;
+
                                 return (
                                     <div
                                         key={feature.title}

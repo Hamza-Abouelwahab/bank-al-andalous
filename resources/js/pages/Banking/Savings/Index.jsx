@@ -488,14 +488,14 @@ function ChooseSavingTypeModal({ onClose, onSelect }) {
             color: 'border-purple-200 hover:bg-purple-50',
             badge: 'bg-purple-100 text-purple-700',
         },
-        {
-            key: 'smart_suggestion',
-            emoji: '🧠',
-            label: 'Smart Saving',
-            desc: 'Get AI-powered suggestions based on your spending habits.',
-            color: 'border-blue-200 hover:bg-blue-50',
-            badge: 'bg-blue-100 text-blue-700',
-        },
+        // {
+        //     key: 'smart_suggestion',
+        //     emoji: '🧠',
+        //     label: 'Smart Saving',
+        //     desc: 'Get AI-powered suggestions based on your spending habits.',
+        //     color: 'border-blue-200 hover:bg-blue-50',
+        //     badge: 'bg-blue-100 text-blue-700',
+        // },
         {
             key: 'group_saving',
             emoji: '👥',
@@ -562,10 +562,10 @@ function CreateGoalModal({ savingType, onClose }) {
             label: '🏆 Saving Challenge',
             className: 'bg-purple-50 text-purple-700',
         },
-        smart_suggestion: {
-            label: '🧠 Smart Saving',
-            className: 'bg-blue-50 text-blue-700',
-        },
+        // smart_suggestion: {
+        //     label: '🧠 Smart Saving',
+        //     className: 'bg-blue-50 text-blue-700',
+        // },
     }[data.saving_type];
 
     return (
