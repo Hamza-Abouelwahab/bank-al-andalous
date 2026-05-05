@@ -29,7 +29,7 @@ import {
     Instagram,
     Linkedin,
 } from 'lucide-react';
-import { dashboard, login, register } from '@/routes';
+// import { dashboard, login, register } from '@/routes';
 import logo from '../assets/sucerity-logo.png'
 
 export default function Welcome({

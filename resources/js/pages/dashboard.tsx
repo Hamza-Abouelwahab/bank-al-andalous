@@ -2,15 +2,15 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowDownToLine,
     ArrowUpFromLine,
-    Bell,
+    // Bell,
     Bot,
-    ChevronDown,
+    // ChevronDown,
     CreditCard,
     Eye,
     EyeOff,
     FileText,
     LayoutGrid,
-    Menu,
+    // Menu,
     PiggyBank,
     Send,
     Sparkles,
@@ -220,7 +220,10 @@ export default function Dashboard() {
                                 <p className="mt-1 text-sm text-[#5C5751] sm:text-base">
                                     Here&apos;s what&apos;s happening with your finances today.
                                 </p>
+
                             </div>
+
+
 
                             {/* Stats */}
                             <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -345,14 +348,12 @@ export default function Dashboard() {
                                                 return (
                                                     <div key={tx.id} className="flex items-center gap-4">
                                                         <div
-                                                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
-                                                                isCredit ? 'bg-green-50' : 'bg-red-50'
-                                                            }`}
+                                                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${isCredit ? 'bg-green-50' : 'bg-red-50'
+                                                                }`}
                                                         >
                                                             <Icon
-                                                                className={`h-5 w-5 ${
-                                                                    isCredit ? 'text-green-600' : 'text-red-600'
-                                                                }`}
+                                                                className={`h-5 w-5 ${isCredit ? 'text-green-600' : 'text-red-600'
+                                                                    }`}
                                                             />
                                                         </div>
 
@@ -371,9 +372,8 @@ export default function Dashboard() {
                                                         </div>
 
                                                         <p
-                                                            className={`shrink-0 font-bold ${
-                                                                isCredit ? 'text-green-600' : 'text-red-600'
-                                                            }`}
+                                                            className={`shrink-0 font-bold ${isCredit ? 'text-green-600' : 'text-red-600'
+                                                                }`}
                                                         >
                                                             {isCredit ? '+' : '-'}
                                                             {formatMoney(Number(tx.amount))}
@@ -445,7 +445,7 @@ export default function Dashboard() {
                                 {/* Savings goals */}
                                 <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
                                     <div className="mb-6 flex items-center justify-between">
-                                        <h3 className="text-lg font-bold">Savings Goals</h3>
+                                        <h3 className="text-lg font-bold">Financial Goals</h3>
                                         <button
                                             onClick={() => router.visit('/saving-challenges/create')}
                                             className="rounded-xl border border-[#EDE8E0] px-3 py-2 text-sm font-semibold hover:bg-[#F8F6F1]"
@@ -454,15 +454,17 @@ export default function Dashboard() {
                                         </button>
                                     </div>
 
+                                    {/* importent Financial Goals */}
+
                                     <div className="space-y-5">
                                         {goals.length > 0 ? (
                                             goals.slice(0, 3).map((goal: any) => {
                                                 const progress =
                                                     Number(goal.target) > 0
                                                         ? Math.min(
-                                                              (Number(goal.saved) / Number(goal.target)) * 100,
-                                                              100,
-                                                          )
+                                                            (Number(goal.saved) / Number(goal.target)) * 100,
+                                                            100,
+                                                        )
                                                         : 0;
 
                                                 return (

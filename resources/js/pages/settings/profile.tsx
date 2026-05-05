@@ -21,7 +21,7 @@ const inputClass = 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 p
 const readonlyClass = 'w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-2.5 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400 cursor-not-allowed select-none';
 
 export default function Profile({ mustVerifyEmail, status, profile, bankAccount, financialProfile }: Props) {
-    const { auth , user  } = usePage().props;
+    const { auth, user } = usePage().props;
 
     return (
         <>
@@ -31,9 +31,20 @@ export default function Profile({ mustVerifyEmail, status, profile, bankAccount,
             <div className="space-y-8">
                 {/* Header */}
                 <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500/10 ring-1 ring-orange-500/20">
-                        <User size={24} className="text-orange-400" />
-                    </div>
+                    {auth.user.avatar ? (
+                        // ✅ IMAGE
+                        <div className="h-14 w-14 rounded-2xl overflow-hidden border border-slate-200">
+                            <img
+                                src={`/storage/${auth.user.avatar}`}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    ) : (
+                        // ✅ FALLBACK ICON
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                            <User size={24} className="text-orange-400" />
+                        </div>
+                    )}
                     <div>
                         <h2 className="text-lg font-bold text-slate-900 dark:text-white">Profile Information</h2>
                         <p className="text-sm text-slate-500">Manage your personal and account details</p>

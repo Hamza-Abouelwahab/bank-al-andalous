@@ -496,12 +496,12 @@ export default function AdminDashboard() {
                                                     <p className="text-xs text-[#9A948C]">
                                                         {user.bank_account
                                                             ? formatMoney(
-                                                                  Number(
-                                                                      user
-                                                                          .bank_account
-                                                                          .balance,
-                                                                  ),
-                                                              )
+                                                                Number(
+                                                                    user
+                                                                        .bank_account
+                                                                        .balance,
+                                                                ),
+                                                            )
                                                             : '—'}
                                                     </p>
                                                 </div>
@@ -631,20 +631,34 @@ export default function AdminDashboard() {
                                                 filteredUsers.map((u, index) => (
                                                     <tr
                                                         key={u.id}
-                                                        className={`border-t border-[#F2EEEA] ${
-                                                            index % 2 === 0
+                                                        className={`border-t border-[#F2EEEA] ${index % 2 === 0
                                                                 ? 'bg-white'
                                                                 : 'bg-[#FFFCFA]'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <td className="px-6 py-4">
                                                             <div className="flex items-center gap-3">
                                                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF1E9] font-semibold text-orange-600">
-                                                                    {u.name
-                                                                        .charAt(
-                                                                            0,
-                                                                        )
-                                                                        .toUpperCase()}
+                                                                    {u.avatar ? (
+                                                                        // ✅ IMAGE
+                                                                        <div className="h-10 w-10 rounded-full overflow-hidden">
+                                                                            <img
+                                                                                src={`/storage/${u.avatar}`}
+                                                                                alt={u.name}
+                                                                                className="w-full h-full object-cover"
+                                                                            />
+                                                                        </div>
+                                                                    ) : (
+                                                                        // ✅ INITIALS FALLBACK
+                                                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF1E9] font-semibold text-orange-600">
+                                                                            {u.name
+                                                                                .split(' ')
+                                                                                .map((n) => n[0])
+                                                                                .join('')
+                                                                                .toUpperCase()
+                                                                                .slice(0, 2)}
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                                 <div className="min-w-0">
                                                                     <p className="truncate font-semibold text-[#171412]">
@@ -682,23 +696,22 @@ export default function AdminDashboard() {
                                                         <td className="px-6 py-4 text-sm font-semibold text-[#171412]">
                                                             {u.bank_account
                                                                 ? formatMoney(
-                                                                      Number(
-                                                                          u
-                                                                              .bank_account
-                                                                              .balance,
-                                                                      ),
-                                                                  )
+                                                                    Number(
+                                                                        u
+                                                                            .bank_account
+                                                                            .balance,
+                                                                    ),
+                                                                )
                                                                 : '—'}
                                                         </td>
 
                                                         <td className="px-6 py-4">
                                                             <span
-                                                                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                                                    u.role ===
-                                                                    'admin'
+                                                                className={`rounded-full px-3 py-1 text-xs font-semibold ${u.role ===
+                                                                        'admin'
                                                                         ? 'bg-[#171412] text-white'
                                                                         : 'bg-green-50 text-green-700'
-                                                                }`}
+                                                                    }`}
                                                             >
                                                                 {u.role}
                                                             </span>
@@ -724,17 +737,17 @@ export default function AdminDashboard() {
 
                                                                 {u.role !==
                                                                     'admin' && (
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            setDeleteConfirm(
-                                                                                u.id,
-                                                                            )
-                                                                        }
-                                                                        className="rounded-xl border border-red-200 p-2 text-red-600 hover:bg-red-50"
-                                                                    >
-                                                                        <Trash2 className="h-4 w-4" />
-                                                                    </button>
-                                                                )}
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                setDeleteConfirm(
+                                                                                    u.id,
+                                                                                )
+                                                                            }
+                                                                            className="rounded-xl border border-red-200 p-2 text-red-600 hover:bg-red-50"
+                                                                        >
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                        </button>
+                                                                    )}
                                                             </div>
                                                         </td>
                                                     </tr>
