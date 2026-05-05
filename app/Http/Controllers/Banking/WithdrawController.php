@@ -50,6 +50,6 @@ class WithdrawController extends Controller
             'status'          => 'completed',
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Withdrawal successful.');
+        return back();
     }
 }

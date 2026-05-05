@@ -79,9 +79,13 @@ const transactionIcon: Record<string, any> = {
     bill_payment: FileText,
 };
 
+
+
 export default function Dashboard() {
-    console.log('fix author');
+    const [activeModal, setActiveModal] = useState<string | null>(null);
+
     
+
     const {
         auth,
         transactions = [],
@@ -201,7 +205,7 @@ export default function Dashboard() {
     ];
 
 
-   
+
 
     return (
         <>
@@ -524,18 +528,19 @@ export default function Dashboard() {
                                             const Icon = action.icon;
 
                                             return (
-                                                <Link
+                                                <div
                                                     key={action.label}
-                                                    href={action.href}
-                                                    className="rounded-2xl border border-[#EDE8E0] p-4 text-center transition hover:-translate-y-1 hover:shadow-md"
+                                                    onClick={() => setActiveModal(action.label)}
+                                                    className="cursor-pointer rounded-2xl border border-[#EDE8E0] p-4 text-center transition hover:-translate-y-1 hover:shadow-md"
                                                 >
                                                     <div
                                                         className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl ${action.bg}`}
                                                     >
                                                         <Icon className={`h-5 w-5 ${action.color}`} />
                                                     </div>
+
                                                     <p className="text-sm font-bold">{action.label}</p>
-                                                </Link>
+                                                </div>
                                             );
                                         })}
                                     </div>
@@ -649,6 +654,66 @@ export default function Dashboard() {
                     </main>
                 </div>
             </div>
+
+
+
+            {/* modals  */}
+
+
+            {activeModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+                    {/* BACKDROP */}
+                    <div
+                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                        onClick={() => setActiveModal(null)}
+                    />
+
+                    {/* CENTER MODAL */}
+                    <div className="
+            relative z-10
+            w-full max-w-md
+            h-[85vh]
+            bg-white
+            rounded-3xl
+            shadow-2xl
+            overflow-hidden
+        ">
+
+                        {/* HEADER */}
+                        <div className="px-4 py-4 flex justify-between items-center border-b">
+                            <h2 className="font-bold text-lg">{activeModal}</h2>
+
+                            <button
+                                onClick={() => setActiveModal(null)}
+                                className="text-gray-400 hover:text-black text-xl"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* CONTENT */}
+                        <iframe
+                            src={
+                                activeModal === 'Deposit'
+                                    ? '/deposit?modal=1'
+                                    : activeModal === 'Withdraw'
+                                        ? '/withdraw?modal=1'
+                                        : activeModal === 'Transfer'
+                                            ? '/transfer?modal=1'
+                                            : activeModal === 'Pay Bills'
+                                                ? '/bills?modal=1'
+                                                : activeModal === 'Acount'
+                                                    ? '/account?modal=1'
+                                                    :'/'
+                            }
+                            className="w-full h-[calc(85vh-64px)] border-0"
+                        />
+
+                    </div>
+                </div>
+            )}
+
         </>
     );
 }

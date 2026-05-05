@@ -148,3 +148,15 @@
         @apply bg-background text-foreground;
     }
 }
+
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -44,6 +44,6 @@ class DepositController extends Controller
             'status'          => 'completed',
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Deposit successful.');
+        return back();
     }
 }
