@@ -12,15 +12,17 @@ use App\Http\Controllers\Banking\WithdrawController;
 use App\Http\Controllers\Banking\DepositController;
 use App\Http\Controllers\Banking\TransferController;
 use App\Http\Controllers\Banking\BillController;
-use App\Http\Controllers\Banking\SavingChallengeController;
+use App\Http\Controllers\Banking\SavingGoalController;
+use App\Http\Controllers\Banking\SavingGroupController;
 use App\Http\Controllers\Banking\TransactionController;
+use App\Http\Controllers\Banking\SavingsController;
 use Inertia\Inertia;
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-// her for chat ai 
+// her for chat ai
 
 Route::middleware(['auth'])->post('/ai-chat/ask', [AIChatController::class, 'ask'])
     ->name('ai.chat.ask');
@@ -71,12 +73,38 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
 
-    Route::get('saving-challenges/create' , [SavingChallengeController::class , 'create'])->name('saving-challenges.create') ;
-    Route::post('/saving-challenges', [SavingChallengeController::class, 'store'])->name('saving-challenges.store');
+    Route::get('savings/index', [SavingsController::class, 'index'])->name('saving.index');
+    Route::post('/saving-goals', [SavingGoalController::class, 'store'])->name('saving-goals.store');
+    // * auto saving
+    Route::post('/saving-goals/{goal}/run-auto-saving', [SavingGoalController::class, 'runAutoSavingForGoal'])
+        ->name('saving-goals.run-one');
+        // * delete challenge
+    Route::delete('/saving-goals/{goal}', [SavingGoalController::class, 'destroy'])
+        ->name('saving-goals.destroy');
+        // * pause
+    Route::post('/saving-goals/{goal}/pause', [SavingGoalController::class, 'pause'])
+        ->name('saving-goals.pause');
+        // * resume
+    Route::post('/saving-goals/{goal}/resume', [SavingGoalController::class, 'resume'])
+        ->name('saving-goals.resume');
+    // * challenge savinge
+        Route::post('/saving-goals/{goal}/add-progress', [SavingGoalController::class, 'addProgress'])
+    ->name('saving-goals.add-progress');
+    // * smart suggestion
+    Route::post('/saving-goals/{goal}/smart-suggestion', [SavingGoalController::class, 'smartSuggestion'])
+    ->name('saving-goals.smart-suggestion');
+    // * group saving
+    Route::post('/saving-groups/{group}/join', [SavingGroupController::class, 'join'])
+    ->name('saving-groups.join');
+    Route::post('/saving-groups/{group}/draw', [SavingGroupController::class, 'draw'])
+    ->name('saving-groups.draw');
+
+    Route::post('/saving-groups', [SavingGroupController::class, 'store'])
+    ->name('saving-groups.store');
 
     Route::middleware(['auth', 'onboarding'])->get('/ai-chat', function () {
-    return Inertia::render('Banking/chat/AIChat');
-})->name('ai-chat');
+        return Inertia::render('Banking/chat/AIChat');
+    })->name('ai-chat');
 });
 
 require __DIR__ . '/settings.php';

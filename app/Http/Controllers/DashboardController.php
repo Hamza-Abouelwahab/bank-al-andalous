@@ -76,11 +76,26 @@ class DashboardController extends Controller
         ];
 
         // ── Goals (static demo — replace with DB model when ready) ────
-        $goals = [
-            ['id' => 1, 'name' => 'Emergency Fund',  'icon' => '🛡️', 'target' => 1000, 'saved' => min($balance * 0.4, 10000), 'color' => '#E8632A'],
-            ['id' => 2, 'name' => 'Vacation',         'icon' => '✈️', 'target' => 5000,  'saved' => min($balance * 0.15, 5000), 'color' => '#3B82F6'],
-            ['id' => 3, 'name' => 'New Laptop',       'icon' => '💻', 'target' => 8000,  'saved' => min($balance * 0.1, 8000),  'color' => '#8B5CF6'],
-        ];
+        $goals = $user->savingGoals()->latest()->get()->map(function ($goal) {
+
+            return [
+                'id' => $goal->id,
+                'end_date' => optional($goal->end_date)->toDateString(),
+                'name' => $goal->name,
+                'target' => $goal->target_amount,
+                'saved' => $goal->saved_amount,
+                'saving_type' => $goal->saving_type,
+                'daily_amount' => $goal->daily_amount,
+                'status' => $goal->status,
+                'color' => $goal->color,
+                'progress' => $goal->target_amount > 0
+                    ? round(($goal->saved_amount / $goal->target_amount) * 100)
+                    : 0,
+                'days_left' => $goal->end_date
+                    ? now()->diffInDays($goal->end_date, false)
+                    : 0,
+            ];
+        });
 
         // ── Saving Challenges ─────────────────────────────────────────
         $challenges = $user->savingChallenges()->latest()->get()->map(function ($c) {
@@ -95,10 +110,10 @@ class DashboardController extends Controller
 
             return [
                 'id' => $c->id,
-                'name'      => $c->name ,
+                'name'      => $c->name,
                 'days_left' => $daysLeft,
-                'progress' => round(min($progress , 100)),
-                'reward' => number_format($c->saved_amount , 2) . ' Mad saved' ,
+                'progress' => round(min($progress, 100)),
+                'reward' => number_format($c->saved_amount, 2) . ' Mad saved',
             ];
         });
 

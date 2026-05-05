@@ -49,8 +49,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(FinancialProfile::class);
     }
-    public function savingChallenges() : HasMany
-{
-    return $this->hasMany(SavingChallenge::class) ;
-}
+    public function savingChallenges(): HasMany
+    {
+        return $this->hasMany(SavingChallenge::class);
+    }
+    public function savingGoals() : HasMany
+    {
+        return $this->hasMany(SavingGoal::class);
+    }
 }
