@@ -80,6 +80,8 @@ const transactionIcon: Record<string, any> = {
 };
 
 export default function Dashboard() {
+    console.log('fix author');
+    
     const {
         auth,
         transactions = [],
@@ -197,6 +199,9 @@ export default function Dashboard() {
             color: 'text-pink-600',
         },
     ];
+
+
+   
 
     return (
         <>
