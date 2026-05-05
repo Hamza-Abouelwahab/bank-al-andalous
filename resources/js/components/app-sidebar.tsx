@@ -20,32 +20,32 @@ import type { NavItem } from '@/types';
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: dashboard.definition.url,
         icon: LayoutGrid,
     },
     {
         title: 'Deposit',
-        href: deposit(),
+        href: deposit.definition.url,
         icon: ArrowDownToLine,
     },
     {
         title: 'Withdraw',
-        href: withdraw(),
+        href: withdraw.definition.url,
         icon: ArrowUpFromLine,
     },
     {
         title: 'Transaction History',
-        href: transactions(),
+        href: transactions.definition.url,
         icon: History,
     },
     {
         title: 'Transfer',
-        href: transfer(),
+        href: transfer.definition.url,
         icon: Send,
     },
     {
         title: 'Pay Bills',
-        href: bills(),
+        href: bills.definition.url,
         icon: FileText,
     },
     {
@@ -55,7 +55,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Create Saving Chalenges ',
-        href: '/saving-challenges/create',
+        href: '/savings/index',
         icon: Target,
     },
     {
@@ -79,7 +79,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={dashboard.definition.url} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

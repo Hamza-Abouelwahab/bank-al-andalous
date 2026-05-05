@@ -79,12 +79,19 @@ const transactionIcon: Record<string, any> = {
     bill_payment: FileText,
 };
 
-
-
 export default function Dashboard() {
-    const [activeModal, setActiveModal] = useState<string | null>(null);
 
-    
+    const [activeModal, setActiveModal] = useState<string | null>(null);
+    // const {
+    //     auth,
+    //     transactions,
+    //     summary,
+    //     goals,
+    //     challenges,
+    //     auto_saving,
+    //     ai_insights,
+    //     smart_alerts,
+    // console.log('fix author');
 
     const {
         auth,
@@ -528,7 +535,7 @@ export default function Dashboard() {
                                             const Icon = action.icon;
 
                                             return (
-                                                <div
+                                                 <div
                                                     key={action.label}
                                                     onClick={() => setActiveModal(action.label)}
                                                     className="cursor-pointer rounded-2xl border border-[#EDE8E0] p-4 text-center transition hover:-translate-y-1 hover:shadow-md"
@@ -656,7 +663,6 @@ export default function Dashboard() {
             </div>
 
 
-
             {/* modals  */}
 
 
@@ -713,7 +719,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             )}
-
         </>
     );
 }

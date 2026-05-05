@@ -1,12 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/hooks/use-initials';
-import type { User } from '@/types';
+import { User } from 'lucide-react';
+import type { User as UserType } from '@/types';
 
 export function UserInfo({
     user,
     showEmail = false,
 }: {
-    user: User;
+    user: UserType;
     showEmail?: boolean;
 }) {
     const getInitials = useInitials();
