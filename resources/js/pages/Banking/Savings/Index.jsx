@@ -3,11 +3,11 @@ import { Head, useForm, usePage } from '@inertiajs/react';
 import {
     Coins,
     FastForward,
+    Lightbulb,
     Pause,
     Play,
     Target,
     Trash2,
-    Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
@@ -27,7 +27,7 @@ export default function Index() {
     const [challengeGoal, setChallengeGoal] = useState(null);
     const [showMessage, setShowMessage] = useState(true);
     const [joinGroupModal, setJoinGroupModal] = useState(false);
-
+    const [showSavingTypeModal, setShowSavingTypeModal] = useState(false);
     useEffect(() => {
         if (flash.success || flash.error || Object.keys(errors).length > 0) {
             setShowMessage(true);
@@ -128,7 +128,7 @@ export default function Index() {
                                 </button>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-4" id='goals-list'>
                                 {visibleGoals.length ? (
                                     visibleGoals.map((goal) => {
                                         const target = Number(
@@ -403,30 +403,59 @@ export default function Index() {
                     <aside className="space-y-6">
                         <div className="rounded-2xl border bg-white p-6 shadow-sm">
                             <div className="mb-4 flex items-center gap-3">
-                                <div className="rounded-xl bg-orange-50 p-3 text-orange-600">
-                                    <Zap />
+                                <div className="rounded-xl bg-yellow-50 p-3 text-yellow-600">
+                                    <Lightbulb />
                                 </div>
-                                <h2 className="text-xl font-bold">
-                                    Silent Auto Saving
-                                </h2>
+                                <div>
+                                    <h2 className="text-xl font-bold">
+                                        Smart Goal Suggestions
+                                    </h2>
+                                    <p className="text-sm text-slate-500">
+                                        Personalized ideas to reach your goals
+                                        faster.
+                                    </p>
+                                </div>
                             </div>
-                            <p className="text-sm text-slate-500">
-                                {autoSaving.rule ??
-                                    'Auto-save from transactions'}
-                            </p>
-                            <div className="mt-5 rounded-xl bg-orange-50 p-4">
-                                <p className="text-sm text-orange-700">
-                                    Saved this month
-                                </p>
-                                <p className="mt-1 text-2xl font-bold text-orange-600">
-                                    {autoSaving.saved_month ?? 0} MAD
-                                </p>
+
+                            <div className="space-y-3">
+                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                    <p className="text-sm text-slate-700">
+                                        💡 Save a small amount daily to make
+                                        progress consistent.
+                                    </p>
+                                </div>
+                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                    <p className="text-sm text-slate-700">
+                                        📊 Split big goals into weekly
+                                        milestones.
+                                    </p>
+                                </div>
+                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                    <p className="text-sm text-slate-700">
+                                        👥 Join a saving challenge with users
+                                        who have similar goals.
+                                    </p>
+                                </div>
                             </div>
-                            <button className="mt-5 w-full rounded-xl bg-slate-900 py-3 font-bold text-white">
-                                Setup Auto Saving
+
+                            <button
+                            type='button'
+                                onClick={() => { setShowSavingTypeModal(true) }}
+                                className="mt-5 w-full rounded-xl bg-orange-600 py-3 font-bold text-white hover:bg-orange-700"
+                            >
+                                Explore Suggestions
                             </button>
                         </div>
                     </aside>
+                   {showSavingTypeModal && (
+    <ChooseSavingTypeModal
+        onClose={() => setShowSavingTypeModal(false)}
+        onSelect={(type) => {
+            setShowSavingTypeModal(false);
+            handleTypeSelect(type);
+        }}
+    />
+)}
                 </div>
 
                 <GroupsSection
@@ -507,7 +536,7 @@ function ChooseSavingTypeModal({ onClose, onSelect }) {
     ];
 
     return (
-        <Modal title="Choose Saving Type" onClose={onClose}>
+        <Modal  title="Choose Saving Type" onClose={onClose}>
             <div className="grid grid-cols-2 gap-3">
                 {types.map((t) => (
                     <button

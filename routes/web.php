@@ -92,6 +92,7 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
 
     Route::get('savings/index', [SavingsController::class, 'index'])->name('saving.index');
     Route::post('/saving-goals', [SavingGoalController::class, 'store'])->name('saving-goals.store');
+    // Route::get('/saving-goals', [GoalController::class, 'index']);
     // * auto saving
     Route::post('/saving-goals/{goal}/run-auto-saving', [SavingGoalController::class, 'runAutoSavingForGoal'])
         ->name('saving-goals.run-one');

@@ -48,20 +48,42 @@ class DashboardController extends Controller
         $monthlyIncome = (float) ($user->financialProfile?->monthly_income ?? 0);
 
         // ── Smart Alerts ──────────────────────────────────────────────
+        $account = auth()->user()->bankAccount;
+        $goals = auth()->user()->savingGoals;
+        $recentTransactions = $bankAccount
+    ? $bankAccount->transactions()->latest()->take(5)->get()
+    : collect();
+
         $alerts = [];
-        if ($balance < 500) {
-            $alerts[] = ['type' => 'warning', 'icon' => '⚠️', 'title' => 'Low Balance', 'message' => 'Your balance is below 500 MAD. Consider making a deposit.'];
+
+        if ($account && $account->balance < 3000) {
+            $alerts[] = [
+                'type' => 'warning',
+                'title' => 'Low balance alert',
+                'message' => 'Your balance is getting low. Try to keep enough funds for your goals.',
+                'icon' => 'wallet',
+            ];
         }
-        $lastWeekDebit = $bankAccount
-            ? $bankAccount->transactions()->where('type', 'debit')->where('created_at', '>=', now()->subDays(7))->sum('amount')
-            : 0;
-        $avgWeeklyDebit = $bankAccount
-            ? $bankAccount->transactions()->where('type', 'debit')->where('created_at', '>=', now()->subDays(30))->sum('amount') / 4
-            : 0;
-        if ($avgWeeklyDebit > 0 && $lastWeekDebit > $avgWeeklyDebit * 1.5) {
-            $alerts[] = ['type' => 'danger', 'icon' => '🚨', 'title' => 'Unusual Spending', 'message' => 'Your spending this week is 50% above your average.'];
+
+        if ($goals->count() === 0) {
+            $alerts[] = [
+                'type' => 'suggestion',
+                'title' => 'No active saving goals',
+                'message' => 'Create a saving goal to start tracking your progress.',
+                'icon' => 'target',
+            ];
         }
-        $alerts[] = ['type' => 'info', 'icon' => '📅', 'title' => 'Bill Reminder', 'message' => 'You have upcoming bills due this month. Stay on top of payments.'];
+
+        $largeTransaction = $recentTransactions->firstWhere('amount', '>=', 5000);
+
+        if ($largeTransaction) {
+            $alerts[] = [
+                'type' => 'security',
+                'title' => 'Large transaction detected',
+                'message' => 'A large transaction was recently made on your account.',
+                'icon' => 'shield',
+            ];
+        }
 
         // ── AI Insights ───────────────────────────────────────────────
         $savingsRate = $monthlyIncome > 0 ? round((($monthlyIncome - $totalDebit / max(1, now()->month)) / $monthlyIncome) * 100) : 0;
@@ -135,7 +157,7 @@ class DashboardController extends Controller
             'challenges'    => $challenges,
             'auto_saving'   => $autoSaving,
             'ai_insights'   => $insights,
-            'smart_alerts'  => $alerts,
+            'alerts' => $alerts,
         ]);
     }
 

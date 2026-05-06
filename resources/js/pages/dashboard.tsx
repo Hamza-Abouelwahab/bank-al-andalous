@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowDownToLine,
     ArrowUpFromLine,
+    Bell,
     // Bell,
     Bot,
     // ChevronDown,
@@ -16,6 +17,7 @@ import {
     Sparkles,
     Target,
     Wallet,
+    ShieldCheck ,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -82,16 +84,7 @@ const transactionIcon: Record<string, any> = {
 export default function Dashboard() {
 
     const [activeModal, setActiveModal] = useState<string | null>(null);
-    // const {
-    //     auth,
-    //     transactions,
-    //     summary,
-    //     goals,
-    //     challenges,
-    //     auto_saving,
-    //     ai_insights,
-    //     smart_alerts,
-    // console.log('fix author');
+
 
     const {
         auth,
@@ -100,6 +93,7 @@ export default function Dashboard() {
         goals = [],
         challenges = [],
         ai_insights = [],
+        alerts = [] ,
     } = usePage<any>().props;
 
     const user: AuthUser = auth.user;
@@ -210,7 +204,11 @@ export default function Dashboard() {
             color: 'text-pink-600',
         },
     ];
-
+    const alertIcons: Record<string, any> = {
+    wallet: Wallet,
+    target: Target,
+    shield: ShieldCheck,
+};
 
 
 
@@ -349,7 +347,7 @@ export default function Dashboard() {
                                         <h3 className="text-lg font-bold">Recent Transactions</h3>
                                         <Link
                                             href="/transactions"
-                                            className="rounded-xl border border-[#EDE8E0] px-3 py-2 text-sm font-semibold hover:bg-[#F8F6F1]"
+                                            className="rounded-xl  px-3 py-2 text-sm bg-orange-600 hover:bg-orange-700  font-semibold text-white"
                                         >
                                             View All
                                         </Link>
@@ -418,7 +416,7 @@ export default function Dashboard() {
                                         <h3 className="text-lg font-bold">Account Summary</h3>
                                         <button
                                             onClick={() => setBalanceVisible(!balanceVisible)}
-                                            className="rounded-xl p-2 hover:bg-[#F8F6F1]"
+                                            className="rounded-xl cursor-pointer p-2 hover:bg-[#F8F6F1]"
                                         >
                                             {balanceVisible ? (
                                                 <EyeOff className="h-5 w-5" />
@@ -458,73 +456,64 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                {/* Savings goals */}
-                                <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
-                                    <div className="mb-6 flex items-center justify-between">
-                                        <h3 className="text-lg font-bold">Financial Goals</h3>
-                                        <button
-                                            onClick={() => router.visit('/saving-challenges/create')}
-                                            className="rounded-xl border border-[#EDE8E0] px-3 py-2 text-sm font-semibold hover:bg-[#F8F6F1]"
-                                        >
-                                            View All
-                                        </button>
-                                    </div>
+                                    {/* Smart alert */}
+                                <div className="rounded-3xl border border-orange-100 bg-white p-7 shadow-sm">
+    <div className="mb-6 flex items-center justify-between">
+        <div>
+            <h2 className="text-2xl font-bold text-slate-900">
+                Smart Alerts
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+                Real-time insights based on your account activity.
+            </p>
+        </div>
 
-                                    {/* importent Financial Goals */}
+        <div className="rounded-2xl bg-orange-50 p-3 text-orange-600">
+            <Bell className="h-6 w-6" />
+        </div>
+    </div>
 
-                                    <div className="space-y-5">
-                                        {goals.length > 0 ? (
-                                            goals.slice(0, 3).map((goal: any) => {
-                                                const progress =
-                                                    Number(goal.target) > 0
-                                                        ? Math.min(
-                                                            (Number(goal.saved) / Number(goal.target)) * 100,
-                                                            100,
-                                                        )
-                                                        : 0;
+    <div className="space-y-4">
+        {alerts.length > 0 ? (
+            alerts.map((alert, index) => {
+                const Icon = alertIcons[alert.icon];
 
-                                                return (
-                                                    <div key={goal.id}>
-                                                        <div className="mb-2 flex items-center justify-between gap-3">
-                                                            <div className="flex min-w-0 items-center gap-3">
-                                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-purple-50">
-                                                                    <Target className="h-5 w-5 text-purple-600" />
-                                                                </div>
-                                                                <div className="min-w-0">
-                                                                    <p className="truncate font-semibold">
-                                                                        {goal.name}
-                                                                    </p>
-                                                                    <p className="text-sm text-[#9C978F]">
-                                                                        {formatMoney(Number(goal.saved))} /{' '}
-                                                                        {formatMoney(Number(goal.target))}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                            <span className="text-sm font-bold">
-                                                                {progress.toFixed(0)}%
-                                                            </span>
-                                                        </div>
+                return (
+                     <div
+                    key={index}
+                    className="rounded-2xl border border-orange-100 bg-orange-50/60 p-4"
+                >
+                    <div className="flex items-center ">
 
-                                                        <div className="h-2 rounded-full bg-[#F1EEE9]">
-                                                            <div
-                                                                className="h-2 rounded-full bg-orange-500"
-                                                                style={{ width: `${progress}%` }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })
-                                        ) : (
-                                            <div className="rounded-2xl bg-[#F8F6F1] p-6 text-center">
-                                                <Target className="mx-auto h-8 w-8 text-orange-600" />
-                                                <p className="mt-2 font-semibold">No goals yet</p>
-                                                <p className="text-sm text-[#9C978F]">
-                                                    Create a saving goal to track progress.
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+                <div className="rounded-xl  p-2 text-orange-600 ">
+                    {Icon && <Icon className="h-5 w-5" />}
+                </div>
+
+                    <h3 className="font-semibold text-slate-900">
+                        {alert.title}
+                    </h3>
+
+
+                </div>
+                    <p className="mt-1 text-sm pl-8 text-slate-500">
+                        {alert.message}
+                    </p>
+                </div>
+                )
+
+            })
+        ) : (
+            <div className="rounded-2xl bg-slate-50 p-5 text-center">
+                <p className="font-semibold text-slate-900">
+                    No alerts right now
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                    Your account looks stable.
+                </p>
+            </div>
+        )}
+    </div>
+</div>
 
                                 {/* Quick actions */}
                                 <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm">
@@ -562,51 +551,57 @@ export default function Dashboard() {
                                             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50">
                                                 <Target className="h-5 w-5 text-orange-600" />
                                             </div>
-                                            <h3 className="text-lg font-bold">Saving Challenges</h3>
+                                            <h3 className="text-lg font-bold">Saving Goals</h3>
                                         </div>
 
                                         <button
-                                            onClick={() => router.visit('/saving-challenges/create')}
-                                            className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-700"
+                                            onClick={() => router.visit('savings/index')}
+                                            className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold cursor-pointer text-white hover:bg-orange-700"
                                         >
-                                            New Challenge
+                                            New Goal
                                         </button>
                                     </div>
 
                                     <div className="grid gap-4 md:grid-cols-2">
-                                        {challenges.length > 0 ? (
-                                            challenges.slice(0, 2).map((challenge: any) => (
-                                                <div
-                                                    key={challenge.id}
-                                                    className="rounded-2xl border border-[#EDE8E0] p-4"
-                                                >
-                                                    <div className="mb-3 flex items-center justify-between">
-                                                        <p className="font-bold">{challenge.name}</p>
-                                                        <p className="text-sm font-bold text-orange-600">
-                                                            {challenge.progress}%
-                                                        </p>
-                                                    </div>
+                                        {goals.length > 0 ? (
+                                            goals.slice(0, 2).map((goal: any) => {
+                                                const saved = Number(goal.saved_amount ?? 0);
+                                                const target = Number(goal.target_amount ?? 0);
+                                                const progress = target > 0 ? Math.min((saved / target) * 100, 100) : 0;
 
-                                                    <div className="mb-3 h-2 rounded-full bg-[#F1EEE9]">
-                                                        <div
-                                                            className="h-2 rounded-full bg-orange-500"
-                                                            style={{
-                                                                width: `${challenge.progress}%`,
-                                                            }}
-                                                        />
-                                                    </div>
+                                                return (
+                                                    <div
+                                                        key={goal.id}
+                                                        className="rounded-2xl border border-[#EDE8E0] bg-white p-4"
+                                                    >
+                                                        <div className="mb-3 flex items-center justify-between">
+                                                            <p className="font-bold">{goal.name}</p>
+                                                            <p className="text-sm font-bold text-orange-600">
+                                                                {progress.toFixed(0)}%
+                                                            </p>
+                                                        </div>
 
-                                                    <div className="flex items-center justify-between text-sm text-[#9C978F]">
-                                                        <span>{challenge.days_left} days left</span>
-                                                        <span>{challenge.reward}</span>
+                                                        <div className="mb-3 h-2 rounded-full bg-[#F1EEE9]">
+                                                            <div
+                                                                className="h-2 rounded-full bg-orange-500"
+                                                                style={{
+                                                                    width: `${progress}%`,
+                                                                }}
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex items-center justify-between text-sm text-[#9C978F]">
+                                                            <span>{formatMoney(saved)}</span>
+                                                            <span>{formatMoney(target)}</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         ) : (
                                             <div className="rounded-2xl bg-[#F8F6F1] p-6 md:col-span-2">
-                                                <p className="font-semibold">No active challenges</p>
+                                                <p className="font-semibold">No saving goals yet</p>
                                                 <p className="text-sm text-[#9C978F]">
-                                                    Start a challenge to build saving habits.
+                                                    Create a goal to start tracking your progress.
                                                 </p>
                                             </div>
                                         )}
@@ -650,7 +645,7 @@ export default function Dashboard() {
 
                                     <Link
                                         href="/ai-chat"
-                                        className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 py-3 font-bold text-white transition hover:shadow-lg"
+                                        className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-600 hover:bg-orange-700 py-3 font-bold text-white transition hover:shadow-lg"
                                     >
                                         <Bot className="h-5 w-5" />
                                         Ask AI Advisor
