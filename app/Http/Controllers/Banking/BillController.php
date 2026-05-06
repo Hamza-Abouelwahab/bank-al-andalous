@@ -73,6 +73,6 @@ class BillController extends Controller
         ]);
     });
 
-        return redirect()->route('dashboard')->with('success', 'Bill paid successfully.');
+        return back();
     }
 }

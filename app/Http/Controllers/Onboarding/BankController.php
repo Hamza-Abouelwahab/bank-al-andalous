@@ -36,8 +36,9 @@ class BankController extends Controller
             ]
         );
 
-        session(['onboarding.account_type' => $request->account_type]);
-
+        session([
+            'onboarding.account_type' => $request->account_type,
+        ]);
         return redirect()->route('onboarding.confirm');
     }
 }

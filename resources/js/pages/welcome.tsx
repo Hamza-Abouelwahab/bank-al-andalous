@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 // import { dashboard, login, register } from '@/routes';
 import logo from '../assets/sucerity-logo.png'
+import { useState } from 'react';
 
 export default function Welcome({
     canRegister = true,
@@ -38,6 +39,8 @@ export default function Welcome({
     canRegister?: boolean;
 }) {
     const { auth } = usePage().props as any;
+
+    const [open, setOpen] = useState(false);
 
     const features = [
         {
@@ -82,7 +85,7 @@ export default function Welcome({
                 />
             </Head>
 
-            <main className="min-h-screen bg-slate-50 font-sans text-slate-900">
+            <main className="min-h-screen overflow-x-hidden bg-slate-50 font-sans text-slate-900">
                 {/* Ambient blobs */}
                 <div className="pointer-events-none fixed inset-0 overflow-hidden">
                     <div className="absolute -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-orange-500/10 blur-[120px]" />
@@ -90,49 +93,39 @@ export default function Welcome({
                 </div>
 
                 {/* Navbar */}
+                {/* Navbar */}
                 <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-xl">
-                    <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5">
+                    <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-5">
+
+                        {/* LOGO */}
                         <div className="flex items-center gap-3">
                             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/15 ring-1 ring-orange-500/30">
                                 <Landmark className="h-5 w-5 text-orange-400" />
                             </div>
                             <h1 className="text-xl font-extrabold tracking-tight">
-                                <span className="text-orange-400">Orange</span>
-                                Bank
+                                <span className="text-orange-400">Orange</span>Bank
                             </h1>
                         </div>
 
-                        <nav className="hidden items-center gap-8 text-sm font-medium text-slate-500 md:flex">
-                            {[
-                                'Home',
-                                'About Us',
-                                'Features',
-                                'Security',
-                                'Contact Us',
-                            ].map((item, i) => (
+                        {/* DESKTOP NAV */}
+                        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500">
+                            {['Home', 'About Us', 'Features', 'Security', 'Contact Us'].map((item, i) => (
                                 <a
                                     key={item}
-                                    href={
-                                        i === 0
-                                            ? '#'
-                                            : `#${item.toLowerCase().replace(' ', '')}`
-                                    }
-                                    className={
-                                        i === 0
-                                            ? 'font-bold text-orange-500'
-                                            : 'transition hover:text-orange-500'
-                                    }
+                                    href={i === 0 ? '#' : `#${item.toLowerCase().replace(' ', '')}`}
+                                    className={i === 0 ? 'font-bold text-orange-500' : 'hover:text-orange-500'}
                                 >
                                     {item}
                                 </a>
                             ))}
                         </nav>
 
-                        <div className="flex items-center gap-3">
+                        {/* RIGHT SIDE (DESKTOP) */}
+                        <div className="hidden md:flex items-center gap-3">
                             {auth?.user ? (
                                 <Link
                                     href="/dashboard"
-                                    className="rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-400"
+                                    className="rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-bold text-white hover:bg-orange-400"
                                 >
                                     Dashboard
                                 </Link>
@@ -140,14 +133,14 @@ export default function Welcome({
                                 <>
                                     <Link
                                         href="/login"
-                                        className="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
+                                        className="rounded-xl border border-slate-200 px-6 py-2.5 text-sm"
                                     >
                                         Login
                                     </Link>
                                     {canRegister && (
                                         <Link
                                             href="/register"
-                                            className="rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-400"
+                                            className="rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-bold text-white"
                                         >
                                             Get Started
                                         </Link>
@@ -155,18 +148,63 @@ export default function Welcome({
                                 </>
                             )}
                         </div>
+
+                        {/* MOBILE BUTTON */}
+                        <button
+                            onClick={() => setOpen(!open)}
+                            className="md:hidden text-2xl text-slate-700"
+                        >
+                            ☰
+                        </button>
                     </div>
+
+                    {/* MOBILE MENU */}
+                    {open && (
+                        <div className="md:hidden w-full px-4 pb-4 space-y-4 border-t bg-white">
+
+                            <a href="#" className="block">Home</a>
+                            <a href="#aboutus" className="block">About</a>
+                            <a href="#features" className="block">Features</a>
+                            <a href="#security" className="block">Security</a>
+                            <a href="#contactus" className="block">Contact</a>
+
+                            <div className="pt-3 border-t flex flex-col gap-3">
+                                {auth?.user ? (
+                                    <Link
+                                        href="/dashboard"
+                                        className="rounded-xl bg-orange-500 px-4 py-3 text-center text-white font-bold"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link href="/login" className="text-center">
+                                            Login
+                                        </Link>
+                                        {canRegister && (
+                                            <Link
+                                                href="/register"
+                                                className="rounded-xl bg-orange-500 px-4 py-3 text-center text-white font-bold"
+                                            >
+                                                Get Started
+                                            </Link>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </header>
 
                 {/* Hero */}
-                <section className="mx-auto grid max-w-7xl items-center gap-12 px-8 py-20 lg:grid-cols-2">
+                <section className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:px-8 py-20 lg:grid-cols-2">
                     <div>
                         <span className="inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-1.5 text-sm font-semibold text-orange-400">
                             <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
                             Smart Banking for a Better Future
                         </span>
 
-                        <h2 className="mt-6 max-w-xl text-6xl leading-[1.1] font-extrabold tracking-tight">
+                        <h2 className="mt-6 max-w-xl text-3xl sm:text-4xl lg:text-6xl leading-[1.1] font-extrabold tracking-tight">
                             Welcome to{' '}
                             <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
                                 OrangeBank
@@ -179,28 +217,28 @@ export default function Welcome({
                             and grow your money securely.
                         </p>
 
-                        <div className="mt-9 flex flex-wrap gap-4">
+                        <div className="mt-9 flex flex-col sm:flex-row gap-4">
                             {
                                 auth?.user ? (
                                     <Link
-                                href="/dashboard"
-                                className="flex items-center gap-3 rounded-xl bg-orange-500 px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
-                            >
-                                Go To Dashboard <ArrowRight size={18} />
-                            </Link>
+                                        href="/dashboard"
+                                        className="flex items-center gap-3 rounded-xl bg-orange-500 px-4 sm:px-6 lg:px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
+                                    >
+                                        Go To Dashboard <ArrowRight size={18} />
+                                    </Link>
                                 ) : (
-                                <Link
-                                href="/login"
-                                className="flex items-center gap-3 rounded-xl bg-orange-500 px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
-                            >
-                                Login to Your Account <ArrowRight size={18} />
-                            </Link>
+                                    <Link
+                                        href="/login"
+                                        className="flex items-center gap-3 rounded-xl bg-orange-500 px-4 sm:px-6 lg:px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
+                                    >
+                                        Login to Your Account <ArrowRight size={18} />
+                                    </Link>
                                 )
                             }
 
                             <a
                                 href="#features"
-                                className="rounded-xl border border-slate-200 px-8 py-4 font-bold text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
+                                className="rounded-xl border border-slate-200 px-4 sm:px-6 lg:px-8 py-4 font-bold text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
                             >
                                 Explore Features
                             </a>
@@ -257,7 +295,7 @@ export default function Welcome({
                         </div>
 
                         {/* Phone mockup */}
-                        <div className="relative z-20 w-72 rounded-[2.5rem] border-[10px] border-slate-800 bg-white p-4 shadow-2xl">
+                        <div className="relative z-20 w-[260px] sm:w-[300px] rounded-[2.5rem] border-[10px] border-slate-800 bg-white p-4 shadow-2xl">
                             <div className="mx-auto mb-3 h-5 w-20 rounded-full bg-slate-200" />
                             <p className="text-sm font-bold text-slate-900">
                                 Welcome Back!
@@ -347,11 +385,11 @@ export default function Welcome({
                 {/* About */}
                 <section
                     id="aboutus"
-                    className="border-t border-slate-100 bg-white px-8 py-20"
+                    className="border-t border-slate-100 bg-white px-4 sm:px-6 lg:px-8 py-20"
                 >
                     <div className="mx-auto max-w-7xl">
                         {/* Header */}
-                        <div className="mb-14 grid items-center gap-10 lg:grid-cols-2">
+                        <div className="mb-14 grid items-center gap-10 grid gap-10 md:grid-cols-2 lg:grid-cols-2">
                             <div>
                                 <span className="text-sm font-bold tracking-widest text-orange-500 uppercase">
                                     About OrangeBank
@@ -389,7 +427,7 @@ export default function Welcome({
                         </div>
 
                         {/* Cards */}
-                        <div className="grid gap-6 md:grid-cols-3">
+                        <div className="grid gap-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {[
                                 {
                                     icon: Rocket,
@@ -412,7 +450,7 @@ export default function Welcome({
                             ].map(({ icon: Icon, label, text, accent }) => (
                                 <div
                                     key={label}
-                                    className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 p-8 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-100"
+                                    className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 p-6 sm:p-8 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-100"
                                 >
                                     <div
                                         className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${accent} text-white shadow-lg`}
@@ -437,7 +475,7 @@ export default function Welcome({
                 {/* Features */}
                 <section
                     id="features"
-                    className="border-t border-slate-100 bg-white px-8 py-20"
+                    className="border-t border-slate-100 bg-white px-4 sm:px-6 lg:px-8 py-20"
                 >
                     <div className="mx-auto max-w-7xl">
                         <div className="mb-14 text-center">
@@ -481,10 +519,10 @@ export default function Welcome({
                 {/* Security */}
                 <section
                     id="security"
-                    className="border-t border-slate-100 bg-white px-8 py-20"
+                    className="border-t border-slate-100 bg-white px-4 sm:px-6 lg:px-8 py-20"
                 >
                     <div className="mx-auto max-w-7xl">
-                        <div className="grid items-center gap-12 lg:grid-cols-2">
+                        <div className="grid items-center gap-12 grid gap-10 md:grid-cols-2">
                             <div>
                                 <div className="mb-6 flex items-center gap-3 text-orange-500">
                                     <ShieldCheck size={34} />
@@ -493,7 +531,7 @@ export default function Welcome({
                                     </span>
                                 </div>
 
-                                <h2 className="max-w-2xl text-5xl leading-tight font-extrabold text-slate-950">
+                                <h2 className="max-w-2xl text-3xl sm:text-4xl lg:text-5xl leading-tight font-extrabold text-slate-950">
                                     Bank with Confidence, <br />
                                     Your{' '}
                                     <span className="text-orange-500">
@@ -509,7 +547,7 @@ export default function Welcome({
                                     is our top priority.
                                 </p>
 
-                                <div className="mt-12 grid  w-200 gap-8 sm:grid-cols-3">
+                                <div className="mt-12 grid  w-full gap-8 sm:grid-cols-3">
                                     {[
                                         [
                                             ShieldCheck,
@@ -548,7 +586,7 @@ export default function Welcome({
                             </div>
 
                             <div className="">
-                                <img src={logo} alt="" />
+                                <img src={logo} alt="" className="w-full max-w-md mx-auto" />
                             </div>
                         </div>
 
@@ -600,177 +638,177 @@ export default function Welcome({
                 </section>
             </main>
 
-                {/* Contact */}
-                <section id="contactus" className="border-t border-slate-100 bg-slate-50 px-8 py-20">
-                    <div className="mx-auto max-w-7xl">
-                        <div className="mb-14 text-center">
-                            <span className="text-sm font-bold uppercase tracking-widest text-orange-500">Get In Touch</span>
-                            <h2 className="mt-3 text-4xl font-extrabold tracking-tight text-slate-900">
-                                We're Here to{' '}
-                                <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Help You</span>
-                            </h2>
-                            <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
-                            <p className="mx-auto mt-4 max-w-lg text-slate-500">Have a question or need support? Reach out to us and our team will get back to you as soon as possible.</p>
+            {/* Contact */}
+            <section id="contactus" className="border-t border-slate-100 bg-slate-50 px-4 sm:px-6 lg:px-8 py-20">
+                <div className="mx-auto max-w-7xl">
+                    <div className="mb-14 text-center">
+                        <span className="text-sm font-bold uppercase tracking-widest text-orange-500">Get In Touch</span>
+                        <h2 className="mt-3 text-4xl font-extrabold tracking-tight text-slate-900">
+                            We're Here to{' '}
+                            <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Help You</span>
+                        </h2>
+                        <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
+                        <p className="mx-auto mt-4 max-w-lg text-slate-500">Have a question or need support? Reach out to us and our team will get back to you as soon as possible.</p>
+                    </div>
+
+                    <div className="grid gap-8 lg:grid-cols-3">
+                        {/* Contact info cards */}
+                        <div className="space-y-5">
+                            {[
+                                { icon: Mail, title: 'Email Us', value: 'support@orangebank.ma', sub: 'We reply within 24 hours' },
+                                { icon: Phone, title: 'Call Us', value: '+212 5XX-XXXXXX', sub: 'Mon–Fri, 9am to 6pm' },
+                                { icon: MapPin, title: 'Visit Us', value: 'Casablanca, Morocco', sub: 'OrangeBank HQ' },
+                            ].map(({ icon: Icon, title, value, sub }) => (
+                                <div key={title} className="group flex items-start gap-4 rounded-2xl border border-slate-100 bg-white p-6 transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-500 transition group-hover:bg-orange-500 group-hover:text-white">
+                                        <Icon size={22} />
+                                    </div>
+                                    <div>
+                                        <p className="font-extrabold text-slate-900">{title}</p>
+                                        <p className="mt-0.5 text-sm font-medium text-slate-700">{value}</p>
+                                        <p className="mt-0.5 text-xs text-slate-400">{sub}</p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
 
-                        <div className="grid gap-8 lg:grid-cols-3">
-                            {/* Contact info cards */}
-                            <div className="space-y-5">
-                                {[
-                                    { icon: Mail, title: 'Email Us', value: 'support@orangebank.ma', sub: 'We reply within 24 hours' },
-                                    { icon: Phone, title: 'Call Us', value: '+212 5XX-XXXXXX', sub: 'Mon–Fri, 9am to 6pm' },
-                                    { icon: MapPin, title: 'Visit Us', value: 'Casablanca, Morocco', sub: 'OrangeBank HQ' },
-                                ].map(({ icon: Icon, title, value, sub }) => (
-                                    <div key={title} className="group flex items-start gap-4 rounded-2xl border border-slate-100 bg-white p-6 transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50">
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-500 transition group-hover:bg-orange-500 group-hover:text-white">
-                                            <Icon size={22} />
-                                        </div>
-                                        <div>
-                                            <p className="font-extrabold text-slate-900">{title}</p>
-                                            <p className="mt-0.5 text-sm font-medium text-slate-700">{value}</p>
-                                            <p className="mt-0.5 text-xs text-slate-400">{sub}</p>
-                                        </div>
+                        {/* Contact form */}
+                        <div className="lg:col-span-2">
+                            <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
+                                <div className="mb-6 flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-500">
+                                        <MessageSquare size={20} />
                                     </div>
-                                ))}
-                            </div>
+                                    <h3 className="text-lg font-extrabold text-slate-900">Send Us a Message</h3>
+                                </div>
 
-                            {/* Contact form */}
-                            <div className="lg:col-span-2">
-                                <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
-                                    <div className="mb-6 flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-500">
-                                            <MessageSquare size={20} />
-                                        </div>
-                                        <h3 className="text-lg font-extrabold text-slate-900">Send Us a Message</h3>
-                                    </div>
-
-                                    <form className="space-y-5">
-                                        <div className="grid gap-5 sm:grid-cols-2">
-                                            <div>
-                                                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full Name</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Your full name"
-                                                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email Address</label>
-                                                <input
-                                                    type="email"
-                                                    placeholder="your@email.com"
-                                                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                                                />
-                                            </div>
-                                        </div>
+                                <form className="space-y-5">
+                                    <div className="grid gap-5 sm:grid-cols-2">
                                         <div>
-                                            <label className="mb-1.5 block text-sm font-semibold text-slate-700">Subject</label>
+                                            <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full Name</label>
                                             <input
                                                 type="text"
-                                                placeholder="How can we help?"
+                                                placeholder="Your full name"
                                                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
                                             />
                                         </div>
                                         <div>
-                                            <label className="mb-1.5 block text-sm font-semibold text-slate-700">Message</label>
-                                            <textarea
-                                                rows={5}
-                                                placeholder="Write your message here..."
-                                                className="w-full resize-none rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                                            <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email Address</label>
+                                            <input
+                                                type="email"
+                                                placeholder="your@email.com"
+                                                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
                                             />
                                         </div>
-                                        <button
-                                            type="submit"
-                                            className="flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-3.5 font-bold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-400"
-                                        >
-                                            Send Message <ArrowRight size={16} />
-                                        </button>
-                                    </form>
-                                </div>
+                                    </div>
+                                    <div>
+                                        <label className="mb-1.5 block text-sm font-semibold text-slate-700">Subject</label>
+                                        <input
+                                            type="text"
+                                            placeholder="How can we help?"
+                                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="mb-1.5 block text-sm font-semibold text-slate-700">Message</label>
+                                        <textarea
+                                            rows={5}
+                                            placeholder="Write your message here..."
+                                            className="w-full resize-none rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="flex w-full sm:w-auto items-center gap-2 rounded-xl bg-orange-500 px-4 sm:px-6 lg:px-8 py-3.5 font-bold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-400"
+                                    >
+                                        Send Message <ArrowRight size={16} />
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                {/* Footer */}
-                <footer className="border-t border-slate-200 bg-white">
-                    <div className="mx-auto max-w-7xl px-8 py-14">
-                        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-                            {/* Brand */}
-                            <div className="lg:col-span-1">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/15 ring-1 ring-orange-500/30">
-                                        <Landmark className="h-5 w-5 text-orange-500" />
-                                    </div>
-                                    <span className="text-xl font-extrabold">
-                                        <span className="text-orange-500">Orange</span>Bank
-                                    </span>
+            {/* Footer */}
+            <footer className="border-t border-slate-200 bg-white">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+                    <div className="grid gap-10 md:grid-cols-2">
+                        {/* Brand */}
+                        <div className="lg:col-span-1">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/15 ring-1 ring-orange-500/30">
+                                    <Landmark className="h-5 w-5 text-orange-500" />
                                 </div>
-                                <p className="mt-4 text-sm leading-7 text-slate-500">
-                                    Smart banking for a better future. Manage, save, and grow your money securely.
-                                </p>
-                                <div className="mt-5 flex gap-3">
-                                    {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-                                        <a key={i} href="#" className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-400 transition hover:border-orange-400 hover:text-orange-500">
-                                            <Icon size={16} />
-                                        </a>
-                                    ))}
-                                </div>
+                                <span className="text-xl font-extrabold">
+                                    <span className="text-orange-500">Orange</span>Bank
+                                </span>
                             </div>
-
-                            {/* Quick Links */}
-                            <div>
-                                <h4 className="mb-5 font-extrabold text-slate-900">Quick Links</h4>
-                                <ul className="space-y-3 text-sm text-slate-500">
-                                    {['Home', 'About Us', 'Features', 'Security', 'Contact Us'].map((item) => (
-                                        <li key={item}>
-                                            <a href="#" className="transition hover:text-orange-500">{item}</a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* Features */}
-                            <div>
-                                <h4 className="mb-5 font-extrabold text-slate-900">Features</h4>
-                                <ul className="space-y-3 text-sm text-slate-500">
-                                    {['Transaction History', 'AI Financial Advisor', 'Savings Goals', 'Savings Simulator', 'Emergency Stop', 'Customer Support'].map((item) => (
-                                        <li key={item}>
-                                            <a href="#" className="transition hover:text-orange-500">{item}</a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* Contact */}
-                            <div>
-                                <h4 className="mb-5 font-extrabold text-slate-900">Contact</h4>
-                                <ul className="space-y-4 text-sm text-slate-500">
-                                    {[
-                                        [Mail, 'support@orangebank.ma'],
-                                        [Phone, '+212 5XX-XXXXXX'],
-                                        [MapPin, 'Casablanca, Morocco'],
-                                    ].map(([Icon, text]: any) => (
-                                        <li key={text} className="flex items-center gap-3">
-                                            <Icon size={15} className="shrink-0 text-orange-500" />
-                                            {text}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-
-                        {/* Bottom bar */}
-                        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-8 text-sm text-slate-400 sm:flex-row">
-                            <p>© {new Date().getFullYear()} OrangeBank. All rights reserved.</p>
-                            <div className="flex gap-6">
-                                {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
-                                    <a key={item} href="#" className="transition hover:text-orange-500">{item}</a>
+                            <p className="mt-4 text-sm leading-7 text-slate-500">
+                                Smart banking for a better future. Manage, save, and grow your money securely.
+                            </p>
+                            <div className="mt-5 flex gap-3">
+                                {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+                                    <a key={i} href="#" className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-400 transition hover:border-orange-400 hover:text-orange-500">
+                                        <Icon size={16} />
+                                    </a>
                                 ))}
                             </div>
                         </div>
+
+                        {/* Quick Links */}
+                        <div>
+                            <h4 className="mb-5 font-extrabold text-slate-900">Quick Links</h4>
+                            <ul className="space-y-3 text-sm text-slate-500">
+                                {['Home', 'About Us', 'Features', 'Security', 'Contact Us'].map((item) => (
+                                    <li key={item}>
+                                        <a href="#" className="transition hover:text-orange-500">{item}</a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* Features */}
+                        <div>
+                            <h4 className="mb-5 font-extrabold text-slate-900">Features</h4>
+                            <ul className="space-y-3 text-sm text-slate-500">
+                                {['Transaction History', 'AI Financial Advisor', 'Savings Goals', 'Savings Simulator', 'Emergency Stop', 'Customer Support'].map((item) => (
+                                    <li key={item}>
+                                        <a href="#" className="transition hover:text-orange-500">{item}</a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* Contact */}
+                        <div>
+                            <h4 className="mb-5 font-extrabold text-slate-900">Contact</h4>
+                            <ul className="space-y-4 text-sm text-slate-500">
+                                {[
+                                    [Mail, 'support@orangebank.ma'],
+                                    [Phone, '+212 5XX-XXXXXX'],
+                                    [MapPin, 'Casablanca, Morocco'],
+                                ].map(([Icon, text]: any) => (
+                                    <li key={text} className="flex items-center gap-3">
+                                        <Icon size={15} className="shrink-0 text-orange-500" />
+                                        {text}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
-                </footer>
+
+                    {/* Bottom bar */}
+                    <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-8 text-sm text-slate-400 sm:flex-row">
+                        <p>© {new Date().getFullYear()} OrangeBank. All rights reserved.</p>
+                        <div className="flex flex-wrap gap-4 justify-center sm:justify-start">
+                            {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
+                                <a key={item} href="#" className="transition hover:text-orange-500">{item}</a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </>
     );
 }

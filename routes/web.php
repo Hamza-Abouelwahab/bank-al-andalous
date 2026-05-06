@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AIChatController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -48,6 +49,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/onboarding/confirm',  [ConfirmController::class, 'create'])->name('onboarding.confirm');
     Route::post('/onboarding/confirm', [ConfirmController::class, 'store'])->name('onboarding.confirm.store');
+
+
+    // for book an Appointment
+
+    Route::post('/appointments', [AppointmentController::class, 'store']);
+
+    Route::get('/appointments/create', function () {
+        return Inertia::render('appointments/Create');
+    });
 });
 
 // User dashboard
@@ -86,29 +96,29 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
     // * auto saving
     Route::post('/saving-goals/{goal}/run-auto-saving', [SavingGoalController::class, 'runAutoSavingForGoal'])
         ->name('saving-goals.run-one');
-        // * delete challenge
+    // * delete challenge
     Route::delete('/saving-goals/{goal}', [SavingGoalController::class, 'destroy'])
         ->name('saving-goals.destroy');
-        // * pause
+    // * pause
     Route::post('/saving-goals/{goal}/pause', [SavingGoalController::class, 'pause'])
         ->name('saving-goals.pause');
-        // * resume
+    // * resume
     Route::post('/saving-goals/{goal}/resume', [SavingGoalController::class, 'resume'])
         ->name('saving-goals.resume');
     // * challenge savinge
-        Route::post('/saving-goals/{goal}/add-progress', [SavingGoalController::class, 'addProgress'])
-    ->name('saving-goals.add-progress');
+    Route::post('/saving-goals/{goal}/add-progress', [SavingGoalController::class, 'addProgress'])
+        ->name('saving-goals.add-progress');
     // * smart suggestion
     Route::post('/saving-goals/{goal}/smart-suggestion', [SavingGoalController::class, 'smartSuggestion'])
-    ->name('saving-goals.smart-suggestion');
+        ->name('saving-goals.smart-suggestion');
     // * group saving
     Route::post('/saving-groups/{group}/join', [SavingGroupController::class, 'join'])
-    ->name('saving-groups.join');
+        ->name('saving-groups.join');
     Route::post('/saving-groups/{group}/draw', [SavingGroupController::class, 'draw'])
-    ->name('saving-groups.draw');
+        ->name('saving-groups.draw');
 
     Route::post('/saving-groups', [SavingGroupController::class, 'store'])
-    ->name('saving-groups.store');
+        ->name('saving-groups.store');
 
     Route::middleware(['auth', 'onboarding'])->get('/ai-chat', function () {
         return Inertia::render('Banking/chat/AIChat');

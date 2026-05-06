@@ -148,3 +148,54 @@
         @apply bg-background text-foreground;
     }
 }
+
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+.bank-calendar {
+    width: 100%;
+}
+
+.bank-calendar .rdp-months {
+    justify-content: center;
+}
+
+.bank-calendar .rdp-caption_label {
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.bank-calendar .rdp-head_cell {
+    font-size: 12px;
+    color: #9c978f;
+    font-weight: 700;
+}
+
+.bank-calendar .rdp-day {
+    border-radius: 9999px;
+    font-weight: 700;
+}
+
+.bank-calendar .rdp-day_selected {
+    background: #ea580c !important;
+    color: white !important;
+}
+
+.bank-calendar .rdp-day_today {
+    color: #ea580c;
+    font-weight: 900;
+}
+
+.bank-calendar .rdp-day_disabled {
+    color: #cfc8bd;
+}

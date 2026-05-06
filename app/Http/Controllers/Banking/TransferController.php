@@ -89,6 +89,6 @@ class TransferController extends Controller
             'status'            => 'completed',
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Transfer completed successfully.');
+        return back();
     }
 }

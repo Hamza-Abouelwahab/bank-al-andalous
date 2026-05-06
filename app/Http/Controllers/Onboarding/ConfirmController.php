@@ -37,14 +37,20 @@ class ConfirmController extends Controller
         $accountNumber = $this->generateAccountNumber();
         $rip = $this->generateRip();
 
+        // dd(session('onboarding.account_type'));
+
+        $accountType = session('onboarding.account_type');
+
+        if (!$accountType) {
+            return redirect()->route('onboarding.bank');
+        }
+
         $request->user()->bankAccount()->create([
             'account_number' => $accountNumber,
             'rip'            => $rip,
-            'account_type'   => session('onboarding.account_type'),
+            'account_type'   => $accountType,
             'balance'        => 0.00,
         ]);
-
-        session()->forget('onboarding');
 
         return redirect()->route('dashboard');
     }

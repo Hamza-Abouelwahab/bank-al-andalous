@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import {  ArrowDownToLine, ArrowUpFromLine, Bot, CreditCard, FileText, Headphones, History, LayoutGrid, Send, Target } from 'lucide-react';  //BookOpen, FolderGit2,
+import { ArrowDownToLine, ArrowUpFromLine, Bot, CalendarCheck, CreditCard, FileText, Headphones, History, LayoutGrid, Send, Target } from 'lucide-react';  //BookOpen, FolderGit2,
 import AppLogo from '@/components/app-logo';
 // import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -68,6 +68,12 @@ const mainNavItems: NavItem[] = [
         href: '/support',
         icon: Headphones,
     },
+
+    {
+        title: 'Appointment',
+        href: '/appointments/create',
+        icon: CalendarCheck,
+    },
 ];
 
 
@@ -91,7 +97,7 @@ export function AppSidebar() {
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            
+
         </Sidebar>
     );
 }

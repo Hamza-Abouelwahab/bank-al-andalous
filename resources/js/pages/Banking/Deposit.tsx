@@ -16,6 +16,8 @@ export default function Deposit() {
 
     const [review, setReview] = useState(false);
 
+    const [success, setSuccess] = useState(false);
+
     const { data, setData, post, processing, errors } = useForm({
         amount: '',
         source: '',
@@ -32,7 +34,13 @@ export default function Deposit() {
     };
 
     const confirmDeposit = () => {
-        post('/deposit');
+        post('/deposit', {
+            preserveScroll: true,
+            onSuccess: () => {
+                setReview(false);
+                setSuccess(true); // 🔥 show success screen
+            },
+        });
     };
 
     return (
@@ -85,11 +93,10 @@ export default function Deposit() {
                                                     key={amt}
                                                     type="button"
                                                     onClick={() => setData('amount', String(amt))}
-                                                    className={`py-2.5 sm:py-3 rounded-xl border font-semibold text-sm ${
-                                                        data.amount === String(amt)
-                                                            ? 'border-orange-500 bg-orange-50 text-orange-600'
-                                                            : 'border-gray-200'
-                                                    }`}
+                                                    className={`py-2.5 sm:py-3 rounded-xl border font-semibold text-sm ${data.amount === String(amt)
+                                                        ? 'border-orange-500 bg-orange-50 text-orange-600'
+                                                        : 'border-gray-200'
+                                                        }`}
                                                 >
                                                     {amt.toLocaleString()}
                                                 </button>
@@ -130,11 +137,10 @@ export default function Deposit() {
                                                     key={s.value}
                                                     type="button"
                                                     onClick={() => setData('source', s.value)}
-                                                    className={`flex items-center gap-3 p-3 rounded-xl border text-sm ${
-                                                        data.source === s.value
-                                                            ? 'border-orange-500 bg-orange-50'
-                                                            : 'border-gray-200'
-                                                    }`}
+                                                    className={`flex items-center gap-3 p-3 rounded-xl border text-sm ${data.source === s.value
+                                                        ? 'border-orange-500 bg-orange-50'
+                                                        : 'border-gray-200'
+                                                        }`}
                                                 >
                                                     <span>{s.icon}</span>
                                                     {s.label}
@@ -270,6 +276,25 @@ export default function Deposit() {
                                 Cancel
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+
+            {success && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/40">
+                    <div className="bg-white p-6 rounded-2xl text-center">
+                        <h2 className="font-bold text-lg mb-2">✅ Deposit Successful</h2>
+                        <p className="text-sm text-gray-500 mb-4">
+                            Your money has been added
+                        </p>
+
+                        <button
+                            onClick={() => setSuccess(false)}
+                            className="bg-orange-500 text-white px-4 py-2 rounded-lg"
+                        >
+                            Done
+                        </button>
                     </div>
                 </div>
             )}

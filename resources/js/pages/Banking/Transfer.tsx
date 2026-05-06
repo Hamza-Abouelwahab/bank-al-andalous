@@ -10,7 +10,7 @@ export default function Transfer() {
     const [review, setReview] = useState(false);
 
     const { data, setData, post, processing } = useForm({
-        recipient: '',
+        recipient_account: '',
         amount: '',
         description: '',
     });
@@ -22,7 +22,7 @@ export default function Transfer() {
 
     const isInsufficient = total > balance;
     const isValid =
-        data.recipient.length > 5 &&
+        data.recipient_account.length > 5 &&
         parsed >= 10 &&
         parsed <= 100000 &&
         !isInsufficient;
@@ -33,8 +33,13 @@ export default function Transfer() {
     };
 
     const confirmTransfer = () => {
-        post('/transfer');
-    };
+    post('/transfer?modal=1', {
+        preserveScroll: true,
+        onSuccess: () => {
+            setReview(false);
+        },
+    });
+};
 
     return (
         <>
@@ -103,9 +108,9 @@ export default function Transfer() {
                                         </label>
                                         <input
                                             placeholder="MA123456789..."
-                                            value={data.recipient}
+                                            value={data.recipient_account}
                                             onChange={(e) =>
-                                                setData('recipient', e.target.value)
+                                                setData('recipient_account', e.target.value)
                                             }
                                             className="w-full h-12 border rounded-xl px-4"
                                         />
@@ -219,7 +224,7 @@ export default function Transfer() {
                             Confirm Transfer
                         </h2>
 
-                        <p>To: {data.recipient}</p>
+                        <p>To: {data.recipient_account}</p>
                         <p>Amount: {parsed} MAD</p>
                         <p>Total: {total} MAD</p>
 
