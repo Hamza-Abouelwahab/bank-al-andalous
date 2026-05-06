@@ -2,6 +2,8 @@ import { useForm, usePage, Head } from '@inertiajs/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 
+
+
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000];
 
 export default function Transfer() {
@@ -9,7 +11,7 @@ export default function Transfer() {
 
     const [review, setReview] = useState(false);
 
-    const { data, setData, post, processing } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         recipient_account: '',
         amount: '',
         description: '',
@@ -33,13 +35,18 @@ export default function Transfer() {
     };
 
     const confirmTransfer = () => {
-    post('/transfer?modal=1', {
-        preserveScroll: true,
-        onSuccess: () => {
-            setReview(false);
-        },
-    });
-};
+        post('/transfer', {
+            preserveScroll: false,
+            onSuccess: () => {
+                setReview(false);
+                reset();
+            },
+            onError: () => {
+                // keep modal open so you can see errors
+                setReview(true);
+            },
+        });
+    };
 
     return (
         <>
@@ -114,6 +121,10 @@ export default function Transfer() {
                                             }
                                             className="w-full h-12 border rounded-xl px-4"
                                         />
+
+                                        {errors.recipient_account && (
+                                            <p className="mt-2 text-sm text-red-500">{errors.recipient_account}</p>
+                                        )}
                                     </div>
 
                                     {/* QUICK */}
@@ -125,11 +136,10 @@ export default function Transfer() {
                                                 onClick={() =>
                                                     setData('amount', String(amt))
                                                 }
-                                                className={`py-3 rounded-xl border font-semibold ${
-                                                    data.amount === String(amt)
-                                                        ? 'border-orange-500 bg-orange-50'
-                                                        : 'border-gray-200'
-                                                }`}
+                                                className={`py-3 rounded-xl border font-semibold ${data.amount === String(amt)
+                                                    ? 'border-orange-500 bg-orange-50'
+                                                    : 'border-gray-200'
+                                                    }`}
                                             >
                                                 {amt}
                                             </button>
@@ -149,6 +159,10 @@ export default function Transfer() {
                                             }
                                             className="w-full h-12 border rounded-xl px-4"
                                         />
+
+                                        {errors.amount && (
+                                            <p className="mt-2 text-sm text-red-500">{errors.amount}</p>
+                                        )}
                                     </div>
 
                                     {isInsufficient && (
@@ -230,10 +244,12 @@ export default function Transfer() {
 
                         <div className="flex gap-3 mt-4">
                             <button
+                                type="button"
                                 onClick={confirmTransfer}
-                                className="flex-1 bg-orange-500 text-white py-2 rounded-lg"
+                                disabled={processing}
+                                className="flex-1 bg-orange-500 text-white py-2 rounded-lg disabled:opacity-50"
                             >
-                                Confirm
+                                {processing ? 'Processing...' : 'Confirm'}
                             </button>
 
                             <button

@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class TransferController extends Controller
 {
@@ -23,72 +24,80 @@ class TransferController extends Controller
 
     public function store(Request $request)
     {
-
-        
-        $request->validate([
+        $validated = $request->validate([
             'recipient_account' => 'required|string',
             'amount'            => 'required|numeric|min:10|max:100000',
             'description'       => 'nullable|string|max:100',
         ]);
-        // dd($request->recipient_account, BankAccount::all()->pluck('account_number'));
 
         $sender = Auth::user()->bankAccount;
 
-        // Cannot transfer to yourself
-        if ($request->recipient_account === $sender->account_number) {
+        if (!$sender) {
+            return back()->withErrors([
+                'recipient_account' => 'Sender account not found.',
+            ]);
+        }
+
+        $recipientAccount = strtoupper(preg_replace('/\s+/', '', $validated['recipient_account']));
+        $amount = (float) $validated['amount'];
+        $fee = 2;
+        $total = $amount + $fee;
+
+        if ($recipientAccount === $sender->account_number) {
             return back()->withErrors([
                 'recipient_account' => 'You cannot transfer to your own account.',
             ]);
         }
 
-        // Find recipient
-        $recipient = BankAccount::where('account_number', trim($request->recipient_account))->first();
+        $recipient = BankAccount::whereRaw('UPPER(TRIM(account_number)) = ?', [$recipientAccount])->first();
+
         if (!$recipient) {
             return back()->withErrors([
                 'recipient_account' => 'Account not found. Please check the account number.',
             ]);
         }
 
-        // Check balance
-        if ($request->amount > $sender->balance) {
+        if ($total > $sender->balance) {
             return back()->withErrors([
                 'amount' => 'Insufficient balance. Available: ' . number_format($sender->balance, 2) . ' MAD.',
             ]);
         }
 
-        $ref            = Transaction::generateReference('TRF');
-        $senderBalance  = $sender->balance - $request->amount;
-        $recipientBalance = $recipient->balance + $request->amount;
-        $desc           = $request->description ?? 'Bank Transfer';
+        DB::transaction(function () use ($sender, $recipient, $amount, $fee, $total, $recipientAccount, $validated) {
+            $ref = Transaction::generateReference('TRF');
+            $desc = $validated['description'] ?? 'Bank Transfer';
 
-        // Deduct from sender
-        $sender->update(['balance' => $senderBalance]);
-        Transaction::create([
-            'bank_account_id'   => $sender->id,
-            'type'              => 'debit',
-            'category'          => 'transfer_out',
-            'amount'            => $request->amount,
-            'balance_after'     => $senderBalance,
-            'description'       => 'Transfer to ' . $request->recipient_account . ' — ' . $desc,
-            'reference'         => $ref . '-OUT',
-            'recipient_account' => $request->recipient_account,
-            'status'            => 'completed',
-        ]);
+            $senderBalance = $sender->balance - $total;
+            $recipientBalance = $recipient->balance + $amount;
 
-        // Add to recipient
-        $recipient->update(['balance' => $recipientBalance]);
-        Transaction::create([
-            'bank_account_id'   => $recipient->id,
-            'type'              => 'credit',
-            'category'          => 'transfer_in',
-            'amount'            => $request->amount,
-            'balance_after'     => $recipientBalance,
-            'description'       => 'Transfer from ' . $sender->account_number . ' — ' . $desc,
-            'reference'         => $ref . '-IN',
-            'recipient_account' => $sender->account_number,
-            'status'            => 'completed',
-        ]);
+            $sender->update(['balance' => $senderBalance]);
 
-        return back();
+            Transaction::create([
+                'bank_account_id'   => $sender->id,
+                'type'              => 'debit',
+                'category'          => 'transfer_out',
+                'amount'            => $amount,
+                'balance_after'     => $senderBalance,
+                'description'       => 'Transfer to ' . $recipientAccount . ' — ' . $desc . ' — Fee: ' . $fee . ' MAD',
+                'reference'         => $ref . '-OUT',
+                'recipient_account' => $recipientAccount,
+                'status'            => 'completed',
+            ]);
+
+            $recipient->update(['balance' => $recipientBalance]);
+
+            Transaction::create([
+                'bank_account_id'   => $recipient->id,
+                'type'              => 'credit',
+                'category'          => 'transfer_in',
+                'amount'            => $amount,
+                'balance_after'     => $recipientBalance,
+                'description'       => 'Transfer from ' . $sender->account_number . ' — ' . $desc,
+                'reference'         => $ref . '-IN',
+                'recipient_account' => $sender->account_number,
+                'status'            => 'completed',
+            ]);
+        });
+        return redirect()->route('dashboard')->with('success', 'Transfer completed successfully.');
     }
 }
