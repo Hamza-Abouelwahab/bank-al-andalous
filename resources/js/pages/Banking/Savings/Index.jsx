@@ -1,13 +1,16 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import {
+    Check,
     Coins,
+    Copy,
     FastForward,
     Lightbulb,
     Pause,
     Play,
     Target,
     Trash2,
+    X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
@@ -20,6 +23,7 @@ export default function Index() {
         flash = {},
         groups = [],
         availableGroups = [],
+        pendingInvitations = [],
     } = usePage().props;
 
     const [modal, setModal] = useState(null);
@@ -128,7 +132,7 @@ export default function Index() {
                                 </button>
                             </div>
 
-                            <div className="space-y-4" id='goals-list'>
+                            <div className="space-y-4" id="goals-list">
                                 {visibleGoals.length ? (
                                     visibleGoals.map((goal) => {
                                         const target = Number(
@@ -439,24 +443,30 @@ export default function Index() {
                             </div>
 
                             <button
-                            type='button'
-                                onClick={() => { setShowSavingTypeModal(true) }}
+                                type="button"
+                                onClick={() => {
+                                    setShowSavingTypeModal(true);
+                                }}
                                 className="mt-5 w-full rounded-xl bg-orange-600 py-3 font-bold text-white hover:bg-orange-700"
                             >
                                 Explore Suggestions
                             </button>
                         </div>
                     </aside>
-                   {showSavingTypeModal && (
-    <ChooseSavingTypeModal
-        onClose={() => setShowSavingTypeModal(false)}
-        onSelect={(type) => {
-            setShowSavingTypeModal(false);
-            handleTypeSelect(type);
-        }}
-    />
-)}
+                    {showSavingTypeModal && (
+                        <ChooseSavingTypeModal
+                            onClose={() => setShowSavingTypeModal(false)}
+                            onSelect={(type) => {
+                                setShowSavingTypeModal(false);
+                                handleTypeSelect(type);
+                            }}
+                        />
+                    )}
                 </div>
+
+                {pendingInvitations.length > 0 && (
+                    <InvitationsSection invitations={pendingInvitations} />
+                )}
 
                 <GroupsSection
                     groups={groups}
@@ -536,7 +546,7 @@ function ChooseSavingTypeModal({ onClose, onSelect }) {
     ];
 
     return (
-        <Modal  title="Choose Saving Type" onClose={onClose}>
+        <Modal title="Choose Saving Type" onClose={onClose}>
             <div className="grid grid-cols-2 gap-3">
                 {types.map((t) => (
                     <button
@@ -690,6 +700,7 @@ function CreateGroupModal({ onClose }) {
         max_members: '',
         start_date: '',
         cycle_days: '15',
+        visibility: 'private',
     });
 
     function submit(e) {
@@ -698,8 +709,12 @@ function CreateGroupModal({ onClose }) {
     }
 
     return (
-        <Modal title="Create Saving Group" onClose={onClose}>
-            <form onSubmit={submit} className="space-y-4">
+        <Modal
+            title="Create Saving Group"
+            subtitle="Set your contribution, members limit, and choose who can join."
+            onClose={onClose}
+        >
+            <form onSubmit={submit} className="space-y-5">
                 <Input
                     label="Group Name"
                     value={data.name}
@@ -741,12 +756,65 @@ function CreateGroupModal({ onClose }) {
                         onChange={(e) => setData('cycle_days', e.target.value)}
                         className="h-11 w-full rounded-xl border border-gray-200 px-4 outline-none focus:border-indigo-500"
                     >
+                        <option value="7">Every 7 days</option>
                         <option value="15">Every 15 days</option>
                         <option value="30">Every 30 days</option>
                     </select>
                     {errors.cycle_days && (
                         <p className="mt-1 text-xs text-red-500">
                             {errors.cycle_days}
+                        </p>
+                    )}
+                </div>
+                <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                        Group Visibility
+                    </label>
+                    <div className="space-y-2">
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-3 hover:bg-slate-50">
+                            <input
+                                type="radio"
+                                name="visibility"
+                                value="private"
+                                checked={data.visibility === 'private'}
+                                onChange={(e) =>
+                                    setData('visibility', e.target.value)
+                                }
+                                className="h-4 w-4 text-indigo-600"
+                            />
+                            <div>
+                                <p className="font-semibold text-slate-900">
+                                    Private
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                    Invite users by account number
+                                </p>
+                            </div>
+                        </label>
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-3 hover:bg-slate-50">
+                            <input
+                                type="radio"
+                                name="visibility"
+                                value="public"
+                                checked={data.visibility === 'public'}
+                                onChange={(e) =>
+                                    setData('visibility', e.target.value)
+                                }
+                                className="h-4 w-4 text-indigo-600"
+                            />
+                            <div>
+                                <p className="font-semibold text-slate-900">
+                                    Public
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                    Users can request to join
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                    {errors.visibility && (
+                        <p className="mt-1 text-xs text-red-500">
+                            {errors.visibility}
                         </p>
                     )}
                 </div>
@@ -760,7 +828,7 @@ function CreateGroupModal({ onClose }) {
                 )}
                 <button
                     disabled={processing}
-                    className="w-full rounded-xl bg-indigo-600 py-3 font-bold text-white hover:bg-indigo-700 disabled:opacity-60"
+                    className="sticky bottom-0 w-full rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 py-4 font-black text-white shadow-lg shadow-indigo-200 transition hover:scale-[1.01] hover:shadow-xl disabled:opacity-60"
                 >
                     {processing ? 'Creating...' : 'Create Group'}
                 </button>
@@ -769,7 +837,71 @@ function CreateGroupModal({ onClose }) {
     );
 }
 
+function InvitationsSection({ invitations = [] }) {
+    if (!invitations.length) return null;
+
+    return (
+        <div className="mt-8">
+            <div className="mb-5">
+                <h2 className="text-xl font-bold text-slate-900">📬 My Invitations</h2>
+                <p className="text-sm text-slate-500">Groups you've been invited to join</p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {invitations.map((invitation) => (
+                    <div
+                        key={invitation.id}
+                        className="rounded-2xl border border-purple-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                        <div className="mb-3">
+                            <h3 className="font-bold text-slate-900">{invitation.group_name}</h3>
+                            <p className="mt-1 text-sm text-slate-500">
+                                Invited by <span className="font-semibold">{invitation.owner_name}</span>
+                            </p>
+                        </div>
+
+                        <div className="mb-4 grid grid-cols-2 gap-2">
+                            <div className="rounded-xl bg-indigo-50 p-3">
+                                <p className="text-xs text-indigo-500">Contribution</p>
+                                <p className="font-bold text-indigo-700">{invitation.amount} MAD</p>
+                            </div>
+                            <div className="rounded-xl bg-slate-50 p-3">
+                                <p className="text-xs text-slate-500">Members</p>
+                                <p className="font-bold text-slate-700">
+                                    {invitation.current_members}/{invitation.max_members}
+                                </p>
+                            </div>
+                        </div>
+
+                        {invitation.start_date && (
+                            <p className="mb-3 text-xs text-slate-400">Start date: {invitation.start_date}</p>
+                        )}
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => router.post(`/saving-groups/requests/${invitation.id}/accept-invitation`)}
+                                className="flex-1 rounded-xl bg-green-600 py-2 text-sm font-bold text-white hover:bg-green-700"
+                            >
+                                Accept
+                            </button>
+                            <button
+                                onClick={() => router.post(`/saving-groups/requests/${invitation.id}/decline-invitation`)}
+                                className="flex-1 rounded-xl bg-gray-200 py-2 text-sm font-bold text-gray-700 hover:bg-gray-300"
+                            >
+                                Decline
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function GroupsSection({ groups = [], onCreateGroup }) {
+    const [copiedId, setCopiedId] = useState(null);
+    const [inviteInputs, setInviteInputs] = useState({});
+
     if (!groups.length) return null;
 
     const statusBadge = {
@@ -791,6 +923,28 @@ function GroupsSection({ groups = [], onCreateGroup }) {
         },
     };
 
+    const copyGroupCode = (groupId) => {
+        const code = `SG-${groupId}`;
+        navigator.clipboard.writeText(code);
+        setCopiedId(groupId);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    const handleInvite = (groupId) => {
+        const accountNumber = inviteInputs[groupId];
+        if (!accountNumber) return;
+
+        router.post(
+            `/saving-groups/${groupId}/invite`,
+            { account_number: accountNumber },
+            {
+                onSuccess: () => {
+                    setInviteInputs({ ...inviteInputs, [groupId]: '' });
+                },
+            },
+        );
+    };
+
     return (
         <div className="mt-8">
             <div className="mb-5 flex items-center justify-between">
@@ -799,7 +953,7 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                 </h2>
                 <button
                     onClick={onCreateGroup}
-                    className="text-sm font-semibold text-indigo-600 hover:text-indigo-800"
+                    className="text-sm font-semibold text-indigo-600 cursor-pointer hover:text-indigo-800"
                 >
                     + New Group
                 </button>
@@ -807,144 +961,179 @@ function GroupsSection({ groups = [], onCreateGroup }) {
 
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {groups.map((group) => {
-                    const badge =
-                        statusBadge[group.status] ?? statusBadge.waiting;
+                    const badge = statusBadge[group.status] ?? statusBadge.waiting;
+                    const groupCode =group.group_code;
+                    const isOwner = group.is_owner;
+                    const isPrivate = group.visibility === 'private';
+
                     return (
                         <div
                             key={group.id}
-                            className="rounded-2xl border bg-white p-5 shadow-sm"
+                            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
                         >
                             {/* Header */}
-                            <div className="mb-3 flex items-start justify-between">
-                                <div>
-                                    <h3 className="font-bold text-slate-900">
-                                        {group.name}
-                                    </h3>
+                            <div className="mb-3 flex items-start justify-between gap-2">
+                                <div className="flex-1">
+                                    <h3 className="font-bold text-slate-900">{group.name}</h3>
                                     <p className="mt-0.5 text-xs text-slate-400">
                                         Every {group.cycle_days} days
                                     </p>
                                 </div>
-                                <span
-                                    className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${badge.className}`}
-                                >
-                                    {badge.label}
-                                </span>
+                                <div className="flex mt-1 gap-1">
+                                    <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${badge.className}`}>
+                                        {badge.label}
+                                    </span>
+                                    <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${
+                                        isPrivate
+                                            ? 'bg-gray-50 text-gray-700 border-gray-200'
+                                            : 'bg-green-50 text-green-700 border-green-200'
+                                    }`}>
+                                        {isPrivate ? '🔒 Private' : '🌍 Public'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Group Code */}
+                            <div className="mb-4 rounded-xl bg-indigo-50 border border-indigo-200 p-3">
+                                <p className="text-xs font-medium text-indigo-600 mb-1">Group Code</p>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-mono text-lg font-bold text-indigo-900">{groupCode}</span>
+                                    <button
+                                        onClick={() => copyGroupCode(group.id)}
+                                        className="rounded-lg bg-indigo-100 p-2 text-indigo-600 hover:bg-indigo-200 transition-colors"
+                                        title="Copy code"
+                                    >
+                                        {copiedId === group.id ? <Check size={16} /> : <Copy size={16} />}
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Cancelled alert */}
                             {group.status === 'cancelled' && (
                                 <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                                    ⚠️ Group cancelled because not enough
-                                    members joined before the start date.
+                                    ⚠️ Group cancelled because not enough members joined before the start date.
                                 </div>
                             )}
 
                             {/* Stats grid */}
                             <div className="mb-4 grid grid-cols-2 gap-2">
                                 <div className="rounded-xl bg-indigo-50 p-3">
-                                    <p className="text-xs text-indigo-500">
-                                        Contribution
-                                    </p>
-                                    <p className="font-bold text-indigo-700">
-                                        {group.amount} MAD
-                                    </p>
+                                    <p className="text-xs text-indigo-500">Contribution</p>
+                                    <p className="font-bold text-indigo-700">{group.amount} MAD</p>
                                 </div>
                                 <div className="rounded-xl bg-orange-50 p-3">
-                                    <p className="text-xs text-orange-500">
-                                        Total Pot
-                                    </p>
-                                    <p className="font-bold text-orange-700">
-                                        {group.total_pot} MAD
-                                    </p>
+                                    <p className="text-xs text-orange-500">Total Pot</p>
+                                    <p className="font-bold text-orange-700">{group.total_pot} MAD</p>
                                 </div>
                                 <div className="rounded-xl bg-slate-50 p-3">
-                                    <p className="text-xs text-slate-500">
-                                        Members
-                                    </p>
+                                    <p className="text-xs text-slate-500">Members</p>
                                     <p className="font-bold text-slate-700">
-                                        {group.current_members}/
-                                        {group.max_members}
+                                        {group.current_members}/{group.max_members}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-blue-50 p-3">
-                                    <p className="text-xs text-blue-500">
-                                        Start Date
-                                    </p>
-                                    <p className="text-xs font-bold text-blue-700">
-                                        {group.start_date ?? '—'}
-                                    </p>
+                                    <p className="text-xs text-blue-500">Start Date</p>
+                                    <p className="text-xs font-bold text-blue-700">{group.start_date ?? '—'}</p>
                                 </div>
                                 <div className="col-span-2 rounded-xl bg-purple-50 p-3">
-                                    <p className="text-xs text-purple-500">
-                                        Next Draw
-                                    </p>
+                                    <p className="text-xs text-purple-500">Next Draw</p>
                                     <p className="text-xs font-bold text-purple-700">
-                                        {group.next_draw_date ??
-                                            'Waiting to fill'}
+                                        {group.next_draw_date ?? 'Waiting to fill'}
                                     </p>
                                 </div>
                             </div>
 
+                            {/* Pending Requests (Owner Only) */}
+                            {isOwner && group.pending_requests && group.pending_requests.length > 0 && (
+                                <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-3">
+                                    <p className="text-sm font-semibold text-blue-900 mb-2">📬 Pending Requests</p>
+                                    <div className="space-y-2">
+                                        {group.pending_requests.map((req) => (
+                                            <div key={req.id} className="flex items-center justify-between bg-white rounded-lg p-2">
+                                                <span className="text-sm font-medium text-slate-700">{req.user_name}</span>
+                                                <div className="flex gap-1">
+                                                    <button
+                                                        onClick={() => router.post(`/saving-groups/requests/${req.id}/approve`)}
+                                                        className="rounded-lg bg-green-100 p-1.5 text-green-600 hover:bg-green-200"
+                                                        title="Accept"
+                                                    >
+                                                        <Check size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => router.post(`/saving-groups/requests/${req.id}/reject`)}
+                                                        className="rounded-lg bg-red-100 p-1.5 text-red-600 hover:bg-red-200"
+                                                        title="Reject"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Private Group Invitation (Owner Only) */}
+                            {isOwner && isPrivate && group.status === 'waiting' && (
+                                <div className="mb-4 rounded-xl border border-purple-200 bg-purple-50 p-3">
+                                    <p className="text-sm font-semibold text-purple-900 mb-2">✉️ Invite by Account Number</p>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={inviteInputs[group.id] || ''}
+                                            onChange={(e) => setInviteInputs({ ...inviteInputs, [group.id]: e.target.value })}
+                                            placeholder="Account Number"
+                                            className="flex-1 rounded-lg border border-purple-200 px-3 py-2 text-sm outline-none focus:border-purple-400"
+                                        />
+                                        <button
+                                            onClick={() => handleInvite(group.id)}
+                                            className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700"
+                                        >
+                                            Invite
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Bank guarantee info */}
                             {group.bank_sponsored && (
                                 <div className="mb-4 space-y-1 rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm">
-                                    <p className="font-semibold text-blue-800">
-                                        🏦 Bank Guarantee: Active
+                                    <p className="font-semibold text-blue-800">🏦 Bank Guarantee: Active</p>
+                                    <p className="text-blue-700">
+                                        Bank Fee: {group.bank_fee_percent}% ({group.bank_fee} MAD)
                                     </p>
                                     <p className="text-blue-700">
-                                        Bank Fee: {group.bank_fee_percent}% (
-                                        {group.bank_fee} MAD)
-                                    </p>
-                                    <p className="text-blue-700">
-                                        Winner receives:{' '}
-                                        <span className="font-bold">
-                                            {group.winner_amount} MAD
-                                        </span>
+                                        Winner receives: <span className="font-bold">{group.winner_amount} MAD</span>
                                     </p>
                                 </div>
                             )}
 
                             {/* Rotation / Turn Info */}
-                            {group.status === 'active' &&
-                                group.current_receiver_name && (
-                                    <div className="mb-4 space-y-1 rounded-xl border border-green-200 bg-green-50 p-3 text-sm">
-                                        <p className="font-semibold text-green-800">
-                                            🎯 Current Turn
-                                        </p>
+                            {group.status === 'active' && group.current_receiver_name && (
+                                <div className="mb-4 space-y-1 rounded-xl border border-green-200 bg-green-50 p-3 text-sm">
+                                    <p className="font-semibold text-green-800">🎯 Current Turn</p>
+                                    <p className="text-green-700">
+                                        Next receiver: <span className="font-bold">{group.current_receiver_name}</span>
+                                    </p>
+                                    {group.draw_start_date && (
+                                        <p className="text-green-700">Draw started: {group.draw_start_date}</p>
+                                    )}
+                                    {group.draw_end_date && (
+                                        <p className="text-green-700">Draw ends: {group.draw_end_date}</p>
+                                    )}
+                                    {group.days_remaining !== null && (
                                         <p className="text-green-700">
-                                            Next receiver:{' '}
-                                            <span className="font-bold">
-                                                {group.current_receiver_name}
-                                            </span>
+                                            Days remaining: <span className="font-bold">{group.days_remaining}</span>
                                         </p>
-                                        {group.draw_start_date && (
-                                            <p className="text-green-700">
-                                                Draw started:{' '}
-                                                {group.draw_start_date}
-                                            </p>
-                                        )}
-                                        {group.draw_end_date && (
-                                            <p className="text-green-700">
-                                                Draw ends: {group.draw_end_date}
-                                            </p>
-                                        )}
-                                        {group.days_remaining !== null && (
-                                            <p className="text-green-700">
-                                                Days remaining:{' '}
-                                                <span className="font-bold">
-                                                    {group.days_remaining}
-                                                </span>
-                                            </p>
-                                        )}
-                                    </div>
-                                )}
+                                    )}
+                                </div>
+                            )}
 
-                            {group.status === 'active' &&
-                                !group.current_receiver_name && (
-                                    <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
-                                        ⏳ Waiting for draw to start
-                                    </div>
-                                )}
+                            {group.status === 'active' && !group.current_receiver_name && (
+                                <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
+                                    ⏳ Waiting for draw to start
+                                </div>
+                            )}
 
                             {group.status === 'completed' && (
                                 <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
@@ -955,13 +1144,8 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                             {/* Current winner */}
                             {group.current_winner && (
                                 <div className="mb-3 rounded-xl border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm">
-                                    🏆{' '}
-                                    <span className="font-semibold text-yellow-800">
-                                        Current winner:
-                                    </span>{' '}
-                                    <span className="text-yellow-700">
-                                        {group.current_winner.name}
-                                    </span>
+                                    🏆 <span className="font-semibold text-yellow-800">Current winner:</span>{' '}
+                                    <span className="text-yellow-700">{group.current_winner.name}</span>
                                 </div>
                             )}
 
@@ -977,21 +1161,13 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                                                 key={m.id}
                                                 className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-1.5 text-sm"
                                             >
-                                                <span className="text-slate-700">
-                                                    {m.name}
-                                                </span>
-                                                {m.has_won && (
-                                                    <span title="Has won a draw">
-                                                        🏆
-                                                    </span>
-                                                )}
+                                                <span className="text-slate-700">{m.name}</span>
+                                                {m.has_won && <span title="Has won a draw">🏆</span>}
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-xs text-slate-400">
-                                        No members yet.
-                                    </p>
+                                    <p className="text-xs text-slate-400">No members yet.</p>
                                 )}
                             </div>
                         </div>
@@ -1003,87 +1179,171 @@ function GroupsSection({ groups = [], onCreateGroup }) {
 }
 
 function JoinGroupModal({ groups = [], onClose }) {
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        wasSuccessful,
+    } = useForm({ group_code: '' });
+
+    function submitByCode(e) {
+        e.preventDefault();
+        post('/saving-groups/request-by-code', {
+            onSuccess: () => {
+                reset('group_code');
+                onClose();
+            },
+        });
+    }
+
     return (
         <Modal title="Join Group Saving" onClose={onClose}>
-            <div className="space-y-4">
+            <div className="space-y-5">
+
+                {/* ── Join by Group Code ── */}
+                <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
+                    <div className="mb-3 flex items-center gap-2">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white text-sm">
+                            🔑
+                        </span>
+                        <div>
+                            <p className="font-bold text-slate-900 leading-tight">
+                                Join by Group Code
+                            </p>
+                            <p className="text-xs text-slate-500">
+                                Enter the group code shared by your friend.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form onSubmit={submitByCode} className="space-y-3">
+                        <div>
+                            <input
+                                id="group_code_input"
+                                type="text"
+                                value={data.group_code}
+                                onChange={(e) =>
+                                    setData('group_code', e.target.value)
+                                }
+                                placeholder="458741"
+                                className={`h-11 w-full rounded-xl border px-4 text-slate-900 outline-none transition focus:ring-2 focus:ring-indigo-300 ${
+                                    errors.group_code
+                                        ? 'border-red-400 bg-red-50 focus:border-red-400'
+                                        : 'border-indigo-200 bg-white focus:border-indigo-500'
+                                }`}
+                            />
+                            {errors.group_code && (
+                                <p className="mt-1.5 text-xs font-medium text-red-600">
+                                    {errors.group_code}
+                                </p>
+                            )}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={processing || !data.group_code.trim()}
+                            className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 font-bold text-white shadow-md shadow-indigo-200 transition hover:scale-[1.01] hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            {processing ? 'Sending…' : 'Send Request'}
+                        </button>
+                    </form>
+                </div>
+
+                {/* ── Separator ── */}
+                <div className="flex items-center gap-3">
+                    <div className="h-px flex-1 bg-slate-200" />
+                    <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                        Or join a public group
+                    </span>
+                    <div className="h-px flex-1 bg-slate-200" />
+                </div>
+
+                {/* ── Public Groups List ── */}
                 {groups.length ? (
-                    groups.map((group) => {
-                        const isMember = group.is_member === true;
-                        return (
-                            <div
-                                key={group.id}
-                                className="rounded-2xl border bg-white p-4 shadow-sm"
-                            >
-                                <div className="mb-3 flex items-start justify-between">
-                                    <div>
-                                        <h3 className="font-bold text-slate-900">
-                                            {group.name}
-                                        </h3>
-                                        <p className="mt-0.5 text-xs text-slate-400">
-                                            Every {group.cycle_days} days
-                                        </p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (!isMember) {
-                                                router.post(
-                                                    `/saving-groups/${group.id}/join`,
-                                                    {},
-                                                    { onSuccess: onClose },
-                                                );
-                                            }
-                                        }}
-                                        disabled={isMember}
-                                        className={`rounded-xl px-4 py-2 text-sm font-bold ${
-                                            isMember
-                                                ? 'cursor-not-allowed bg-gray-200 text-gray-500'
-                                                : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                        }`}
-                                    >
-                                        {isMember ? 'Already joined' : 'Join'}
-                                    </button>
-                                </div>
+                    <div className="space-y-4">
+                        {groups.map((group) => {
+                            const hasPendingRequest =
+                                group.user_request_status === 'pending';
 
-                                <div className="grid grid-cols-3 gap-2 text-center">
-                                    <div className="rounded-xl bg-indigo-50 p-2">
-                                        <p className="text-xs text-indigo-500">
-                                            Contribution
-                                        </p>
-                                        <p className="text-sm font-bold text-indigo-700">
-                                            {group.amount} MAD
-                                        </p>
+                            return (
+                                <div
+                                    key={group.id}
+                                    className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md"
+                                >
+                                    <div className="mb-3 flex items-start justify-between">
+                                        <div>
+                                            <h3 className="font-bold text-slate-900">
+                                                {group.name}
+                                            </h3>
+                                            <p className="mt-0.5 text-xs text-slate-400">
+                                                Every {group.cycle_days} days
+                                            </p>
+                                        </div>
+                                        {hasPendingRequest ? (
+                                            <span className="rounded-xl bg-yellow-100 px-4 py-2 text-sm font-bold text-yellow-700">
+                                                Pending
+                                            </span>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    router.post(
+                                                        `/saving-groups/${group.id}/request-join`,
+                                                        {},
+                                                        { onSuccess: onClose },
+                                                    )
+                                                }
+                                                className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700"
+                                            >
+                                                Request to Join
+                                            </button>
+                                        )}
                                     </div>
-                                    <div className="rounded-xl bg-orange-50 p-2">
-                                        <p className="text-xs text-orange-500">
-                                            Total Pot
-                                        </p>
-                                        <p className="text-sm font-bold text-orange-700">
-                                            {group.total_pot} MAD
-                                        </p>
-                                    </div>
-                                    <div className="rounded-xl bg-slate-50 p-2">
-                                        <p className="text-xs text-slate-500">
-                                            Members
-                                        </p>
-                                        <p className="text-sm font-bold text-slate-700">
-                                            {group.current_members}/
-                                            {group.max_members}
-                                        </p>
-                                    </div>
-                                </div>
 
-                                {group.start_date && (
-                                    <p className="mt-2 text-xs text-slate-400">
-                                        Start date: {group.start_date}
-                                    </p>
-                                )}
-                            </div>
-                        );
-                    })
+                                    <div className="grid grid-cols-3 gap-2 text-center">
+                                        <div className="rounded-xl bg-indigo-50 p-2">
+                                            <p className="text-xs text-indigo-500">
+                                                Contribution
+                                            </p>
+                                            <p className="text-sm font-bold text-indigo-700">
+                                                {group.amount} MAD
+                                            </p>
+                                        </div>
+                                        <div className="rounded-xl bg-orange-50 p-2">
+                                            <p className="text-xs text-orange-500">
+                                                Total Pot
+                                            </p>
+                                            <p className="text-sm font-bold text-orange-700">
+                                                {group.total_pot} MAD
+                                            </p>
+                                        </div>
+                                        <div className="rounded-xl bg-slate-50 p-2">
+                                            <p className="text-xs text-slate-500">
+                                                Members
+                                            </p>
+                                            <p className="text-sm font-bold text-slate-700">
+                                                {group.current_members}/
+                                                {group.max_members}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {group.start_date && (
+                                        <p className="mt-2 text-xs text-slate-400">
+                                            Start date: {group.start_date}
+                                        </p>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 ) : (
-                    <p className="rounded-xl bg-gray-50 p-4 text-sm text-slate-500">
-                        No available groups to join right now.
+                    <p className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-5 text-center text-sm text-slate-500">
+                        No public groups available right now. You can still join
+                        using a group code above.
                     </p>
                 )}
             </div>
@@ -1091,29 +1351,39 @@ function JoinGroupModal({ groups = [], onClose }) {
     );
 }
 
-function Modal({ title, onClose, children }) {
+function Modal({ title, subtitle, onClose, children }) {
     return (
         <div
             onClick={onClose}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+                className="flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-[2rem] bg-white shadow-2xl sm:max-w-xl sm:rounded-[2rem]"
             >
-                <div className="mb-5 flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-slate-900">
-                        {title}
-                    </h2>
+                <div className="flex items-start justify-between border-b border-slate-100 bg-white px-6 py-5">
+                    <div>
+                        <h2 className="text-xl font-black text-slate-900">
+                            {title}
+                        </h2>
+
+                        {subtitle && (
+                            <p className="mt-1 text-sm text-slate-500">
+                                {subtitle}
+                            </p>
+                        )}
+                    </div>
+
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-2xl text-slate-400 hover:text-slate-700"
+                        className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 text-xl text-slate-500 transition hover:bg-slate-200 hover:text-slate-800"
                     >
                         ×
                     </button>
                 </div>
-                {children}
+
+                <div className="overflow-y-auto px-6 py-5">{children}</div>
             </div>
         </div>
     );

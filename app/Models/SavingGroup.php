@@ -18,8 +18,10 @@ class SavingGroup extends Model
         'current_winner_id',
         'next_draw_date',
         'status',
+        'visibility',
         'bank_sponsored',
         'bank_fee_percent',
+        'group_code',
     ];
 
     protected $casts = [
@@ -41,6 +43,35 @@ class SavingGroup extends Model
     public function currentWinner()
     {
         return $this->belongsTo(User::class, 'current_winner_id');
+    }
+
+    public function joinRequests()
+    {
+        return $this->hasMany(GroupJoinRequest::class, 'group_id');
+    }
+
+    public function pendingRequests()
+    {
+        return $this->hasMany(GroupJoinRequest::class, 'group_id')
+            ->where('status', 'pending')
+            ->where('type', 'request');
+    }
+
+    public function pendingInvitations()
+    {
+        return $this->hasMany(GroupJoinRequest::class, 'group_id')
+            ->where('status', 'pending')
+            ->where('type', 'invitation');
+    }
+    protected static function booted()
+    {
+        static::creating(function ($group) {
+            do {
+                $code = random_int(100000, 999999);
+            } while (self::where('group_code', $code)->exists());
+
+            $group->group_code = $code;
+        });
     }
 
     /**

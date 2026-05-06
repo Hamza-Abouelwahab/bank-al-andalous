@@ -112,11 +112,22 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
     Route::post('/saving-goals/{goal}/smart-suggestion', [SavingGoalController::class, 'smartSuggestion'])
         ->name('saving-goals.smart-suggestion');
     // * group saving
-    Route::post('/saving-groups/{group}/join', [SavingGroupController::class, 'join'])
-        ->name('saving-groups.join');
+    Route::post('/saving-groups/{group}/request-join', [SavingGroupController::class, 'requestJoin'])
+        ->name('saving-groups.request-join');
+    Route::post('/saving-groups/request-by-code', [SavingGroupController::class, 'requestByCode'])
+        ->name('saving-groups.request-by-code');
+    Route::post('/saving-groups/requests/{request}/approve', [SavingGroupController::class, 'approveRequest'])
+        ->name('saving-groups.approve-request');
+    Route::post('/saving-groups/requests/{request}/reject', [SavingGroupController::class, 'rejectRequest'])
+        ->name('saving-groups.reject-request');
+    Route::post('/saving-groups/{group}/invite', [SavingGroupController::class, 'inviteByAccountNumber'])
+        ->name('saving-groups.invite');
+    Route::post('/saving-groups/requests/{request}/accept-invitation', [SavingGroupController::class, 'acceptInvitation'])
+        ->name('saving-groups.accept-invitation');
+    Route::post('/saving-groups/requests/{request}/decline-invitation', [SavingGroupController::class, 'declineInvitation'])
+        ->name('saving-groups.decline-invitation');
     Route::post('/saving-groups/{group}/draw', [SavingGroupController::class, 'draw'])
         ->name('saving-groups.draw');
-
     Route::post('/saving-groups', [SavingGroupController::class, 'store'])
         ->name('saving-groups.store');
 
