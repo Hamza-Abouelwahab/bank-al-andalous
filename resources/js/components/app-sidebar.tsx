@@ -58,6 +58,20 @@ const mainNavItems: NavItem[] = [
         href: '/savings/index',
         icon: Target,
     },
+
+    {
+        title: 'Appointment ',
+        href: '/appointments/create',
+        icon: CalendarCheck,
+    },
+
+    {
+        title: 'Simulation ',
+        href: '/simulation',
+        icon: CalendarCheck,
+    },
+
+
     {
         title: 'Ai Advisor ',
         href: '/ai-chat',
@@ -69,11 +83,7 @@ const mainNavItems: NavItem[] = [
         icon: Headphones,
     },
 
-    {
-        title: 'Appointment',
-        href: '/appointments/create',
-        icon: CalendarCheck,
-    },
+    
 ];
 
 

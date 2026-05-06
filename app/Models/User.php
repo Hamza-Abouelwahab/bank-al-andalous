@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable ;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -54,8 +54,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(SavingChallenge::class);
     }
-    public function savingGoals() : HasMany
+    public function savingGoals(): HasMany
     {
         return $this->hasMany(SavingGoal::class);
     }
+
+    public function loanSimulations()
+    {
+        return $this->hasMany(LoanSimulation::class);
+    }
+
+    public function loans()
+{
+    return $this->hasMany(Loan::class);
+}
 }

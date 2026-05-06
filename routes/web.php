@@ -17,7 +17,9 @@ use App\Http\Controllers\Banking\SavingGoalController;
 use App\Http\Controllers\Banking\SavingGroupController;
 use App\Http\Controllers\Banking\TransactionController;
 use App\Http\Controllers\Banking\SavingsController;
+use App\Http\Controllers\LoanSimulationController;
 use App\Http\Controllers\SupportController;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 
@@ -57,6 +59,33 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/appointments/create', function () {
         return Inertia::render('appointments/Create');
+    });
+
+    // for simulation 
+    // 🔥 Simulation UI
+    Route::get('/simulation', function () {
+        return Inertia::render('Simulation/Loan');
+    });
+
+    // 🔥 Run simulation (API)
+    Route::post('/loan/simulate', [LoanSimulationController::class, 'simulate']);
+
+    // 🔥 Apply loan (API)
+    Route::post('/loan/apply', [LoanSimulationController::class, 'apply']);
+
+    // 🔥 Simulation history
+    Route::get('/loan/history', [LoanSimulationController::class, 'index']);
+
+    // 🔥 Real loans list
+    Route::get('/loans', function () {
+        return Inertia::render('Simulation/Loans', [
+            'loans' => Auth::user()->loans()->latest()->get()
+        ]);
+    });
+
+    // 🔥 Apply page (optional UI page)
+    Route::get('/loan/apply', function () {
+        return Inertia::render('Simulation/Apply');
     });
 });
 

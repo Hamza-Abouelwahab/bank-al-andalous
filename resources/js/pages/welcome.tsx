@@ -99,12 +99,200 @@ export default function Welcome({
 
                         {/* LOGO */}
                         <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/15 ring-1 ring-orange-500/30">
-                                <Landmark className="h-5 w-5 text-orange-400" />
+                            {/* Icon */}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 64 84"
+                                width="52"
+                                height="64"
+                                fill="none"
+                            >
+                                {/* OUTER ARCH */}
+                                <path
+                                    d="
+            M11 78
+            V30
+            C11 26.5 12.3 23.7 14.8 21.5
+            L19.4 17.4
+            L22.8 13.2
+            L26.1 9.1
+            L29.1 5.8
+            L32 3.5
+            L34.9 5.8
+            L37.9 9.1
+            L41.2 13.2
+            L44.6 17.4
+            L49.2 21.5
+            C51.7 23.7 53 26.5 53 30
+            V78
+        "
+                                    stroke="#F28C28"
+                                    strokeWidth="2.3"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+
+                                {/* DECORATIVE TOP INNER LINE */}
+                                <path
+                                    d="
+            M17 29
+            C17 26.4 18 24.2 19.9 22.5
+            L24 18.8
+            L26.8 15.2
+            L29.2 12.1
+            L32 9.8
+            L34.8 12.1
+            L37.2 15.2
+            L40 18.8
+            L44.1 22.5
+            C46 24.2 47 26.4 47 29
+        "
+                                    stroke="#F28C28"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+
+                                {/* INNER ARCH */}
+                                <path
+                                    d="
+            M18 78
+            V33
+            C18 30.6 18.9 28.6 20.6 27
+            L24.4 23.4
+            L27 20.2
+            L29.2 17.6
+            L32 15.4
+            L34.8 17.6
+            L37 20.2
+            L39.6 23.4
+            L43.4 27
+            C45.1 28.6 46 30.6 46 33
+            V78
+        "
+                                    stroke="#F28C28"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+
+                                {/* LITTLE SHOULDER DETAILS */}
+                                <path
+                                    d="M18 34.5H21.2"
+                                    stroke="#F28C28"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                />
+                                <path
+                                    d="M42.8 34.5H46"
+                                    stroke="#F28C28"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                />
+
+                                {/* TOP SMALL STAR */}
+                                <path
+                                    d="
+            M32 20.2
+            L33.1 22.6
+            L35.7 21.9
+            L35 24.5
+            L37.4 25.6
+            L35 26.7
+            L35.7 29.3
+            L33.1 28.6
+            L32 31
+            L30.9 28.6
+            L28.3 29.3
+            L29 26.7
+            L26.6 25.6
+            L29 24.5
+            L28.3 21.9
+            L30.9 22.6
+            Z
+        "
+                                    fill="#F28C28"
+                                />
+
+                                {/* FLOWER */}
+                                <g transform="translate(32 53)">
+                                    {/* 8 petals */}
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                    />
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                        transform="rotate(45)"
+                                    />
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                        transform="rotate(90)"
+                                    />
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                        transform="rotate(135)"
+                                    />
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                        transform="rotate(180)"
+                                    />
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                        transform="rotate(225)"
+                                    />
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                        transform="rotate(270)"
+                                    />
+                                    <path
+                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        fill="none"
+                                        transform="rotate(315)"
+                                    />
+
+                                    {/* center ring */}
+                                    <circle
+                                        cx="0"
+                                        cy="0"
+                                        r="2.2"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.4"
+                                        fill="none"
+                                    />
+                                </g>
+                            </svg>
+                            {/* Text */}
+                            <div className="leading-tight">
+                                <h1 className="text-xl font-extrabold text-slate-900 tracking-wide">
+                                    BANK AL-ANDALOUS
+                                </h1>
+                                <p className="text-sm text-slate-500 font-medium">
+                                    بنك الأندلس
+                                </p>
                             </div>
-                            <h1 className="text-xl font-extrabold tracking-tight">
-                                <span className="text-orange-400">Orange</span>Bank
-                            </h1>
                         </div>
 
                         {/* DESKTOP NAV */}
@@ -196,25 +384,31 @@ export default function Welcome({
                     )}
                 </header>
 
-                {/* Hero */}
+                {/* home  */}
                 <section className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:px-8 py-20 lg:grid-cols-2">
                     <div>
-                        <span className="inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-1.5 text-sm font-semibold text-orange-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+                        <span className="inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-1.5 text-sm font-semibold text-orange-500">
+                            <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
                             Smart Banking for a Better Future
                         </span>
 
                         <h2 className="mt-6 max-w-xl text-3xl sm:text-4xl lg:text-6xl leading-[1.1] font-extrabold tracking-tight">
                             Welcome to{' '}
-                            <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
-                                OrangeBank
+                            <span className="block bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                                Bank Al-Andalous
                             </span>
+                            {/* 🔥 Moroccan separator */}
+                            <div className="flex items-center gap-4 mt-6 mb-6 max-w-md">
+                                <div className="h-px flex-1 bg-orange-200" />
+                                <div className="text-orange-500 text-xl">✺</div>
+                                <div className="h-px flex-1 bg-orange-200" />
+                            </div>
                         </h2>
 
                         <p className="mt-6 max-w-lg text-lg leading-8 text-slate-500">
-                            Your trusted partner for a smarter financial life.
-                            Modern banking solutions that help you save, plan,
-                            and grow your money securely.
+                            Inspired by 12 centuries of Moroccan heritage, Bank Al-Andalous
+                            combines tradition and innovation to deliver secure, modern
+                            financial solutions.
                         </p>
 
                         <div className="mt-9 flex flex-col sm:flex-row gap-4">
@@ -222,14 +416,14 @@ export default function Welcome({
                                 auth?.user ? (
                                     <Link
                                         href="/dashboard"
-                                        className="flex items-center gap-3 rounded-xl bg-orange-500 px-4 sm:px-6 lg:px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
+                                        className="flex items-center gap-3 rounded-xl bg-orange-500 px-6 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400"
                                     >
                                         Go To Dashboard <ArrowRight size={18} />
                                     </Link>
                                 ) : (
                                     <Link
                                         href="/login"
-                                        className="flex items-center gap-3 rounded-xl bg-orange-500 px-4 sm:px-6 lg:px-8 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400 hover:shadow-orange-400/40"
+                                        className="flex items-center gap-3 rounded-xl bg-orange-500 px-6 py-4 font-bold text-white shadow-xl shadow-orange-500/30 transition hover:bg-orange-400"
                                     >
                                         Login to Your Account <ArrowRight size={18} />
                                     </Link>
@@ -238,7 +432,7 @@ export default function Welcome({
 
                             <a
                                 href="#features"
-                                className="rounded-xl border border-slate-200 px-4 sm:px-6 lg:px-8 py-4 font-bold text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
+                                className="rounded-xl border border-slate-200 px-6 py-4 font-bold text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
                             >
                                 Explore Features
                             </a>
@@ -250,17 +444,9 @@ export default function Welcome({
                                 [Headphones, '24/7 Support'],
                                 [Lock, 'Your Data is Safe'],
                             ].map(([Icon, label]: any, i) => (
-                                <span
-                                    key={label}
-                                    className="flex items-center gap-2"
-                                >
-                                    {i > 0 && (
-                                        <span className="h-4 w-px bg-slate-200" />
-                                    )}
-                                    <Icon
-                                        size={16}
-                                        className="text-orange-400"
-                                    />
+                                <span key={label} className="flex items-center gap-2">
+                                    {i > 0 && <span className="h-4 w-px bg-slate-200" />}
+                                    <Icon size={16} className="text-orange-500" />
                                     {label}
                                 </span>
                             ))}
@@ -272,14 +458,11 @@ export default function Welcome({
                         <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-orange-500/10 blur-3xl" />
 
                         {/* Credit card */}
-                        <div className="absolute top-40 left-0 z-10 hidden rotate-[-8deg] rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 p-5 text-white shadow-2xl lg:block">
+                        <div className="absolute top-40 left-0 z-10 hidden rotate-[-8deg] rounded-2xl bg-gradient-to-br from-slate-800 to-black p-5 text-white shadow-2xl lg:block">
                             <div className="mb-8 flex items-center gap-2">
-                                <Landmark
-                                    size={16}
-                                    className="text-orange-400"
-                                />
+                                <Landmark size={16} className="text-orange-500" />
                                 <span className="text-sm font-bold">
-                                    OrangeBank
+                                    Bank Al-Andalous
                                 </span>
                             </div>
                             <CreditCard className="mb-4 text-slate-300" />
@@ -301,7 +484,7 @@ export default function Welcome({
                                 Welcome Back!
                             </p>
                             <p className="text-xs text-slate-400">
-                                Good to see you again
+                                مرحباً بعودتك
                             </p>
 
                             <div className="mt-4 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-4 text-white shadow-lg shadow-orange-500/30">
@@ -326,10 +509,7 @@ export default function Welcome({
                                     [Smartphone, 'Top Up'],
                                     [MoreHorizontal, 'More'],
                                 ].map(([Icon, label]: any) => (
-                                    <div
-                                        key={label}
-                                        className="rounded-xl bg-orange-50 p-2"
-                                    >
+                                    <div key={label} className="rounded-xl bg-orange-50 p-2">
                                         <Icon className="mx-auto mb-1 h-4 w-4 text-orange-500" />
                                         {label}
                                     </div>
@@ -346,27 +526,12 @@ export default function Welcome({
                                     </span>
                                 </div>
                                 {[
-                                    [
-                                        'Salary Deposit',
-                                        '+3,500.00 DH',
-                                        'text-emerald-600',
-                                    ],
+                                    ['Salary Deposit', '+3,500.00 DH', 'text-emerald-600'],
                                     ['Shopping', '-120.00 DH', 'text-red-500'],
-                                    [
-                                        'Car Goal Saving',
-                                        '-100.00 DH',
-                                        'text-red-500',
-                                    ],
-                                    [
-                                        'Electricity Bill',
-                                        '-250.00 DH',
-                                        'text-red-500',
-                                    ],
+                                    ['Car Saving', '-100.00 DH', 'text-red-500'],
+                                    ['Electricity Bill', '-250.00 DH', 'text-red-500'],
                                 ].map(([name, price, color]) => (
-                                    <div
-                                        key={name}
-                                        className="mb-2 flex items-center justify-between text-[10px] text-slate-500"
-                                    >
+                                    <div key={name} className="mb-2 flex justify-between text-[10px] text-slate-500">
                                         <span>{name}</span>
                                         <span className={`font-bold ${color}`}>
                                             {price}
@@ -381,7 +546,6 @@ export default function Welcome({
                         </div>
                     </div>
                 </section>
-
                 {/* About */}
                 <section
                     id="aboutus"
@@ -738,10 +902,85 @@ export default function Welcome({
                         <div className="lg:col-span-1">
                             <div className="flex items-center gap-3">
                                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/15 ring-1 ring-orange-500/30">
-                                    <Landmark className="h-5 w-5 text-orange-500" />
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 64 84"
+                                        className="h-7 w-7"
+                                        fill="none"
+                                    >
+                                        {/* OUTER ARCH */}
+                                        <path
+                                            d="M11 78V30C11 26.5 12.3 23.7 14.8 21.5L19.4 17.4L22.8 13.2L26.1 9.1L29.1 5.8L32 3.5L34.9 5.8L37.9 9.1L41.2 13.2L44.6 17.4L49.2 21.5C51.7 23.7 53 26.5 53 30V78"
+                                            stroke="#F28C28"
+                                            strokeWidth="2.3"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+
+                                        {/* DECORATIVE TOP INNER LINE */}
+                                        <path
+                                            d="M17 29C17 26.4 18 24.2 19.9 22.5L24 18.8L26.8 15.2L29.2 12.1L32 9.8L34.8 12.1L37.2 15.2L40 18.8L44.1 22.5C46 24.2 47 26.4 47 29"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+
+                                        {/* INNER ARCH */}
+                                        <path
+                                            d="M18 78V33C18 30.6 18.9 28.6 20.6 27L24.4 23.4L27 20.2L29.2 17.6L32 15.4L34.8 17.6L37 20.2L39.6 23.4L43.4 27C45.1 28.6 46 30.6 46 33V78"
+                                            stroke="#F28C28"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+
+                                        {/* LITTLE SHOULDER DETAILS */}
+                                        <path
+                                            d="M18 34.5H21.2"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            strokeLinecap="round"
+                                        />
+                                        <path
+                                            d="M42.8 34.5H46"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            strokeLinecap="round"
+                                        />
+
+                                        {/* TOP SMALL STAR */}
+                                        <path
+                                            d="M32 20.2L33.1 22.6L35.7 21.9L35 24.5L37.4 25.6L35 26.7L35.7 29.3L33.1 28.6L32 31L30.9 28.6L28.3 29.3L29 26.7L26.6 25.6L29 24.5L28.3 21.9L30.9 22.6Z"
+                                            fill="#F28C28"
+                                        />
+
+                                        {/* FLOWER */}
+                                        <g transform="translate(32 53)">
+                                            {Array.from({ length: 8 }).map((_, i) => (
+                                                <path
+                                                    key={i}
+                                                    d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                                    stroke="#F28C28"
+                                                    strokeWidth="1.6"
+                                                    fill="none"
+                                                    transform={`rotate(${i * 45})`}
+                                                />
+                                            ))}
+
+                                            <circle
+                                                cx="0"
+                                                cy="0"
+                                                r="2.2"
+                                                stroke="#F28C28"
+                                                strokeWidth="1.4"
+                                                fill="none"
+                                            />
+                                        </g>
+                                    </svg>
                                 </div>
                                 <span className="text-xl font-extrabold">
-                                    <span className="text-orange-500">Orange</span>Bank
+                                    Bank <span className="text-orange-500" >Al-Andalous   </span >
                                 </span>
                             </div>
                             <p className="mt-4 text-sm leading-7 text-slate-500">
