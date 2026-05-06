@@ -347,7 +347,7 @@ export default function Dashboard() {
                                         <h3 className="text-lg font-bold">Recent Transactions</h3>
                                         <Link
                                             href="/transactions"
-                                            className="rounded-xl border border-[#EDE8E0] px-3 py-2 text-sm font-semibold hover:bg-[#F8F6F1]"
+                                            className="rounded-xl  px-3 py-2 text-sm bg-orange-600 hover:bg-orange-700  font-semibold text-white"
                                         >
                                             View All
                                         </Link>
@@ -416,7 +416,7 @@ export default function Dashboard() {
                                         <h3 className="text-lg font-bold">Account Summary</h3>
                                         <button
                                             onClick={() => setBalanceVisible(!balanceVisible)}
-                                            className="rounded-xl p-2 hover:bg-[#F8F6F1]"
+                                            className="rounded-xl cursor-pointer p-2 hover:bg-[#F8F6F1]"
                                         >
                                             {balanceVisible ? (
                                                 <EyeOff className="h-5 w-5" />
@@ -559,51 +559,57 @@ export default function Dashboard() {
                                             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50">
                                                 <Target className="h-5 w-5 text-orange-600" />
                                             </div>
-                                            <h3 className="text-lg font-bold">Saving Challenges</h3>
+                                            <h3 className="text-lg font-bold">Saving Goals</h3>
                                         </div>
 
                                         <button
-                                            onClick={() => router.visit('/saving-challenges/create')}
-                                            className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-700"
+                                            onClick={() => router.visit('savings/index')}
+                                            className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold cursor-pointer text-white hover:bg-orange-700"
                                         >
-                                            New Challenge
+                                            New Goal
                                         </button>
                                     </div>
 
                                     <div className="grid gap-4 md:grid-cols-2">
-                                        {challenges.length > 0 ? (
-                                            challenges.slice(0, 2).map((challenge: any) => (
-                                                <div
-                                                    key={challenge.id}
-                                                    className="rounded-2xl border border-[#EDE8E0] p-4"
-                                                >
-                                                    <div className="mb-3 flex items-center justify-between">
-                                                        <p className="font-bold">{challenge.name}</p>
-                                                        <p className="text-sm font-bold text-orange-600">
-                                                            {challenge.progress}%
-                                                        </p>
-                                                    </div>
+                                        {goals.length > 0 ? (
+                                            goals.slice(0, 2).map((goal: any) => {
+                                                const saved = Number(goal.saved_amount ?? 0);
+                                                const target = Number(goal.target_amount ?? 0);
+                                                const progress = target > 0 ? Math.min((saved / target) * 100, 100) : 0;
 
-                                                    <div className="mb-3 h-2 rounded-full bg-[#F1EEE9]">
-                                                        <div
-                                                            className="h-2 rounded-full bg-orange-500"
-                                                            style={{
-                                                                width: `${challenge.progress}%`,
-                                                            }}
-                                                        />
-                                                    </div>
+                                                return (
+                                                    <div
+                                                        key={goal.id}
+                                                        className="rounded-2xl border border-[#EDE8E0] bg-white p-4"
+                                                    >
+                                                        <div className="mb-3 flex items-center justify-between">
+                                                            <p className="font-bold">{goal.name}</p>
+                                                            <p className="text-sm font-bold text-orange-600">
+                                                                {progress.toFixed(0)}%
+                                                            </p>
+                                                        </div>
 
-                                                    <div className="flex items-center justify-between text-sm text-[#9C978F]">
-                                                        <span>{challenge.days_left} days left</span>
-                                                        <span>{challenge.reward}</span>
+                                                        <div className="mb-3 h-2 rounded-full bg-[#F1EEE9]">
+                                                            <div
+                                                                className="h-2 rounded-full bg-orange-500"
+                                                                style={{
+                                                                    width: `${progress}%`,
+                                                                }}
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex items-center justify-between text-sm text-[#9C978F]">
+                                                            <span>{formatMoney(saved)}</span>
+                                                            <span>{formatMoney(target)}</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         ) : (
                                             <div className="rounded-2xl bg-[#F8F6F1] p-6 md:col-span-2">
-                                                <p className="font-semibold">No active challenges</p>
+                                                <p className="font-semibold">No saving goals yet</p>
                                                 <p className="text-sm text-[#9C978F]">
-                                                    Start a challenge to build saving habits.
+                                                    Create a goal to start tracking your progress.
                                                 </p>
                                             </div>
                                         )}
@@ -647,7 +653,7 @@ export default function Dashboard() {
 
                                     <Link
                                         href="/ai-chat"
-                                        className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 py-3 font-bold text-white transition hover:shadow-lg"
+                                        className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-600 hover:bg-orange-700 py-3 font-bold text-white transition hover:shadow-lg"
                                     >
                                         <Bot className="h-5 w-5" />
                                         Ask AI Advisor

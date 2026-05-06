@@ -113,7 +113,7 @@ return;
                 <header className="shrink-0 border-b border-gray-200 bg-white">
                     <div className="px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
                         <div className="flex min-w-0 items-center gap-3">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-orange-600">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600">
                                 <Bot className="h-5 w-5 text-white sm:h-6 sm:w-6" />
                             </div>
 
@@ -168,7 +168,7 @@ return;
                                     <div
                                         className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm sm:max-w-[78%] sm:px-5 sm:text-base ${
                                             message.sender === 'user'
-                                                ? 'bg-gradient-to-r from-[#1f1a17] to-orange-600 text-white'
+                                                ? 'bg-orange-600 text-white'
                                                 : 'border border-gray-200 bg-white text-gray-800'
                                         }`}
                                     >
@@ -220,7 +220,7 @@ return;
                             <button
                                 onClick={handleSend}
                                 disabled={!inputText.trim() || isLoading}
-                                className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1f1a17] to-orange-600 px-4 text-white transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
+                                className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-orange-600 px-4 text-white transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
                             >
                                 <Send className="h-5 w-5" />
                                 <span className="hidden font-medium sm:inline">
