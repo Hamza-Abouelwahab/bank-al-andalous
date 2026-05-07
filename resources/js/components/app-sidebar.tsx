@@ -14,6 +14,9 @@ import {
     Settings,
     Sun,
     Target,
+    Users,
+    ShieldCheck,
+    UserCog,
 } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 import {
@@ -58,9 +61,16 @@ const supportNav = [
     { title: 'Support', href: '/support', icon: Headphones },
 ];
 
+const adminNav = [
+    { title: 'Admin Dashboard', href: '/admin', icon: ShieldCheck },
+    { title: 'Users', href: '/admin/users', icon: Users },
+    { title: 'Appointments', href: '/admin/appointments', icon: CalendarCheck },
+    { title: 'Security Center', href: '/admin/security', icon: UserCog },
+];
+
 // ─── Bank Logo (reusable inline SVG) ─────────────────────────────
 function BankLogo({
-    
+
     className = '',
 }: {
     size?: number;
@@ -138,6 +148,8 @@ function BankLogo({
 export function AppSidebar() {
     const page = usePage();
     const { auth } = page.props as any;
+    const user = auth?.user;
+    const isAdmin = user?.role === 'admin';
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -169,11 +181,27 @@ export function AppSidebar() {
 
             {/* ── Nav Content ── */}
             <SidebarContent className="gap-0 py-3">
-                <NavMain items={bankingNav} groupLabel="Banking" />
-                <SidebarSeparator className="mx-4 my-2 opacity-50" />
-                <NavMain items={planningNav} groupLabel="Planning" />
-                <SidebarSeparator className="mx-4 my-2 opacity-50" />
-                <NavMain items={supportNav} groupLabel="Support" />
+                {isAdmin ? (
+                    <>
+                        <NavMain items={adminNav} groupLabel="Administration" />
+                        <SidebarSeparator className="mx-4 my-2 opacity-50" />
+                        <NavMain
+                            items={[
+                                { title: 'Support', href: '/support', icon: Headphones },
+                                { title: 'Settings', href: '/settings/profile', icon: Settings },
+                            ]}
+                            groupLabel="System"
+                        />
+                    </>
+                ) : (
+                    <>
+                        <NavMain items={bankingNav} groupLabel="Banking" />
+                        <SidebarSeparator className="mx-4 my-2 opacity-50" />
+                        <NavMain items={planningNav} groupLabel="Planning" />
+                        <SidebarSeparator className="mx-4 my-2 opacity-50" />
+                        <NavMain items={supportNav} groupLabel="Support" />
+                    </>
+                )}
             </SidebarContent>
 
             {/* ── Footer ── */}

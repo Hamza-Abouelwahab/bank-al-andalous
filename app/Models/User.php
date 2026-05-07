@@ -65,7 +65,12 @@ class User extends Authenticatable
     }
 
     public function loans()
-{
-    return $this->hasMany(Loan::class);
-}
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(\App\Models\Appointment::class);
+    }
 }

@@ -99,8 +99,20 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
 
 // Admin
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::inertia('/admin', 'Admin/Dashboard')->name('admin.dashboard');
-    Route::delete('/admin/users/{user}', [DashboardController::class, 'destroy'])->name('admin.users.destroy');
+    Route::get('/admin', [DashboardController::class, 'index'])
+        ->name('admin.dashboard');
+
+    Route::get('/admin/users', [DashboardController::class, 'users'])
+        ->name('admin.users');
+
+    Route::get('/admin/appointments', [DashboardController::class, 'appointments'])
+        ->name('admin.appointments');
+
+    Route::get('/admin/security', [DashboardController::class, 'security'])
+        ->name('admin.security');
+
+    Route::delete('/admin/users/{user}', [DashboardController::class, 'destroy'])
+        ->name('admin.users.destroy');
 });
 
 // Account card

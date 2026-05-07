@@ -9,24 +9,53 @@ use App\Models\User;
 use App\Models\BankAccount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Appointment;
+use App\Models\Transaction;
+
+
+
 
 class DashboardController extends Controller
 {
+    
+
     public function index()
     {
         $user = Auth::user();
 
 
         if ($user->role === 'admin') {
+            $appointments = Appointment::query()
+                ->with(['user.profile', 'user.bankAccount'])
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->where(function ($query) {
+                    $query->whereDate('date', '>', now()->toDateString())
+                        ->orWhere(function ($query) {
+                            $query->whereDate('date', now()->toDateString())
+                                ->whereTime('time', '>=', now()->format('H:i'));
+                        });
+                })
+                ->orderBy('date')
+                ->orderBy('time')
+                ->get();
+
             return Inertia::render('Admin/Dashboard', [
                 'auth' => [
                     'user' => $user,
                 ],
-                'users' => User::with(['bankAccount', 'profile'])->get(),
+
+                'users' => User::with(['bankAccount', 'profile'])
+                    ->latest()
+                    ->get(),
+
+                'appointments' => $appointments,
+
                 'stats' => [
                     'total_users' => User::count(),
                     'total_accounts' => BankAccount::count(),
                     'total_balance' => BankAccount::sum('balance'),
+                    'total_transactions' => Transaction::count(),
+                    'future_appointments' => $appointments->count(),
                 ],
             ]);
         }
@@ -51,8 +80,8 @@ class DashboardController extends Controller
         $account = auth()->user()->bankAccount;
         $goals = auth()->user()->savingGoals;
         $recentTransactions = $bankAccount
-    ? $bankAccount->transactions()->latest()->take(5)->get()
-    : collect();
+            ? $bankAccount->transactions()->latest()->take(5)->get()
+            : collect();
 
         $alerts = [];
 
@@ -162,15 +191,92 @@ class DashboardController extends Controller
     }
 
 
+    public function users()
+    {
+        $users = User::query()
+            ->with(['bankAccount', 'profile'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('Admin/Users', [
+            'auth' => [
+                'user' => Auth::user(),
+            ],
+
+            'users' => $users,
+
+            'stats' => [
+                'total_users' => User::count(),
+                'total_accounts' => BankAccount::count(),
+                'total_balance' => BankAccount::sum('balance'),
+            ],
+        ]);
+    }
+
+    public function appointments()
+    {
+        $appointments = Appointment::query()
+            ->with(['user.profile', 'user.bankAccount'])
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->where(function ($query) {
+                $query->whereDate('date', '>', now()->toDateString())
+                    ->orWhere(function ($query) {
+                        $query->whereDate('date', now()->toDateString())
+                            ->whereTime('time', '>=', now()->format('H:i'));
+                    });
+            })
+            ->orderBy('date')
+            ->orderBy('time')
+            ->get();
+
+        return Inertia::render('Admin/Appointments', [
+            'auth' => [
+                'user' => Auth::user(),
+            ],
+
+            'appointments' => $appointments,
+
+            'stats' => [
+                'future_appointments' => $appointments->count(),
+                'pending_appointments' => $appointments->where('status', 'pending')->count(),
+                'confirmed_appointments' => $appointments->where('status', 'confirmed')->count(),
+            ],
+        ]);
+    }
+
+    public function security()
+    {
+        return Inertia::render('Admin/Security', [
+            'auth' => [
+                'user' => Auth::user(),
+            ],
+
+            'stats' => [
+                'failed_logins' => 0,
+                'locked_accounts' => 0,
+                'large_transfers' => 0,
+                'suspicious_reports' => 0,
+            ],
+        ]);
+    }
+
+
     public function destroy(User $user)
     {
-        if ($user->id === Auth::id()) {
+        if (Auth::id() === $user->id) {
             return back()->withErrors([
                 'user' => 'You cannot delete your own account.',
             ]);
         }
 
+        if ($user->role === 'admin') {
+            return back()->withErrors([
+                'user' => 'You cannot delete another admin.',
+            ]);
+        }
+
         DB::transaction(function () use ($user) {
+            $user->appointments()->delete();
 
             if ($user->bankAccount) {
                 $user->bankAccount->transactions()->delete();
@@ -180,7 +286,7 @@ class DashboardController extends Controller
             $user->profile()?->delete();
             $user->financialProfile()?->delete();
 
-            $user->delete(); //
+            $user->delete();
         });
 
         return back()->with('success', 'User deleted successfully.');
