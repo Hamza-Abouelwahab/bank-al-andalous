@@ -120,6 +120,7 @@ export default function AdminAppointments() {
 
         return 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20';
     };
+    
 
     return (
         <>
