@@ -20,7 +20,7 @@ export default function ConfirmPassword() {
                                 placeholder="Password"
                                 autoComplete="current-password"
                                 autoFocus
-                                className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:ring-orange-500/20"
+                                className=" border-orange-200/50 dark:border-[#584b3e] bg-white text-slate-900 placeholder:text-slate-400 focus:border-orange-600 dark:bg-transparent outline-0"
                             />
                             <InputError message={errors.password} />
                         </div>

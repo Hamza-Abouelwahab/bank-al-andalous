@@ -69,19 +69,18 @@ export default function SupportIndex() {
         <>
             <Head title="Support Center" />
 
-            <div className="min-h-screen bg-[#FFFCF9]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <div className="min-h-screen bg-[#F8F6F1] dark:bg-[#0F0D0B]">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
-                    <div className="rounded-[32px] border border-[#EFE7DE] bg-white/80 backdrop-blur-sm overflow-hidden shadow-[0_10px_40px_rgba(15,13,11,0.04)]">
+                    <div className="rounded-[32px] border border-[#EFE7DE] bg-white/90 backdrop-blur-sm overflow-hidden shadow-[0_10px_40px_rgba(15,13,11,0.04)] dark:border-[#2A2520] dark:bg-[#1A1714]">
                         <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8 px-6 lg:px-10 py-10 border-b border-[#F2ECE5]">
                             <div className="max-w-2xl">
                                 <p className="text-[#9C978F] text-sm mb-3">Support Center</p>
                                 <h1
-                                    className="text-4xl lg:text-5xl font-extrabold text-[#0F0D0B] tracking-tight leading-tight"
-                                    style={{ fontFamily: "'Syne', sans-serif" }}
+                                    className="text-4xl lg:text-5xl font-extrabold text-[#0F0D0B] tracking-tight leading-tight dark:text-white"
                                 >
                                     How can we help you, {firstName}?
                                 </h1>
-                                <p className="mt-4 text-lg text-[#5C5751] max-w-xl leading-relaxed">
+                                <p className="mt-4 text-lg text-[#5C5751] max-w-xl leading-relaxed dark:text-slate-400">
                                     Find help for cards, payments, security, account access, and urgent support.
                                 </p>
 
@@ -89,7 +88,7 @@ export default function SupportIndex() {
                                     <input
                                         type="text"
                                         placeholder="Search help topics, articles, questions..."
-                                        className="w-full h-16 rounded-2xl border border-[#EDE8E0] bg-[#FFFCF9] pl-6 pr-16 text-base text-[#0F0D0B] placeholder:text-[#A8A29B] outline-none focus:border-[#E8632A] focus:ring-4 focus:ring-[#E8632A]/10 transition"
+                                        className="w-full h-16 rounded-2xl border border-[#EDE8E0] bg-[#FFFCF9] pl-6 pr-16 text-base text-[#0F0D0B] placeholder:text-[#A8A29B] outline-none focus:border-[#E8632A] focus:ring-4 focus:ring-[#E8632A]/10 transition dark:border-[#2A2520] dark:bg-[#252118] dark:text-white dark:placeholder:text-slate-600"
                                     />
                                     <div className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl text-[#7B746C]">
                                         ⌕
@@ -115,10 +114,7 @@ export default function SupportIndex() {
 
                         <div className="px-6 lg:px-10 py-8">
                             <div className="flex items-center justify-between mb-5">
-                                <h2
-                                    className="text-xl font-bold text-[#0F0D0B]"
-                                    style={{ fontFamily: "'Syne', sans-serif" }}
-                                >
+                                <h2 className="text-xl font-bold text-[#0F0D0B] dark:text-white">
                                     Popular Topics
                                 </h2>
                                 <Link href="/support" className="text-sm font-medium text-[#E8632A] hover:underline">
@@ -131,15 +127,15 @@ export default function SupportIndex() {
                                     <Link
                                         key={topic.title}
                                         href={topic.href}
-                                        className="group rounded-2xl border border-[#EDE8E0] bg-white p-5 hover:border-[#E8632A] hover:shadow-[0_12px_30px_rgba(232,99,42,0.08)] transition-all"
+                                        className="group rounded-2xl border border-[#EDE8E0] bg-white p-5 hover:border-[#E8632A] hover:shadow-[0_12px_30px_rgba(232,99,42,0.08)] transition-all dark:border-[#2A2520] dark:bg-[#1E1B18]"
                                     >
                                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${topic.tone}`}>
                                             {topic.icon}
                                         </div>
-                                        <h3 className="mt-4 text-lg font-bold text-[#0F0D0B] group-hover:text-[#E8632A] transition">
+                                        <h3 className="mt-4 text-lg font-bold text-[#0F0D0B] group-hover:text-[#E8632A] transition dark:text-white">
                                             {topic.title}
                                         </h3>
-                                        <p className="mt-2 text-sm leading-6 text-[#6E6861]">
+                                        <p className="mt-2 text-sm leading-6 text-[#6E6861] dark:text-slate-400">
                                             {topic.description}
                                         </p>
                                         <div className="mt-5 text-[#E8632A] text-lg">→</div>
@@ -149,11 +145,8 @@ export default function SupportIndex() {
                         </div>
 
                         <div className="px-6 lg:px-10 pb-8 grid lg:grid-cols-[0.9fr_1.1fr] gap-6">
-                            <div className="rounded-[28px] border border-[#EDE8E0] bg-white p-6">
-                                <h3
-                                    className="text-2xl font-bold text-[#0F0D0B] mb-5"
-                                    style={{ fontFamily: "'Syne', sans-serif" }}
-                                >
+                            <div className="rounded-[28px] border border-[#EDE8E0] bg-white p-6 dark:border-[#2A2520] dark:bg-[#1A1714]">
+                                <h3 className="text-2xl font-bold text-[#0F0D0B] mb-5 dark:text-white">
                                     Contact Support
                                 </h3>
 
@@ -161,15 +154,15 @@ export default function SupportIndex() {
                                     {contactItems.map((item) => (
                                         <button
                                             key={item.title}
-                                            className="w-full flex items-center justify-between rounded-2xl border border-[#F1EAE3] px-4 py-4 hover:border-[#E8632A] hover:bg-[#FFF8F3] transition"
+                                            className="w-full flex items-center justify-between rounded-2xl border border-[#F1EAE3] px-4 py-4 hover:border-[#E8632A] hover:bg-[#FFF8F3] transition dark:border-[#2A2520] dark:hover:bg-orange-500/5"
                                         >
                                             <div className="flex items-center gap-4 text-left">
                                                 <div className="w-12 h-12 rounded-2xl bg-[#FFF3EA] flex items-center justify-center text-xl">
                                                     {item.icon}
                                                 </div>
                                                 <div>
-                                                    <p className="text-base font-bold text-[#0F0D0B]">{item.title}</p>
-                                                    <p className="text-sm text-[#7C756E]">{item.subtitle}</p>
+                                                    <p className="text-base font-bold text-[#0F0D0B] dark:text-white">{item.title}</p>
+                                                    <p className="text-sm text-[#7C756E] dark:text-slate-400">{item.subtitle}</p>
                                                 </div>
                                             </div>
 
@@ -192,18 +185,15 @@ export default function SupportIndex() {
                                 </div>
                             </div>
 
-                            <div className="rounded-[28px] border border-[#EDE8E0] bg-white p-6 relative overflow-hidden">
+                            <div className="rounded-[28px] border border-[#EDE8E0] bg-white p-6 relative overflow-hidden dark:border-[#2A2520] dark:bg-[#1A1714]">
                                 <div className="absolute right-[-30px] bottom-[-40px] text-[180px] opacity-[0.06] select-none">
                                     🛡️
                                 </div>
 
-                                <h3
-                                    className="text-2xl font-bold text-[#0F0D0B] mb-2"
-                                    style={{ fontFamily: "'Syne', sans-serif" }}
-                                >
+                                <h3 className="text-2xl font-bold text-[#0F0D0B] mb-2 dark:text-white">
                                     Security is our priority
                                 </h3>
-                                <p className="text-[#6E6861] max-w-xl leading-7">
+                                <p className="text-[#6E6861] max-w-xl leading-7 dark:text-slate-400">
                                     We use multiple layers of protection to help keep your banking experience
                                     safe, trusted, and secure.
                                 </p>

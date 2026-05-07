@@ -10,7 +10,7 @@ export default function AccountShow() {
     return (
         <>
             <Head title="My Account" />
-            <div className="min-h-screen bg-[#FFFCF9] p-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <div className="min-h-screen bg-[#f8f6f1] dark:bg-[#0f0d0b] p-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                 <div className="max-w-xl mx-auto">
 
                     {/* Credit Card */}
@@ -85,22 +85,22 @@ export default function AccountShow() {
                     </div>
 
                     {/* RIP below card */}
-                    <div className="mt-4 bg-white border border-[#EDE8E0] rounded-xl p-4 flex items-center justify-between">
+                    <div className="mt-4 bg-white dark:bg-[#1f1a17] border border-orange-100/60 dark:border-[#7a2800]/30 rounded-xl p-4 flex items-center justify-between">
                         <div>
-                            <p className="text-[10px] text-[#9C978F] uppercase tracking-[2px] mb-0.5">RIP</p>
-                            <p className="font-mono text-sm text-[#E8632A] font-semibold">{account?.rip ?? '—'}</p>
+                            <p className="text-[10px] text-[#1f1a17]/60 dark:text-white/60 uppercase tracking-[2px] mb-0.5">RIP</p>
+                            <p className="font-mono text-sm text-orange-600 dark:text-orange-400 font-semibold">{account?.rip ?? '—'}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-[10px] text-[#9C978F] uppercase tracking-[2px] mb-0.5">Status</p>
+                            <p className="text-[10px] text-[#1f1a17]/60 dark:text-white/60 uppercase tracking-[2px] mb-0.5">Status</p>
                             <div className="flex items-center gap-1.5">
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                                <span className="text-xs text-green-600 font-medium">Active</span>
+                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                                <span className="text-xs text-orange-600 dark:text-orange-400 font-medium">Active</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="mt-5">
-                        <a href="/dashboard" className="text-[#E8632A] text-sm hover:underline">← Back to dashboard</a>
+                        <a href="/dashboard" className="text-orange-600 dark:text-orange-400 text-sm hover:text-[#7a2800] dark:hover:text-orange-300 transition-colors">← Back to dashboard</a>
                     </div>
                 </div>
             </div>

@@ -25,13 +25,13 @@ export default function Login({
 
             {/* ✅ Success message */}
             {status && (
-                <div className="mb-4 rounded-lg border border-green-500/20 bg-green-500/10 px-4 py-2.5 text-center text-sm font-medium text-green-500">
+                <div className="mb-4 rounded-lg border border-orange-500/20 bg-orange-500/10 px-4 py-2.5 text-center text-sm font-medium text-orange-600 dark:border-orange-400/30 dark:bg-orange-900/20 dark:text-orange-400">
                     {status}
                 </div>
             )}
 
             {/* 🔐 Security Notice */}
-            <div className="mb-4 rounded-xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-sm text-orange-600">
+            <div className="mb-4 rounded-xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-sm text-orange-600 dark:border-orange-400/30 dark:bg-orange-900/20 dark:text-orange-400">
                 For your security, you may be asked to enter a verification code after login.
             </div>
 
@@ -46,7 +46,7 @@ export default function Login({
 
                             {/* Email */}
                             <div className="grid gap-2">
-                                <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                                <Label htmlFor="email" className="text-sm font-medium text-[#1f1a17] dark:text-white">
                                     Email address
                                 </Label>
                                 <Input
@@ -57,7 +57,7 @@ export default function Login({
                                     autoFocus
                                     autoComplete="email"
                                     placeholder="email@example.com"
-                                    className="border-slate-200 bg-white text-slate-900 focus:border-orange-500 focus:ring-orange-500/20"
+                                    className="border-orange-200/60 bg-white text-[#1f1a17] focus:border-orange-600 focus:ring-orange-600/20 dark:border-[#7a2800]/40 dark:bg-[#1f1a17] dark:text-white"
                                 />
                                 <InputError message={errors.email} />
                             </div>
@@ -65,14 +65,14 @@ export default function Login({
                             {/* Password */}
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password" className="text-sm font-medium text-slate-700">
+                                    <Label htmlFor="password" className="text-sm font-medium text-[#1f1a17] dark:text-white">
                                         Password
                                     </Label>
 
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
-                                            className="ml-auto text-sm text-orange-500 hover:text-orange-400"
+                                            className="ml-auto text-sm text-orange-600 hover:text-[#7a2800] dark:text-orange-400 dark:hover:text-orange-300"
                                         >
                                             Forgot password?
                                         </TextLink>
@@ -86,7 +86,7 @@ export default function Login({
                                     required
                                     autoComplete="current-password"
                                     placeholder="Password"
-                                    className="border-slate-200 bg-white text-slate-900 focus:border-orange-500 focus:ring-orange-500/20"
+                                    className="border-orange-200/60 bg-white text-[#1f1a17] focus:border-orange-600 focus:ring-orange-600/20 dark:border-[#7a2800]/40 dark:bg-[#1f1a17] dark:text-white"
                                 />
 
                                 <InputError message={errors.password} />
@@ -97,9 +97,9 @@ export default function Login({
                                 <Checkbox
                                     id="remember"
                                     name="remember"
-                                    className="border-slate-300 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                                    className="border-orange-300 data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600 dark:border-[#7a2800]/60"
                                 />
-                                <Label htmlFor="remember" className="text-sm text-slate-600">
+                                <Label htmlFor="remember" className="text-sm text-[#1f1a17]/70 dark:text-white/70">
                                     Remember me
                                 </Label>
                             </div>
@@ -108,25 +108,25 @@ export default function Login({
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-400 disabled:opacity-60"
+                                className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#7a2800] disabled:opacity-60"
                             >
                                 {processing && <Spinner />}
                                 {processing ? 'Signing in...' : 'Log in'}
                             </button>
 
                             {/* 🔐 Security footer */}
-                            <div className="text-center text-xs text-slate-400">
+                            <div className="text-center text-xs text-[#1f1a17]/60 dark:text-white/60">
                                 🔐 Protected by secure authentication
                             </div>
                         </div>
 
                         {/* Register */}
                         {canRegister && (
-                            <div className="text-center text-sm text-slate-500">
+                            <div className="text-center text-sm text-[#1f1a17]/70 dark:text-white/70">
                                 Don't have an account?{' '}
                                 <Link
                                     href="/register"
-                                    className="font-semibold text-orange-500 hover:text-orange-400"
+                                    className="font-semibold text-orange-600 hover:text-[#7a2800] dark:text-orange-400 dark:hover:text-orange-300"
                                 >
                                     Sign up
                                 </Link>

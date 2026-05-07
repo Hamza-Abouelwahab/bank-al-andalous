@@ -198,7 +198,7 @@ export default function AdminDashboard() {
         <>
             <Head title="Admin Dashboard" />
 
-            <div className="min-h-screen bg-[#F8F6F1] text-[#171412]">
+            <div className="min-h-screen bg-[#F8F6F1] dark:bg-[#0F0D0B] text-[#171412] dark:text-[#F5F0EA]">
                 <div className="flex min-h-screen">
 
 
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
                                     return (
                                         <div
                                             key={card.label}
-                                            className="rounded-3xl border border-[#ECE7DF] bg-white p-5 shadow-sm"
+                                            className="fintech-card rounded-3xl border border-[#ECE7DF] bg-white p-5 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]"
                                         >
                                             <div className="mb-4 flex items-start justify-between">
                                                 <div
@@ -227,13 +227,13 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
 
-                                            <p className="text-sm text-[#7B756E]">
+                                            <p className="text-sm text-[#7B756E] dark:text-[#9A8E85]">
                                                 {card.label}
                                             </p>
-                                            <p className="mt-1 text-[30px] font-extrabold leading-none tracking-tight text-[#171412]">
+                                            <p className="mt-1 text-[30px] font-extrabold leading-none tracking-tight text-[#171412] dark:text-[#F5F0EA]">
                                                 {card.value}
                                             </p>
-                                            <p className="mt-3 text-sm text-[#7B756E]">
+                                            <p className="mt-3 text-sm text-[#7B756E] dark:text-[#9A8E85]">
                                                 <span className="font-semibold text-green-600">
                                                     ↗
                                                 </span>{' '}
@@ -247,11 +247,11 @@ export default function AdminDashboard() {
                             {/* Middle Grid */}
                             <div className="grid grid-cols-1 gap-6 2xl:grid-cols-12">
                                 {/* Security Center */}
-                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm 2xl:col-span-4">
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714] 2xl:col-span-4">
                                     <div className="flex items-center justify-between border-b border-[#F2EEEA] px-6 py-5">
                                         <div className="flex items-center gap-2">
-                                            <Shield className="h-5 w-5 text-[#171412]" />
-                                            <h3 className="text-lg font-bold">
+                                            <Shield className="h-5 w-5 text-[#171412] dark:text-[#F5F0EA]" />
+                                            <h3 className="text-lg font-bold dark:text-[#F5F0EA]">
                                                 Security Center
                                             </h3>
                                         </div>
@@ -333,7 +333,7 @@ export default function AdminDashboard() {
                                 </section>
 
                                 {/* Recent Activity */}
-                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm 2xl:col-span-4">
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714] 2xl:col-span-4">
                                     <div className="flex items-center justify-between border-b border-[#F2EEEA] px-6 py-5">
                                         <div className="flex items-center gap-2">
                                             <ArrowRightLeft className="h-5 w-5 text-[#171412]" />
@@ -394,7 +394,7 @@ export default function AdminDashboard() {
                                 </section>
 
                                 {/* User Summary */}
-                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm 2xl:col-span-4">
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714] 2xl:col-span-4">
                                     <div className="flex items-center justify-between border-b border-[#F2EEEA] px-6 py-5">
                                         <div className="flex items-center gap-2">
                                             <UserCog className="h-5 w-5 text-[#171412]" />
@@ -448,7 +448,7 @@ export default function AdminDashboard() {
                             </div>
 
                             {/* User table */}
-                            <section className="overflow-hidden rounded-3xl border border-[#ECE7DF] bg-white shadow-sm">
+                            <section className="overflow-hidden rounded-3xl border border-[#ECE7DF] bg-white shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
                                 <div className="flex flex-col gap-4 border-b border-[#F2EEEA] px-6 py-5 md:flex-row md:items-center md:justify-between">
                                     <div>
                                         <h3 className="text-lg font-bold">
@@ -465,7 +465,7 @@ export default function AdminDashboard() {
                                             {filteredUsers.length} users
                                         </span>
 
-                                        <div className="flex items-center gap-2 rounded-2xl border border-[#ECE7DF] bg-[#FCFBF9] px-3 py-2">
+                                        <div className="flex items-center gap-2 rounded-2xl border border-[#ECE7DF] bg-[#FCFBF9] px-3 py-2 dark:border-[#2A2520] dark:bg-[#252118]">
                                             <Search className="h-4 w-4 text-[#9A948C]" />
                                             <input
                                                 type="text"
@@ -647,7 +647,7 @@ export default function AdminDashboard() {
                             {/* Bottom widgets */}
                             <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                                 {/* Risk overview */}
-                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm">
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
                                     <div className="mb-5 flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <AlertTriangle className="h-5 w-5" />
@@ -710,7 +710,7 @@ export default function AdminDashboard() {
                                 </section>
 
                                 {/* Global operations */}
-                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm">
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
                                     <div className="mb-5 flex items-center gap-2">
                                         <Globe className="h-5 w-5" />
                                         <h3 className="text-lg font-bold">
@@ -746,7 +746,7 @@ export default function AdminDashboard() {
                                 </section>
 
                                 {/* System summary */}
-                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm">
+                                <section className="rounded-3xl border border-[#ECE7DF] bg-white p-6 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
                                     <div className="mb-5 flex items-center gap-2">
                                         <TrendingUp className="h-5 w-5" />
                                         <h3 className="text-lg font-bold">

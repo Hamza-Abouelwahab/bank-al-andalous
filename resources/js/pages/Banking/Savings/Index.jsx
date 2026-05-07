@@ -1,4 +1,3 @@
-import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import {
     Check,
@@ -64,53 +63,57 @@ export default function Index() {
     return (
         <>
             <Head title="Savings" />
-            <div className="min-h-screen bg-[#F8F6F1] p-8">
+            <div className="min-h-screen bg-[#f8f6f1] p-4 transition-colors duration-300 dark:bg-[#0F0D0B] sm:p-6 lg:p-8">
                 {showMessage && errors.balance && (
-                    <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+                    <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-900/20 dark:text-red-400">
                         {errors.balance}
                     </div>
                 )}
                 {showMessage && errors.goal && (
-                    <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+                    <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-900/20 dark:text-red-400">
                         {errors.goal}
                     </div>
                 )}
                 {showMessage && errors.account && (
-                    <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+                    <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-900/20 dark:text-red-400">
                         {errors.account}
                     </div>
                 )}
                 {showMessage && flash.success && (
-                    <div className="mb-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-700">
+                    <div className="mb-4 rounded-xl border border-orange-200 bg-orange-50 p-4 text-sm font-medium text-orange-700 dark:border-orange-500/30 dark:bg-orange-900/20 dark:text-orange-400">
                         {flash.success}
                     </div>
                 )}
 
-                <div className="mb-8 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="rounded-2xl bg-orange-500 p-4 text-white">
-                            <Target />
+                <div className="mb-8 animate-fade-in">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-50 to-[#f8f6f1] dark:from-orange-900/15 dark:to-[#7a2800]/10">
+                            <Target className="h-6 w-6 text-orange-600" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-slate-900">
+                            <h1 className="text-3xl font-extrabold tracking-tight text-[#1f1a17] dark:text-white">
                                 Savings Center
                             </h1>
-                            <p className="text-slate-500">
-                                Manage goals, challenges, and auto saving
+                            <p className="mt-0.5 text-sm text-[#1f1a17]/60 dark:text-white/60">
+                                Manage goals, challenges, and group savings
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex items-center gap-2 text-xs font-medium text-orange-600 dark:text-orange-400 mb-4">
+                        <Check className="h-4 w-4" /> Secure saving solutions
+                    </div>
+
+                    <div className="flex gap-3 flex-wrap">
                         <button
                             onClick={openChooseType}
-                            className="rounded-xl bg-orange-500 px-5 py-3 font-bold text-white hover:bg-orange-600"
+                            className="rounded-xl bg-orange-600 px-6 py-3 font-bold text-white hover:bg-[#7a2800] transition-all duration-300 cursor-pointer"
                         >
                             + New Goal
                         </button>
                         <button
                             onClick={() => setJoinGroupModal(true)}
-                            className="rounded-xl bg-indigo-600 px-5 py-3 font-bold text-white hover:bg-indigo-700"
+                            className="rounded-xl border-2 border-orange-600 bg-white px-6 py-3 font-bold text-orange-600 hover:bg-orange-50 transition-all duration-300 dark:bg-[#1A1714] dark:border-orange-500 dark:text-orange-400 dark:hover:bg-orange-900/10"
                         >
                             Join Group Saving
                         </button>
@@ -119,16 +122,19 @@ export default function Index() {
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     <section className="space-y-6 lg:col-span-2">
-                        <div className="rounded-2xl border bg-white p-6 shadow-sm">
-                            <div className="mb-5 flex items-center justify-between">
-                                <h2 className="text-xl font-bold">
-                                    Saving Goals
-                                </h2>
+                        <div className="fintech-card rounded-3xl border border-orange-100/60 bg-white p-8 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
+                            <div className="mb-6 flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-xl font-extrabold tracking-tight text-[#1f1a17] dark:text-white">
+                                        Saving Goals
+                                    </h2>
+                                    <p className="mt-1 text-sm text-[#1f1a17]/60 dark:text-white/60">Track your financial targets</p>
+                                </div>
                                 <button
                                     onClick={openChooseType}
-                                    className="text-sm font-semibold text-orange-600"
+                                    className="text-sm font-bold text-orange-600 cursor-pointer hover:text-[#7a2800] dark:text-orange-400 dark:hover:text-orange-300 transition-colors"
                                 >
-                                    Create Goal
+                                    + Create Goal
                                 </button>
                             </div>
 
@@ -173,13 +179,13 @@ export default function Index() {
                                                 ? {
                                                       text: 'Goal completed 🎉',
                                                       className:
-                                                          'bg-green-50 text-green-700 border-green-200',
+                                                          'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20',
                                                   }
                                                 : progress >= 80
                                                   ? {
                                                         text: 'Almost there! You are close to your goal 🔥',
                                                         className:
-                                                            'bg-yellow-50 text-yellow-700 border-yellow-200',
+                                                            'bg-orange-50 text-[#7a2800] border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20',
                                                     }
                                                   : null;
                                         const progressColor =
@@ -200,14 +206,14 @@ export default function Index() {
                                         return (
                                             <div
                                                 key={goal.id}
-                                                className="rounded-2xl border bg-white p-5 shadow-sm"
+                                                className="fintech-card rounded-3xl border border-orange-100/60 bg-white p-6 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]"
                                             >
-                                                <span className="mt-1 inline-block rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700">
+                                                <span className="inline-block rounded-full bg-orange-50 dark:bg-orange-900/20 px-3 py-1 text-xs font-bold text-orange-700 dark:text-orange-300 dark:text-orange-400 mb-3">
                                                     {typeBadge}
                                                 </span>
 
-                                                <div className="mb-3 flex items-center justify-between px-3 py-1">
-                                                    <h3 className="font-bold text-slate-900">
+                                                <div className="mb-3 flex items-center justify-between">
+                                                    <h3 className="font-bold text-[#1f1a17] dark:text-white">
                                                         {goal.name}
                                                     </h3>
 
@@ -226,7 +232,7 @@ export default function Index() {
                                                                     goal.status !==
                                                                     'active'
                                                                 }
-                                                                className="rounded-lg bg-orange-100 p-3 text-orange-600 hover:bg-orange-200 disabled:opacity-40"
+                                                                className="rounded-xl bg-orange-50 dark:bg-orange-900/20 p-2.5 text-orange-600 dark:text-orange-500 hover:bg-orange-100 dark:hover:bg-orange-900/30 disabled:opacity-40 transition-colors"
                                                             >
                                                                 <FastForward
                                                                     size={16}
@@ -248,7 +254,7 @@ export default function Index() {
                                                                     goal.status !==
                                                                     'active'
                                                                 }
-                                                                className="rounded-lg bg-purple-100 p-3 text-purple-600 hover:bg-purple-200 disabled:opacity-40"
+                                                                className="rounded-xl bg-orange-50 dark:bg-orange-900/20 p-2.5 text-orange-600 dark:text-orange-500 hover:bg-orange-100 dark:hover:bg-orange-900/30 disabled:opacity-40 transition-colors"
                                                             >
                                                                 <Coins
                                                                     size={16}
@@ -270,7 +276,7 @@ export default function Index() {
                                                                     goal.status !==
                                                                     'active'
                                                                 }
-                                                                className="rounded-lg bg-blue-100 p-2 text-blue-600 hover:bg-blue-200 disabled:opacity-40"
+                                                                className="rounded-xl bg-orange-50 dark:bg-orange-900/20 p-2 text-orange-600 dark:text-orange-500 hover:bg-orange-100 dark:hover:bg-orange-900/30 disabled:opacity-40 transition-colors text-lg"
                                                             >
                                                                 🧠
                                                             </button>
@@ -294,11 +300,11 @@ export default function Index() {
                                                                           `/saving-goals/${goal.id}/pause`,
                                                                       )
                                                             }
-                                                            className={`rounded-lg p-3 text-xs font-semibold ${
+                                                            className={`rounded-xl p-2.5 transition-colors ${
                                                                 goal.status ===
                                                                 'paused'
-                                                                    ? 'bg-gray-200 text-gray-600'
-                                                                    : 'bg-green-100 text-green-700'
+                                                                    ? 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                                                                    : 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-500 hover:bg-orange-100 dark:hover:bg-orange-900/30'
                                                             }`}
                                                         >
                                                             {goal.status ===
@@ -327,16 +333,16 @@ export default function Index() {
                                                                     );
                                                                 }
                                                             }}
-                                                            className="rounded-lg bg-red-100 p-3 text-red-600 hover:bg-red-200"
+                                                            className="rounded-xl bg-red-50 dark:bg-red-900/20 p-2.5 text-red-600 dark:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
                                                         >
                                                             <Trash2 size={16} />
                                                         </button>
                                                     </div>
                                                 </div>
 
-                                                <div className="mb-3 h-3 rounded-full bg-gray-100">
+                                                <div className="mb-4 h-3 rounded-full bg-orange-100/60 dark:bg-[#7a2800]/20">
                                                     <div
-                                                        className={`h-3 rounded-full ${progressColor}`}
+                                                        className="h-3 rounded-full bg-orange-600"
                                                         style={{
                                                             width: `${progress}%`,
                                                         }}
@@ -345,44 +351,50 @@ export default function Index() {
 
                                                 {goalMessage && (
                                                     <div
-                                                        className={`mb-3 rounded-xl border p-3 text-sm font-medium ${goalMessage.className}`}
+                                                        className={`mb-4 rounded-2xl border p-3 text-sm font-medium ${
+                                                            progress >= 100
+                                                                ? 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-500/30'
+                                                                : progress >= 80
+                                                                  ? 'bg-orange-50 text-[#7a2800] border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-500/30'
+                                                                  : goalMessage.className
+                                                        }`}
                                                     >
                                                         {goalMessage.text}
                                                     </div>
                                                 )}
 
-                                                <div className="mb-4 flex justify-between text-sm text-slate-500">
-                                                    <span>
+                                                <div className="mb-4 flex justify-between text-sm text-[#1f1a17]/70 dark:text-white/70">
+                                                    <span className="font-medium">
                                                         {saved.toFixed(2)} MAD
                                                     </span>
-                                                    <span>
+                                                    <span className="font-medium">
                                                         of {target.toFixed(2)}{' '}
                                                         MAD
                                                     </span>
                                                 </div>
 
                                                 <div className="grid grid-cols-3 gap-3">
-                                                    <div className="rounded-xl border border-orange-200 bg-orange-50 p-3">
-                                                        <p className="text-xs text-orange-600">
+                                                    <div className="rounded-2xl border border-orange-200/60 bg-orange-50 p-3 dark:border-orange-900/30 dark:bg-orange-900/10">
+                                                        <p className="text-xs font-semibold text-orange-600 dark:text-orange-400">
                                                             Daily Amount
                                                         </p>
-                                                        <p className="font-bold text-orange-700">
+                                                        <p className="font-bold text-orange-700 dark:text-orange-300 mt-1">
                                                             {dailyAmount} MAD
                                                         </p>
                                                     </div>
-                                                    <div className="rounded-xl border border-blue-200 bg-blue-50 p-3">
-                                                        <p className="text-xs text-blue-600">
+                                                    <div className="rounded-2xl border border-orange-200/60 bg-[#f8f6f1] p-3 dark:border-[#2A2520] dark:bg-white/5">
+                                                        <p className="text-xs font-semibold text-[#1f1a17]/70 dark:text-white/70">
                                                             Days Left
                                                         </p>
-                                                        <p className="font-bold text-blue-700">
+                                                        <p className="font-bold text-[#1f1a17] dark:text-white mt-1">
                                                             {daysLeft}
                                                         </p>
                                                     </div>
-                                                    <div className="rounded-xl border border-green-200 bg-green-50 p-3">
-                                                        <p className="text-xs text-green-600">
+                                                    <div className="rounded-2xl border border-[#7a2800]/20 bg-gradient-to-br from-[#7a2800]/5 to-orange-500/5 p-3 dark:border-[#7a2800] dark:from-[#7a2800]/20 dark:to-orange-900/20">
+                                                        <p className="text-xs font-semibold text-[#7a2800] dark:text-orange-400">
                                                             Status
                                                         </p>
-                                                        <p className="font-bold text-green-700">
+                                                        <p className="font-bold text-[#7a2800] dark:text-orange-400 mt-1">
                                                             {progress >= 100
                                                                 ? 'Completed'
                                                                 : goal.status ===
@@ -396,7 +408,7 @@ export default function Index() {
                                         );
                                     })
                                 ) : (
-                                    <p className="text-sm text-slate-500">
+                                    <p className="text-sm text-[#1f1a17]/60 dark:text-white/60">
                                         No saving goals yet.
                                     </p>
                                 )}
@@ -405,39 +417,35 @@ export default function Index() {
                     </section>
 
                     <aside className="space-y-6">
-                        <div className="rounded-2xl border bg-white p-6 shadow-sm">
-                            <div className="mb-4 flex items-center gap-3">
-                                <div className="rounded-xl bg-yellow-50 p-3 text-yellow-600">
-                                    <Lightbulb />
+                        <div className="fintech-card rounded-3xl border border-orange-100/60 bg-white p-8 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
+                            <div className="mb-6 flex items-start gap-4">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-50 to-[#f8f6f1] flex-shrink-0 dark:from-orange-900/15 dark:to-[#7a2800]/10">
+                                    <Lightbulb className="h-5 w-5 text-orange-600" />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold">
+                                    <h2 className="text-lg font-bold text-[#1f1a17] dark:text-white">
                                         Smart Goal Suggestions
                                     </h2>
-                                    <p className="text-sm text-slate-500">
-                                        Personalized ideas to reach your goals
-                                        faster.
+                                    <p className="text-xs text-[#1f1a17]/60 dark:text-white/60 mt-1">
+                                        Personalized ideas to reach your goals faster
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                                    <p className="text-sm text-slate-700">
-                                        💡 Save a small amount daily to make
-                                        progress consistent.
+                            <div className="space-y-3 mb-6">
+                                <div className="rounded-2xl border border-orange-100/60 bg-gradient-to-br from-[#f8f6f1] to-orange-50/50 dark:border-[#2A2520] dark:from-orange-900/10 dark:to-[#7a2800]/5 p-4">
+                                    <p className="text-sm text-[#1f1a17] dark:text-white">
+                                        💡 Save a small amount daily to make progress consistent.
                                     </p>
                                 </div>
-                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                                    <p className="text-sm text-slate-700">
-                                        📊 Split big goals into weekly
-                                        milestones.
+                                <div className="rounded-2xl border border-orange-100/60 bg-gradient-to-br from-[#f8f6f1] to-orange-50/50 dark:border-[#2A2520] dark:from-orange-900/10 dark:to-[#7a2800]/5 p-4">
+                                    <p className="text-sm text-[#1f1a17] dark:text-white">
+                                        📊 Split big goals into weekly milestones.
                                     </p>
                                 </div>
-                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                                    <p className="text-sm text-slate-700">
-                                        👥 Join a saving challenge with users
-                                        who have similar goals.
+                                <div className="rounded-2xl border border-orange-100/60 bg-gradient-to-br from-[#f8f6f1] to-orange-50/50 dark:border-[#2A2520] dark:from-orange-900/10 dark:to-[#7a2800]/5 p-4">
+                                    <p className="text-sm text-[#1f1a17] dark:text-white">
+                                        👥 Join a saving challenge with users who have similar goals.
                                     </p>
                                 </div>
                             </div>
@@ -447,7 +455,7 @@ export default function Index() {
                                 onClick={() => {
                                     setShowSavingTypeModal(true);
                                 }}
-                                className="mt-5 w-full rounded-xl bg-orange-600 py-3 font-bold text-white hover:bg-orange-700"
+                                className="w-full rounded-2xl bg-orange-600 py-3 font-bold text-white hover:bg-[#7a2800] transition-all duration-300"
                             >
                                 Explore Suggestions
                             </button>
@@ -516,16 +524,16 @@ function ChooseSavingTypeModal({ onClose, onSelect }) {
             emoji: '⚡',
             label: 'Auto Saving',
             desc: 'Automatically save a fixed amount daily toward your goal.',
-            color: 'border-orange-200 hover:bg-orange-50',
-            badge: 'bg-orange-100 text-orange-700',
+            color: 'border-orange-200 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-900/10',
+            badge: 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400',
         },
         {
             key: 'challenge',
             emoji: '🏆',
             label: 'Saving Challenge',
             desc: 'Manually add progress to challenge yourself to save more.',
-            color: 'border-purple-200 hover:bg-purple-50',
-            badge: 'bg-purple-100 text-purple-700',
+            color: 'border-[#7a2800]/20 dark:border-[#7a2800] hover:bg-orange-50 dark:hover:bg-orange-900/10',
+            badge: 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400',
         },
         // {
         //     key: 'smart_suggestion',
@@ -533,15 +541,15 @@ function ChooseSavingTypeModal({ onClose, onSelect }) {
         //     label: 'Smart Saving',
         //     desc: 'Get AI-powered suggestions based on your spending habits.',
         //     color: 'border-blue-200 hover:bg-blue-50',
-        //     badge: 'bg-blue-100 text-blue-700',
+        //     badge: 'bg-blue-100 text-[#7a2800]/80 dark:text-orange-300/80',
         // },
         {
             key: 'group_saving',
             emoji: '👥',
             label: 'Group Saving',
             desc: 'Save together with friends or family in a shared group.',
-            color: 'border-indigo-200 hover:bg-indigo-50',
-            badge: 'bg-indigo-100 text-indigo-700',
+            color: 'border-orange-200 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-900/10',
+            badge: 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400',
         },
     ];
 
@@ -553,14 +561,14 @@ function ChooseSavingTypeModal({ onClose, onSelect }) {
                         key={t.key}
                         type="button"
                         onClick={() => onSelect(t.key)}
-                        className={`rounded-2xl border p-4 text-left transition ${t.color}`}
+                        className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 ${t.color}`}
                     >
                         <span
-                            className={`mb-2 inline-block rounded-full px-2 py-1 text-xs font-semibold ${t.badge}`}
+                            className={`mb-2 inline-block rounded-full px-2 py-1 text-xs font-bold ${t.badge}`}
                         >
                             {t.emoji} {t.label}
                         </span>
-                        <p className="text-xs text-slate-500">{t.desc}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400">{t.desc}</p>
                     </button>
                 ))}
             </div>
@@ -595,15 +603,15 @@ function CreateGoalModal({ savingType, onClose }) {
     const typeBadge = {
         auto_saving: {
             label: '⚡ Auto Saving',
-            className: 'bg-orange-50 text-orange-700',
+            className: 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400',
         },
         challenge: {
             label: '🏆 Saving Challenge',
-            className: 'bg-purple-50 text-purple-700',
+            className: 'bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400',
         },
         // smart_suggestion: {
         //     label: '🧠 Smart Saving',
-        //     className: 'bg-blue-50 text-blue-700',
+        //     className: 'bg-blue-50 text-[#7a2800]/80 dark:text-orange-300/80',
         // },
     }[data.saving_type];
 
@@ -611,12 +619,12 @@ function CreateGoalModal({ savingType, onClose }) {
         <Modal title="Create Saving Goal" onClose={onClose}>
             {typeBadge && (
                 <span
-                    className={`mb-4 inline-block rounded-full px-3 py-1 text-xs font-semibold ${typeBadge.className}`}
+                    className={`mb-4 inline-block rounded-full px-3 py-1 text-xs font-bold ${typeBadge.className}`}
                 >
                     {typeBadge.label}
                 </span>
             )}
-            <form onSubmit={submit} className="space-y-4">
+            <form onSubmit={submit} className="space-y-5">
                 <Input
                     label="Goal Name"
                     value={data.name}
@@ -640,21 +648,21 @@ function CreateGoalModal({ savingType, onClose }) {
                     error={errors.end_date}
                 />
                 {estimatedDailyAmount && (
-                    <div className="rounded-2xl border border-orange-200 bg-orange-50 p-4">
-                        <p className="text-sm font-medium text-orange-700">
+                    <div className="rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-orange-50/50 dark:border-orange-900/30 dark:from-orange-900/10 dark:to-orange-900/5 p-4">
+                        <p className="text-sm font-semibold text-orange-700 dark:text-orange-400">
                             Estimated daily saving
                         </p>
-                        <p className="mt-1 text-2xl font-bold text-orange-600">
+                        <p className="mt-2 text-2xl font-bold text-orange-600 dark:text-orange-500">
                             {estimatedDailyAmount} MAD / day
                         </p>
-                        <p className="mt-1 text-xs text-orange-700">
+                        <p className="mt-1 text-xs text-orange-700 dark:text-orange-400">
                             Based on your target amount and deadline.
                         </p>
                     </div>
                 )}
                 <button
                     disabled={processing}
-                    className="w-full rounded-xl bg-orange-500 py-3 font-bold text-white hover:bg-orange-600 disabled:opacity-60"
+                    className="w-full rounded-2xl bg-orange-600 py-3 font-bold text-white shadow-sm transition-colors duration-300 hover:bg-[#7a2800] disabled:opacity-60"
                 >
                     {processing ? 'Creating...' : 'Create Goal'}
                 </button>
@@ -673,7 +681,7 @@ function AddProgressModal({ goal, onClose }) {
 
     return (
         <Modal title="Add Progress" onClose={onClose}>
-            <form onSubmit={submit} className="space-y-4">
+            <form onSubmit={submit} className="space-y-5">
                 <Input
                     label="Amount"
                     placeholder="Minimum 10 MAD"
@@ -684,9 +692,9 @@ function AddProgressModal({ goal, onClose }) {
                 />
                 <button
                     disabled={processing}
-                    className="w-full rounded-xl bg-purple-600 py-3 font-bold text-white"
+                    className="w-full rounded-2xl bg-orange-600 py-3 font-bold text-white shadow-sm transition-colors duration-300 hover:bg-[#7a2800] disabled:opacity-60"
                 >
-                    Add Progress
+                    {processing ? 'Adding...' : 'Add Progress'}
                 </button>
             </form>
         </Modal>
@@ -748,13 +756,13 @@ function CreateGroupModal({ onClose }) {
                     error={errors.start_date}
                 />
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                    <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-white">
                         Cycle Days
                     </label>
                     <select
                         value={data.cycle_days}
                         onChange={(e) => setData('cycle_days', e.target.value)}
-                        className="h-11 w-full rounded-xl border border-gray-200 px-4 outline-none focus:border-indigo-500"
+                        className="h-11 w-full rounded-xl border border-[#EDE8E0] px-4 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 bg-white dark:bg-[#1A1714] dark:border-[#2A2520] dark:text-white"
                     >
                         <option value="7">Every 7 days</option>
                         <option value="15">Every 15 days</option>
@@ -767,11 +775,11 @@ function CreateGroupModal({ onClose }) {
                     )}
                 </div>
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                    <label className="mb-3 block text-sm font-semibold text-slate-900 dark:text-white">
                         Group Visibility
                     </label>
                     <div className="space-y-2">
-                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-3 hover:bg-slate-50">
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#EDE8E0] dark:border-[#2A2520] p-3 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
                             <input
                                 type="radio"
                                 name="visibility"
@@ -780,18 +788,18 @@ function CreateGroupModal({ onClose }) {
                                 onChange={(e) =>
                                     setData('visibility', e.target.value)
                                 }
-                                className="h-4 w-4 text-indigo-600"
+                                className="h-4 w-4 text-orange-600 dark:text-orange-500"
                             />
                             <div>
-                                <p className="font-semibold text-slate-900">
+                                <p className="font-semibold text-slate-900 dark:text-white">
                                     Private
                                 </p>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400">
                                     Invite users by account number
                                 </p>
                             </div>
                         </label>
-                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-3 hover:bg-slate-50">
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#EDE8E0] dark:border-[#2A2520] p-3 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
                             <input
                                 type="radio"
                                 name="visibility"
@@ -800,13 +808,13 @@ function CreateGroupModal({ onClose }) {
                                 onChange={(e) =>
                                     setData('visibility', e.target.value)
                                 }
-                                className="h-4 w-4 text-indigo-600"
+                                className="h-4 w-4 text-orange-600 dark:text-orange-500"
                             />
                             <div>
-                                <p className="font-semibold text-slate-900">
+                                <p className="font-semibold text-slate-900 dark:text-white">
                                     Public
                                 </p>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400">
                                     Users can request to join
                                 </p>
                             </div>
@@ -819,16 +827,16 @@ function CreateGroupModal({ onClose }) {
                     )}
                 </div>
                 {data.amount && data.max_members && (
-                    <div className="rounded-xl bg-indigo-50 p-3 text-sm text-indigo-700">
+                    <div className="rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-orange-50/50 dark:border-orange-900/30 dark:from-orange-900/10 dark:to-orange-900/5 p-3 text-sm text-orange-700 dark:text-orange-400">
                         Total pot:{' '}
-                        {Number(data.amount) * Number(data.max_members)} MAD
+                        <span className="font-bold">{Number(data.amount) * Number(data.max_members)} MAD</span>
                         <br />
-                        Minimum required: 3000 MAD
+                        Minimum required: <span className="font-bold">3000 MAD</span>
                     </div>
                 )}
                 <button
                     disabled={processing}
-                    className="sticky bottom-0 w-full rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 py-4 font-black text-white shadow-lg shadow-indigo-200 transition hover:scale-[1.01] hover:shadow-xl disabled:opacity-60"
+                    className="sticky bottom-0 w-full rounded-2xl bg-orange-600 py-3 font-bold text-white shadow-sm transition-colors duration-300 hover:bg-[#7a2800] disabled:opacity-60"
                 >
                     {processing ? 'Creating...' : 'Create Group'}
                 </button>
@@ -843,50 +851,50 @@ function InvitationsSection({ invitations = [] }) {
     return (
         <div className="mt-8">
             <div className="mb-5">
-                <h2 className="text-xl font-bold text-slate-900">📬 My Invitations</h2>
-                <p className="text-sm text-slate-500">Groups you've been invited to join</p>
+                <h2 className="text-xl font-bold text-[#1f1a17] dark:text-white">📬 My Invitations</h2>
+                <p className="text-sm text-[#1f1a17]/60 dark:text-white/60">Groups you've been invited to join</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {invitations.map((invitation) => (
                     <div
                         key={invitation.id}
-                        className="rounded-2xl border border-purple-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+                        className="rounded-2xl border border-[#EDE8E0] bg-white p-5 shadow-sm transition-shadow hover:border-orange-200 hover:shadow-md dark:border-[#2A2520] dark:bg-[#1A1714]"
                     >
                         <div className="mb-3">
-                            <h3 className="font-bold text-slate-900">{invitation.group_name}</h3>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <h3 className="font-bold text-[#1f1a17] dark:text-white">{invitation.group_name}</h3>
+                            <p className="mt-1 text-sm text-[#1f1a17]/60 dark:text-white/60">
                                 Invited by <span className="font-semibold">{invitation.owner_name}</span>
                             </p>
                         </div>
 
                         <div className="mb-4 grid grid-cols-2 gap-2">
-                            <div className="rounded-xl bg-indigo-50 p-3">
-                                <p className="text-xs text-indigo-500">Contribution</p>
-                                <p className="font-bold text-indigo-700">{invitation.amount} MAD</p>
+                            <div className="rounded-xl border border-orange-100 bg-orange-50 p-3 dark:border-[#2A2520] dark:bg-orange-500/10">
+                                <p className="text-xs text-orange-600 dark:text-orange-400">Contribution</p>
+                                <p className="font-bold text-orange-700 dark:text-orange-300">{invitation.amount} MAD</p>
                             </div>
-                            <div className="rounded-xl bg-slate-50 p-3">
-                                <p className="text-xs text-slate-500">Members</p>
-                                <p className="font-bold text-slate-700">
+                            <div className="rounded-xl border border-[#EDE8E0] bg-[#f8f6f1] p-3 dark:border-[#2A2520] dark:bg-white/5">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Members</p>
+                                <p className="font-bold text-[#1f1a17] dark:text-white">
                                     {invitation.current_members}/{invitation.max_members}
                                 </p>
                             </div>
                         </div>
 
                         {invitation.start_date && (
-                            <p className="mb-3 text-xs text-slate-400">Start date: {invitation.start_date}</p>
+                            <p className="mb-3 text-xs text-slate-400 dark:text-slate-500">Start date: {invitation.start_date}</p>
                         )}
 
                         <div className="flex gap-2">
                             <button
                                 onClick={() => router.post(`/saving-groups/requests/${invitation.id}/accept-invitation`)}
-                                className="flex-1 rounded-xl bg-green-600 py-2 text-sm font-bold text-white hover:bg-green-700"
+                                className="flex-1 rounded-xl bg-orange-600 py-2 text-sm font-bold text-white transition-colors hover:bg-[#7a2800]"
                             >
                                 Accept
                             </button>
                             <button
                                 onClick={() => router.post(`/saving-groups/requests/${invitation.id}/decline-invitation`)}
-                                className="flex-1 rounded-xl bg-gray-200 py-2 text-sm font-bold text-gray-700 hover:bg-gray-300"
+                                className="flex-1 rounded-xl border border-[#EDE8E0] bg-white py-2 text-sm font-bold text-[#1f1a17] transition-colors hover:bg-[#f8f6f1] dark:border-[#2A2520] dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
                             >
                                 Decline
                             </button>
@@ -907,19 +915,19 @@ function GroupsSection({ groups = [], onCreateGroup }) {
     const statusBadge = {
         waiting: {
             label: '⏳ Waiting',
-            className: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+            className: 'bg-orange-50 text-[#7a2800] border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20',
         },
         active: {
             label: '✅ Active',
-            className: 'bg-green-50 text-green-700 border-green-200',
+            className: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20',
         },
         completed: {
             label: '🏁 Completed',
-            className: 'bg-slate-50 text-slate-600 border-slate-200',
+            className: 'bg-[#f8f6f1] text-[#1f1a17]/70 border-[#EDE8E0] dark:bg-white/5 dark:text-white/70 dark:border-[#2A2520]',
         },
         cancelled: {
             label: '❌ Cancelled',
-            className: 'bg-red-50 text-red-600 border-red-200',
+            className: 'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20',
         },
     };
 
@@ -948,18 +956,18 @@ function GroupsSection({ groups = [], onCreateGroup }) {
     return (
         <div className="mt-8">
             <div className="mb-5 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-900">
+                <h2 className="text-xl font-bold text-[#1f1a17] dark:text-white">
                     👥 Group Savings
                 </h2>
                 <button
                     onClick={onCreateGroup}
-                    className="text-sm font-semibold text-indigo-600 cursor-pointer hover:text-indigo-800"
+                    className="text-sm font-semibold text-orange-600 hover:text-orange-700 dark:text-orange-500 cursor-pointer"
                 >
                     + New Group
                 </button>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid items-start gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {groups.map((group) => {
                     const badge = statusBadge[group.status] ?? statusBadge.waiting;
                     const groupCode =group.group_code;
@@ -969,13 +977,13 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                     return (
                         <div
                             key={group.id}
-                            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+                            className="rounded-2xl border border-[#EDE8E0] bg-white p-5 shadow-sm transition-shadow hover:border-orange-200 hover:shadow-md dark:border-[#2A2520] dark:bg-[#1A1714]"
                         >
                             {/* Header */}
                             <div className="mb-3 flex items-start justify-between gap-2">
                                 <div className="flex-1">
-                                    <h3 className="font-bold text-slate-900">{group.name}</h3>
-                                    <p className="mt-0.5 text-xs text-slate-400">
+                                    <h3 className="font-bold text-[#1f1a17] dark:text-white">{group.name}</h3>
+                                    <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
                                         Every {group.cycle_days} days
                                     </p>
                                 </div>
@@ -985,8 +993,8 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                                     </span>
                                     <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${
                                         isPrivate
-                                            ? 'bg-gray-50 text-gray-700 border-gray-200'
-                                            : 'bg-green-50 text-green-700 border-green-200'
+                                            ? 'bg-[#f8f6f1] text-[#1f1a17]/70 border-[#EDE8E0] dark:bg-white/5 dark:text-white/70 dark:border-[#2A2520]'
+                                            : 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20'
                                     }`}>
                                         {isPrivate ? '🔒 Private' : '🌍 Public'}
                                     </span>
@@ -994,13 +1002,13 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                             </div>
 
                             {/* Group Code */}
-                            <div className="mb-4 rounded-xl bg-indigo-50 border border-indigo-200 p-3">
-                                <p className="text-xs font-medium text-indigo-600 mb-1">Group Code</p>
+                            <div className="mb-4 rounded-xl border border-orange-200 bg-orange-50 p-3 dark:border-orange-500/20 dark:bg-orange-500/10">
+                                <p className="mb-1 text-xs font-medium text-orange-600 dark:text-orange-400">Group Code</p>
                                 <div className="flex items-center justify-between">
-                                    <span className="font-mono text-lg font-bold text-indigo-900">{groupCode}</span>
+                                    <span className="font-mono text-lg font-bold text-[#7a2800] dark:text-orange-300">{groupCode}</span>
                                     <button
                                         onClick={() => copyGroupCode(group.id)}
-                                        className="rounded-lg bg-indigo-100 p-2 text-indigo-600 hover:bg-indigo-200 transition-colors"
+                                        className="rounded-lg bg-orange-100 p-2 text-orange-600 transition-colors hover:bg-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:hover:bg-orange-500/20"
                                         title="Copy code"
                                     >
                                         {copiedId === group.id ? <Check size={16} /> : <Copy size={16} />}
@@ -1010,34 +1018,34 @@ function GroupsSection({ groups = [], onCreateGroup }) {
 
                             {/* Cancelled alert */}
                             {group.status === 'cancelled' && (
-                                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
                                     ⚠️ Group cancelled because not enough members joined before the start date.
                                 </div>
                             )}
 
                             {/* Stats grid */}
                             <div className="mb-4 grid grid-cols-2 gap-2">
-                                <div className="rounded-xl bg-indigo-50 p-3">
-                                    <p className="text-xs text-indigo-500">Contribution</p>
-                                    <p className="font-bold text-indigo-700">{group.amount} MAD</p>
+                                <div className="rounded-xl border border-orange-100 bg-orange-50 p-3 dark:border-[#2A2520] dark:bg-orange-500/10">
+                                    <p className="text-xs text-orange-600 dark:text-orange-400">Contribution</p>
+                                    <p className="font-bold text-orange-700 dark:text-orange-300">{group.amount} MAD</p>
                                 </div>
-                                <div className="rounded-xl bg-orange-50 p-3">
-                                    <p className="text-xs text-orange-500">Total Pot</p>
-                                    <p className="font-bold text-orange-700">{group.total_pot} MAD</p>
+                                <div className="rounded-xl border border-orange-100 bg-orange-50 p-3 dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    <p className="text-xs text-orange-600 dark:text-orange-400">Total Pot</p>
+                                    <p className="font-bold text-orange-700 dark:text-orange-300">{group.total_pot} MAD</p>
                                 </div>
-                                <div className="rounded-xl bg-slate-50 p-3">
-                                    <p className="text-xs text-slate-500">Members</p>
-                                    <p className="font-bold text-slate-700">
+                                <div className="rounded-xl border border-[#EDE8E0] bg-[#f8f6f1] p-3 dark:border-[#2A2520] dark:bg-white/5">
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">Members</p>
+                                    <p className="font-bold text-[#1f1a17] dark:text-white">
                                         {group.current_members}/{group.max_members}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-blue-50 p-3">
-                                    <p className="text-xs text-blue-500">Start Date</p>
-                                    <p className="text-xs font-bold text-blue-700">{group.start_date ?? '—'}</p>
+                                <div className="rounded-xl border border-orange-100 bg-orange-50 p-3 dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    <p className="text-xs text-orange-600 dark:text-orange-400">Start Date</p>
+                                    <p className="text-xs font-bold text-[#7a2800]/80 dark:text-orange-300/80">{group.start_date ?? '—'}</p>
                                 </div>
-                                <div className="col-span-2 rounded-xl bg-purple-50 p-3">
-                                    <p className="text-xs text-purple-500">Next Draw</p>
-                                    <p className="text-xs font-bold text-purple-700">
+                                <div className="col-span-2 rounded-xl border border-orange-100 bg-orange-50 p-3 dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    <p className="text-xs text-orange-600 dark:text-orange-400">Next Draw</p>
+                                    <p className="text-xs font-bold text-orange-700 dark:text-orange-300">
                                         {group.next_draw_date ?? 'Waiting to fill'}
                                     </p>
                                 </div>
@@ -1045,23 +1053,23 @@ function GroupsSection({ groups = [], onCreateGroup }) {
 
                             {/* Pending Requests (Owner Only) */}
                             {isOwner && group.pending_requests && group.pending_requests.length > 0 && (
-                                <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-3">
-                                    <p className="text-sm font-semibold text-blue-900 mb-2">📬 Pending Requests</p>
+                                <div className="mb-4 rounded-xl border border-orange-200 bg-orange-50 p-3 dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    <p className="mb-2 text-sm font-semibold text-[#7a2800] dark:text-orange-300">📬 Pending Requests</p>
                                     <div className="space-y-2">
                                         {group.pending_requests.map((req) => (
-                                            <div key={req.id} className="flex items-center justify-between bg-white rounded-lg p-2">
-                                                <span className="text-sm font-medium text-slate-700">{req.user_name}</span>
+                                            <div key={req.id} className="flex items-center justify-between rounded-lg border border-[#EDE8E0] bg-white p-2 dark:border-[#2A2520] dark:bg-white/5">
+                                                <span className="text-sm font-medium text-[#1f1a17]/80 dark:text-white/80">{req.user_name}</span>
                                                 <div className="flex gap-1">
                                                     <button
                                                         onClick={() => router.post(`/saving-groups/requests/${req.id}/approve`)}
-                                                        className="rounded-lg bg-green-100 p-1.5 text-green-600 hover:bg-green-200"
+                                                        className="rounded-lg bg-orange-100 p-1.5 text-orange-600 hover:bg-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:hover:bg-orange-500/20"
                                                         title="Accept"
                                                     >
                                                         <Check size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => router.post(`/saving-groups/requests/${req.id}/reject`)}
-                                                        className="rounded-lg bg-red-100 p-1.5 text-red-600 hover:bg-red-200"
+                                                        className="rounded-lg bg-red-100 p-1.5 text-red-600 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
                                                         title="Reject"
                                                     >
                                                         <X size={16} />
@@ -1075,19 +1083,19 @@ function GroupsSection({ groups = [], onCreateGroup }) {
 
                             {/* Private Group Invitation (Owner Only) */}
                             {isOwner && isPrivate && group.status === 'waiting' && (
-                                <div className="mb-4 rounded-xl border border-purple-200 bg-purple-50 p-3">
-                                    <p className="text-sm font-semibold text-purple-900 mb-2">✉️ Invite by Account Number</p>
+                                <div className="mb-4 rounded-xl border border-orange-200 bg-orange-50 p-3 dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    <p className="mb-2 text-sm font-semibold text-[#7a2800] dark:text-orange-300">✉️ Invite by Account Number</p>
                                     <div className="flex gap-2">
                                         <input
                                             type="text"
                                             value={inviteInputs[group.id] || ''}
                                             onChange={(e) => setInviteInputs({ ...inviteInputs, [group.id]: e.target.value })}
                                             placeholder="Account Number"
-                                            className="flex-1 rounded-lg border border-purple-200 px-3 py-2 text-sm outline-none focus:border-purple-400"
+                                            className="flex-1 rounded-lg border border-orange-200 bg-white px-3 py-2 text-sm text-[#1f1a17] outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-600/10 dark:border-[#2A2520] dark:bg-[#0F0D0B] dark:text-white"
                                         />
                                         <button
                                             onClick={() => handleInvite(group.id)}
-                                            className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700"
+                                            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#7a2800]"
                                         >
                                             Invite
                                         </button>
@@ -1097,12 +1105,12 @@ function GroupsSection({ groups = [], onCreateGroup }) {
 
                             {/* Bank guarantee info */}
                             {group.bank_sponsored && (
-                                <div className="mb-4 space-y-1 rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm">
-                                    <p className="font-semibold text-blue-800">🏦 Bank Guarantee: Active</p>
-                                    <p className="text-blue-700">
+                                <div className="mb-4 space-y-1 rounded-xl border border-orange-200 bg-orange-50 p-3 text-sm dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    <p className="font-semibold text-[#7a2800] dark:text-orange-300">🏦 Bank Guarantee: Active</p>
+                                    <p className="text-[#7a2800]/80 dark:text-orange-300/80">
                                         Bank Fee: {group.bank_fee_percent}% ({group.bank_fee} MAD)
                                     </p>
-                                    <p className="text-blue-700">
+                                    <p className="text-[#7a2800]/80 dark:text-orange-300/80">
                                         Winner receives: <span className="font-bold">{group.winner_amount} MAD</span>
                                     </p>
                                 </div>
@@ -1110,19 +1118,19 @@ function GroupsSection({ groups = [], onCreateGroup }) {
 
                             {/* Rotation / Turn Info */}
                             {group.status === 'active' && group.current_receiver_name && (
-                                <div className="mb-4 space-y-1 rounded-xl border border-green-200 bg-green-50 p-3 text-sm">
-                                    <p className="font-semibold text-green-800">🎯 Current Turn</p>
-                                    <p className="text-green-700">
+                                <div className="mb-4 space-y-1 rounded-xl border border-orange-200 bg-orange-50 p-3 text-sm dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    <p className="font-semibold text-[#7a2800] dark:text-orange-300">🎯 Current Turn</p>
+                                    <p className="text-[#7a2800]/80 dark:text-orange-300/80">
                                         Next receiver: <span className="font-bold">{group.current_receiver_name}</span>
                                     </p>
                                     {group.draw_start_date && (
-                                        <p className="text-green-700">Draw started: {group.draw_start_date}</p>
+                                        <p className="text-[#7a2800]/80 dark:text-orange-300/80">Draw started: {group.draw_start_date}</p>
                                     )}
                                     {group.draw_end_date && (
-                                        <p className="text-green-700">Draw ends: {group.draw_end_date}</p>
+                                        <p className="text-[#7a2800]/80 dark:text-orange-300/80">Draw ends: {group.draw_end_date}</p>
                                     )}
                                     {group.days_remaining !== null && (
-                                        <p className="text-green-700">
+                                        <p className="text-[#7a2800]/80 dark:text-orange-300/80">
                                             Days remaining: <span className="font-bold">{group.days_remaining}</span>
                                         </p>
                                     )}
@@ -1130,22 +1138,22 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                             )}
 
                             {group.status === 'active' && !group.current_receiver_name && (
-                                <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
+                                <div className="mb-4 rounded-xl border border-[#EDE8E0] bg-[#f8f6f1] p-3 text-sm text-[#1f1a17]/70 dark:border-[#2A2520] dark:bg-white/5 dark:text-white/70">
                                     ⏳ Waiting for draw to start
                                 </div>
                             )}
 
                             {group.status === 'completed' && (
-                                <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+                                <div className="mb-4 rounded-xl border border-[#EDE8E0] bg-[#f8f6f1] p-3 text-sm text-[#1f1a17]/70 dark:border-[#2A2520] dark:bg-white/5 dark:text-white/70">
                                     ✅ All members have received their turn.
                                 </div>
                             )}
 
                             {/* Current winner */}
                             {group.current_winner && (
-                                <div className="mb-3 rounded-xl border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm">
-                                    🏆 <span className="font-semibold text-yellow-800">Current winner:</span>{' '}
-                                    <span className="text-yellow-700">{group.current_winner.name}</span>
+                                <div className="mb-3 rounded-xl border border-orange-200 bg-orange-50 px-3 py-2 text-sm dark:border-orange-500/20 dark:bg-orange-500/10">
+                                    🏆 <span className="font-semibold text-[#7a2800] dark:text-orange-300">Current winner:</span>{' '}
+                                    <span className="text-[#7a2800]/80 dark:text-orange-300/80">{group.current_winner.name}</span>
                                 </div>
                             )}
 
@@ -1159,9 +1167,9 @@ function GroupsSection({ groups = [], onCreateGroup }) {
                                         {group.members.map((m) => (
                                             <li
                                                 key={m.id}
-                                                className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-1.5 text-sm"
+                                                className="flex items-center justify-between rounded-lg border border-[#EDE8E0] bg-[#f8f6f1] px-3 py-1.5 text-sm dark:border-[#2A2520] dark:bg-white/5"
                                             >
-                                                <span className="text-slate-700">{m.name}</span>
+                                                <span className="text-[#1f1a17]/80 dark:text-white/80">{m.name}</span>
                                                 {m.has_won && <span title="Has won a draw">🏆</span>}
                                             </li>
                                         ))}
@@ -1201,19 +1209,18 @@ function JoinGroupModal({ groups = [], onClose }) {
 
     return (
         <Modal title="Join Group Saving" onClose={onClose}>
-            <div className="space-y-5">
-
-                {/* ── Join by Group Code ── */}
-                <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
-                    <div className="mb-3 flex items-center gap-2">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white text-sm">
+            <div className="space-y-6 text-[#1f1a17] dark:text-white">
+                {/* Join by Group Code */}
+                <div className="rounded-3xl border border-orange-200/70 bg-gradient-to-br from-[#f8f6f1] via-white to-orange-50/60 p-5 shadow-sm shadow-orange-900/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-orange-900/5 dark:border-[#7a2800]/40 dark:from-[#1f1a17] dark:via-[#241b16] dark:to-[#2b160b]">
+                    <div className="mb-4 flex items-center gap-3">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm">
                             🔑
                         </span>
                         <div>
-                            <p className="font-bold text-slate-900 leading-tight">
+                            <p className="text-lg font-extrabold leading-tight text-[#1f1a17] dark:text-white">
                                 Join by Group Code
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-sm text-[#1f1a17]/60 dark:text-white/60">
                                 Enter the group code shared by your friend.
                             </p>
                         </div>
@@ -1229,14 +1236,14 @@ function JoinGroupModal({ groups = [], onClose }) {
                                     setData('group_code', e.target.value)
                                 }
                                 placeholder="458741"
-                                className={`h-11 w-full rounded-xl border px-4 text-slate-900 outline-none transition focus:ring-2 focus:ring-indigo-300 ${
+                                className={`h-12 w-full rounded-2xl border px-4 text-lg font-semibold text-[#1f1a17] outline-none transition duration-300 placeholder:text-[#1f1a17]/35 focus:ring-4 dark:text-white dark:placeholder:text-white/30 ${
                                     errors.group_code
-                                        ? 'border-red-400 bg-red-50 focus:border-red-400'
-                                        : 'border-indigo-200 bg-white focus:border-indigo-500'
+                                        ? 'border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-400/15 dark:bg-red-950/20'
+                                        : 'border-orange-200 bg-white/90 focus:border-orange-600 focus:ring-orange-600/15 dark:border-[#7a2800]/50 dark:bg-white/5'
                                 }`}
                             />
                             {errors.group_code && (
-                                <p className="mt-1.5 text-xs font-medium text-red-600">
+                                <p className="mt-2 text-xs font-semibold text-red-600">
                                     {errors.group_code}
                                 </p>
                             )}
@@ -1245,23 +1252,23 @@ function JoinGroupModal({ groups = [], onClose }) {
                         <button
                             type="submit"
                             disabled={processing || !data.group_code.trim()}
-                            className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 font-bold text-white shadow-md shadow-indigo-200 transition hover:scale-[1.01] hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full rounded-2xl bg-orange-600 py-3.5 font-extrabold text-white shadow-sm transition-colors duration-300 hover:bg-[#7a2800] disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {processing ? 'Sending…' : 'Send Request'}
                         </button>
                     </form>
                 </div>
 
-                {/* ── Separator ── */}
-                <div className="flex items-center gap-3">
-                    <div className="h-px flex-1 bg-slate-200" />
-                    <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                {/* Separator */}
+                <div className="flex items-center gap-4">
+                    <div className="h-px flex-1 bg-gradient-to-r from-transparent to-orange-200 dark:to-[#7a2800]/50" />
+                    <span className="text-xs font-extrabold uppercase tracking-[0.25em] text-[#7a2800]/70 dark:text-orange-300/80">
                         Or join a public group
                     </span>
-                    <div className="h-px flex-1 bg-slate-200" />
+                    <div className="h-px flex-1 bg-gradient-to-l from-transparent to-orange-200 dark:to-[#7a2800]/50" />
                 </div>
 
-                {/* ── Public Groups List ── */}
+                {/* Public Groups List */}
                 {groups.length ? (
                     <div className="space-y-4">
                         {groups.map((group) => {
@@ -1271,19 +1278,20 @@ function JoinGroupModal({ groups = [], onClose }) {
                             return (
                                 <div
                                     key={group.id}
-                                    className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md"
+                                    className="rounded-3xl border border-orange-100 bg-white p-5 shadow-sm shadow-orange-900/5 transition duration-300 hover:-translate-y-0.5 hover:border-orange-200 hover:shadow-md hover:shadow-orange-900/5 dark:border-[#2A2520] dark:bg-[#1A1714]"
                                 >
-                                    <div className="mb-3 flex items-start justify-between">
+                                    <div className="mb-4 flex items-start justify-between gap-3">
                                         <div>
-                                            <h3 className="font-bold text-slate-900">
+                                            <h3 className="text-lg font-extrabold text-[#1f1a17] dark:text-white">
                                                 {group.name}
                                             </h3>
-                                            <p className="mt-0.5 text-xs text-slate-400">
+                                            <p className="mt-0.5 text-xs font-medium text-[#1f1a17]/50 dark:text-white/50">
                                                 Every {group.cycle_days} days
                                             </p>
                                         </div>
+
                                         {hasPendingRequest ? (
-                                            <span className="rounded-xl bg-yellow-100 px-4 py-2 text-sm font-bold text-yellow-700">
+                                            <span className="rounded-2xl border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-extrabold text-[#7a2800] dark:border-[#7a2800]/40 dark:bg-[#7a2800]/15 dark:text-orange-300">
                                                 Pending
                                             </span>
                                         ) : (
@@ -1296,35 +1304,37 @@ function JoinGroupModal({ groups = [], onClose }) {
                                                         { onSuccess: onClose },
                                                     )
                                                 }
-                                                className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700"
+                                                className="rounded-2xl bg-orange-600 px-4 py-2 text-sm font-extrabold text-white shadow-md shadow-orange-600/20 transition hover:-translate-y-0.5 hover:bg-[#7a2800]"
                                             >
                                                 Request to Join
                                             </button>
                                         )}
                                     </div>
 
-                                    <div className="grid grid-cols-3 gap-2 text-center">
-                                        <div className="rounded-xl bg-indigo-50 p-2">
-                                            <p className="text-xs text-indigo-500">
+                                    <div className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
+                                        <div className="rounded-2xl border border-orange-100 bg-[#f8f6f1] p-3 dark:border-[#2A2520] dark:bg-white/5">
+                                            <p className="text-xs font-semibold text-[#7a2800]/70 dark:text-orange-300/70">
                                                 Contribution
                                             </p>
-                                            <p className="text-sm font-bold text-indigo-700">
+                                            <p className="text-sm font-extrabold text-[#1f1a17] dark:text-white">
                                                 {group.amount} MAD
                                             </p>
                                         </div>
-                                        <div className="rounded-xl bg-orange-50 p-2">
-                                            <p className="text-xs text-orange-500">
+
+                                        <div className="rounded-2xl border border-orange-100 bg-orange-50 p-3 dark:border-[#2A2520] dark:bg-[#7a2800]/15">
+                                            <p className="text-xs font-semibold text-[#7a2800]/70 dark:text-orange-300/70">
                                                 Total Pot
                                             </p>
-                                            <p className="text-sm font-bold text-orange-700">
+                                            <p className="text-sm font-extrabold text-[#7a2800] dark:text-orange-300">
                                                 {group.total_pot} MAD
                                             </p>
                                         </div>
-                                        <div className="rounded-xl bg-slate-50 p-2">
-                                            <p className="text-xs text-slate-500">
+
+                                        <div className="rounded-2xl border border-orange-100 bg-[#f8f6f1] p-3 dark:border-[#2A2520] dark:bg-white/5">
+                                            <p className="text-xs font-semibold text-[#1f1a17]/50 dark:text-white/50">
                                                 Members
                                             </p>
-                                            <p className="text-sm font-bold text-slate-700">
+                                            <p className="text-sm font-extrabold text-[#1f1a17] dark:text-white">
                                                 {group.current_members}/
                                                 {group.max_members}
                                             </p>
@@ -1332,7 +1342,7 @@ function JoinGroupModal({ groups = [], onClose }) {
                                     </div>
 
                                     {group.start_date && (
-                                        <p className="mt-2 text-xs text-slate-400">
+                                        <p className="mt-3 rounded-2xl bg-[#f8f6f1] px-4 py-2 text-xs font-semibold text-[#1f1a17]/55 dark:bg-white/5 dark:text-white/55">
                                             Start date: {group.start_date}
                                         </p>
                                     )}
@@ -1341,7 +1351,7 @@ function JoinGroupModal({ groups = [], onClose }) {
                         })}
                     </div>
                 ) : (
-                    <p className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-5 text-center text-sm text-slate-500">
+                    <p className="rounded-3xl border border-dashed border-orange-200 bg-[#f8f6f1] px-5 py-7 text-center text-sm font-medium leading-6 text-[#1f1a17]/60 dark:border-[#7a2800]/40 dark:bg-white/5 dark:text-white/60">
                         No public groups available right now. You can still join
                         using a group code above.
                     </p>
@@ -1355,20 +1365,20 @@ function Modal({ title, subtitle, onClose, children }) {
     return (
         <div
             onClick={onClose}
-            className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-[2rem] bg-white shadow-2xl sm:max-w-xl sm:rounded-[2rem]"
+                className="flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-[2rem] border border-[#EDE8E0] bg-white shadow-2xl transition-colors duration-300 dark:border-[#2A2520] dark:bg-[#1A1714] sm:max-w-xl sm:rounded-[2rem]"
             >
-                <div className="flex items-start justify-between border-b border-slate-100 bg-white px-6 py-5">
+                <div className="flex items-start justify-between border-b border-[#EDE8E0] bg-white px-6 py-5 dark:border-[#2A2520] dark:bg-[#1A1714]">
                     <div>
-                        <h2 className="text-xl font-black text-slate-900">
+                        <h2 className="text-xl font-black text-[#1f1a17] dark:text-white">
                             {title}
                         </h2>
 
                         {subtitle && (
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className="mt-1 text-sm text-[#1f1a17]/60 dark:text-white/60">
                                 {subtitle}
                             </p>
                         )}
@@ -1377,13 +1387,13 @@ function Modal({ title, subtitle, onClose, children }) {
                     <button
                         type="button"
                         onClick={onClose}
-                        className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 text-xl text-slate-500 transition hover:bg-slate-200 hover:text-slate-800"
+                        className="grid h-10 w-10 place-items-center rounded-full bg-[#f8f6f1] text-xl text-[#1f1a17]/50 transition hover:bg-orange-50 hover:text-[#7a2800] dark:bg-white/5 dark:text-white/50 dark:hover:bg-orange-500/10 dark:hover:text-orange-300"
                     >
                         ×
                     </button>
                 </div>
 
-                <div className="overflow-y-auto px-6 py-5">{children}</div>
+                <div className="overflow-y-auto bg-white px-6 py-5 dark:bg-[#1A1714]">{children}</div>
             </div>
         </div>
     );
@@ -1401,7 +1411,7 @@ function Input({
 }) {
     return (
         <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-medium text-[#1f1a17]/80 dark:text-white/80">
                 {label}
             </label>
             <input
@@ -1411,7 +1421,7 @@ function Input({
                 min={min}
                 max={max}
                 onChange={(e) => onChange(e.target.value)}
-                className="h-11 w-full rounded-xl border border-gray-200 px-4 outline-none focus:border-orange-500"
+                className="h-11 w-full rounded-xl border border-[#EDE8E0] bg-white px-4 text-[#1f1a17] outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 dark:border-[#2A2520] dark:bg-[#0F0D0B] dark:text-white dark:placeholder:text-white/30"
             />
             {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
         </div>

@@ -1,5 +1,5 @@
 import { Bot, Send, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Message {
     id: string;
@@ -8,30 +8,32 @@ interface Message {
     timestamp: string;
 }
 
+const QUICK_QUESTIONS = [
+    'How much should I save monthly?',
+    'Tips for budgeting?',
+    'Investment advice for beginners',
+    'Should I take a loan?',
+];
+
 export default function AIChat() {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '1',
-            text: 'Hello! I am your Nestora Bank AI assistant. I can help with savings goals, budgeting, transactions, loans, appointments, and account support. How can I help you today?',
-            sender: 'ai',
-            timestamp: '',
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([{
+        id: '1',
+        text: 'Hello! I\'m your Bank Al-Andalous AI financial advisor. I can help you with savings goals, budgeting, transactions, loans, appointments, and account support. How can I help you today?',
+        sender: 'ai',
+        timestamp: '',
+    }]);
+    const [inputText,  setInputText]  = useState('');
+    const [isLoading,  setIsLoading]  = useState(false);
+    const bottomRef = useRef<HTMLDivElement>(null);
 
-    const [inputText, setInputText] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, isLoading]);
 
-    const getTime = () =>
-        new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+    const getTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const handleSend = async () => {
-        if (!inputText.trim() || isLoading) {
-return;
-}
-
+        if (!inputText.trim() || isLoading) return;
         const messageToSend = inputText.trim();
 
         const userMessage: Message = {
@@ -41,7 +43,7 @@ return;
             timestamp: getTime(),
         };
 
-        setMessages(prev => [...prev, userMessage]);
+        setMessages((prev) => [...prev, userMessage]);
         setInputText('');
         setIsLoading(true);
 
@@ -51,186 +53,134 @@ return;
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
-                    'X-CSRF-TOKEN':
-                        document
-                            .querySelector('meta[name="csrf-token"]')
-                            ?.getAttribute('content') || '',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
-                body: JSON.stringify({
-                    message: messageToSend,
-                }),
+                body: JSON.stringify({ message: messageToSend }),
             });
 
             const text = await response.text();
-
             let data: { answer?: string; message?: string };
+            try { data = JSON.parse(text); } catch { throw new Error(text || 'Invalid server response.'); }
+            if (!response.ok) throw new Error(data.answer || data.message || 'Request failed.');
 
-            try {
-                data = JSON.parse(text);
-            } catch {
-                throw new Error(text || 'Invalid server response.');
-            }
-
-            if (!response.ok) {
-                throw new Error(data.answer || data.message || 'Request failed.');
-            }
-
-            const aiMessage: Message = {
+            setMessages((prev) => [...prev, {
                 id: crypto.randomUUID(),
                 text: data.answer || 'Sorry, I could not answer right now.',
                 sender: 'ai',
                 timestamp: getTime(),
-            };
-
-            setMessages(prev => [...prev, aiMessage]);
+            }]);
         } catch (error: any) {
-            const errorMessage: Message = {
+            setMessages((prev) => [...prev, {
                 id: crypto.randomUUID(),
-                text:
-                    error.message ||
-                    'Sorry, the AI assistant is not available right now.',
+                text: error.message || 'Sorry, the AI assistant is not available right now.',
                 sender: 'ai',
                 timestamp: getTime(),
-            };
-
-            setMessages(prev => [...prev, errorMessage]);
+            }]);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const quickQuestions = [
-        'How much should I save monthly?',
-        'Tips for budgeting?',
-        'Investment advice for beginners',
-        'Should I take a loan?',
-    ];
-
     return (
-        <div className="flex h-[100dvh] min-w-0 overflow-hidden bg-gray-50">
-            <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                {/* Header */}
-                <header className="shrink-0 border-b border-gray-200 bg-white">
-                    <div className="px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
-                        <div className="flex min-w-0 items-center gap-3">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600">
-                                <Bot className="h-5 w-5 text-white sm:h-6 sm:w-6" />
-                            </div>
+        <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#F8F6F1] dark:bg-[#0F0D0B]">
 
-                            <div className="min-w-0">
-                                <h1 className="truncate text-base font-semibold text-gray-900 sm:text-xl">
-                                    AI Financial Advisor
-                                </h1>
-                                <p className="mt-0.5 truncate text-sm text-gray-500 sm:text-base">
-                                    Get personalized financial advice
-                                </p>
-                            </div>
+            {/* ── Header ── */}
+            <header className="shrink-0 border-b border-orange-100/60 bg-white/90 backdrop-blur dark:border-[#7a2800]/30 dark:bg-[#1f1a17]/90">
+                <div className="flex items-center gap-4 px-4 py-4 sm:px-6">
+                    <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-600 to-[#7a2800] shadow-sm">
+                        <Bot className="h-5 w-5 text-white" />
+                        <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-white bg-orange-500 dark:border-[#1f1a17]" />
+                    </div>
+                    <div>
+                        <h1 className="text-base font-bold text-[#1f1a17] dark:text-white">AI Financial Advisor</h1>
+                        <p className="text-xs text-orange-600 font-medium dark:text-orange-400">● Online · Responds instantly</p>
+                    </div>
+                </div>
+            </header>
+
+            {/* ── Messages ── */}
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
+
+                {/* Quick questions (only on fresh chat) */}
+                {messages.length === 1 && (
+                    <div className="mb-5 animate-fade-in">
+                        <div className="mb-3 flex items-center gap-2">
+                            <Sparkles className="h-4 w-4 text-orange-600" />
+                            <p className="text-sm font-semibold text-[#1f1a17]/70 dark:text-white/70">Suggested questions:</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            {QUICK_QUESTIONS.map((q, i) => (
+                                <button key={i} onClick={() => setInputText(q)}
+                                    className="rounded-xl border border-orange-200/60 bg-white px-4 py-3 text-left text-sm text-[#1f1a17] transition hover:border-orange-300 hover:bg-orange-50 dark:border-[#7a2800]/40 dark:bg-[#1f1a17] dark:text-white dark:hover:bg-orange-900/10">
+                                    {q}
+                                </button>
+                            ))}
                         </div>
                     </div>
-                </header>
+                )}
 
-                {/* Chat Body */}
-                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-                        {messages.length === 1 && (
-                            <div className="mb-5">
-                                <div className="mb-3 flex items-center gap-2">
-                                    <Sparkles className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
-                                    <p className="text-sm text-gray-700 sm:text-base">
-                                        Quick questions to get started:
-                                    </p>
+                {/* Message bubbles */}
+                <div className="space-y-4">
+                    {messages.map((msg) => (
+                        <div key={msg.id} className={`flex animate-fade-in ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            {/* AI avatar */}
+                            {msg.sender === 'ai' && (
+                                <div className="mr-2.5 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-600">
+                                    <Bot className="h-4 w-4 text-white" />
                                 </div>
+                            )}
 
-                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
-                                    {quickQuestions.map((question, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => setInputText(question)}
-                                            className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-left text-sm text-gray-700 transition-colors hover:border-primary hover:bg-orange-50 sm:text-base"
-                                        >
-                                            {question}
-                                        </button>
+                            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm sm:max-w-[75%] ${
+                                msg.sender === 'user'
+                                    ? 'rounded-br-sm bg-orange-600 text-white'
+                                    : 'rounded-bl-sm border border-orange-100/60 bg-white text-[#1f1a17] dark:border-[#7a2800]/30 dark:bg-[#1f1a17] dark:text-white'
+                            }`}>
+                                <p className="whitespace-pre-line break-words">{msg.text}</p>
+                                {msg.timestamp && (
+                                    <p className={`mt-1.5 text-[10px] ${msg.sender === 'user' ? 'text-orange-100' : 'text-[#1f1a17]/60 dark:text-white/60'}`}>
+                                        {msg.timestamp}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Typing indicator */}
+                    {isLoading && (
+                        <div className="flex animate-fade-in justify-start">
+                            <div className="mr-2.5 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-600">
+                                <Bot className="h-4 w-4 text-white" />
+                            </div>
+                            <div className="rounded-2xl rounded-bl-sm border border-orange-100/60 bg-white px-5 py-3.5 shadow-sm dark:border-[#7a2800]/30 dark:bg-[#1f1a17]">
+                                <div className="flex items-center gap-1.5">
+                                    {[0, 150, 300].map((delay) => (
+                                        <span key={delay} className="h-2 w-2 rounded-full bg-orange-400"
+                                            style={{ animation: `pulse 1.2s ease-in-out ${delay}ms infinite` }} />
                                     ))}
                                 </div>
                             </div>
-                        )}
-
-                        <div className="space-y-4">
-                            {messages.map(message => (
-                                <div
-                                    key={message.id}
-                                    className={`flex ${
-                                        message.sender === 'user'
-                                            ? 'justify-end'
-                                            : 'justify-start'
-                                    }`}
-                                >
-                                    <div
-                                        className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm sm:max-w-[78%] sm:px-5 sm:text-base ${
-                                            message.sender === 'user'
-                                                ? 'bg-orange-600 text-white'
-                                                : 'border border-gray-200 bg-white text-gray-800'
-                                        }`}
-                                    >
-                                        <p className="whitespace-pre-line break-words">
-                                            {message.text}
-                                        </p>
-
-                                        {message.timestamp && (
-                                            <p
-                                                className={`mt-2 text-xs ${
-                                                    message.sender === 'user'
-                                                        ? 'text-orange-100'
-                                                        : 'text-gray-500'
-                                                }`}
-                                            >
-                                                {message.timestamp}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-
-                            {isLoading && (
-                                <div className="flex justify-start">
-                                    <div className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm text-gray-500 shadow-sm sm:text-base">
-                                        Thinking...
-                                    </div>
-                                </div>
-                            )}
                         </div>
-                    </div>
+                    )}
 
-                    {/* Input */}
-                    <div className="shrink-0 border-t border-gray-200 bg-white/95 px-3 py-3 backdrop-blur sm:px-6 sm:py-4 lg:px-8">
-                        <div className="mx-auto flex max-w-5xl items-center gap-2 rounded-2xl border border-gray-200 bg-white p-2 shadow-sm sm:gap-3 sm:p-3">
-                            <input
-                                type="text"
-                                value={inputText}
-                                onChange={e => setInputText(e.target.value)}
-                                onKeyDown={e => {
-                                    if (e.key === 'Enter') {
-                                        handleSend();
-                                    }
-                                }}
-                                placeholder="Ask about savings, transactions, loans..."
-                                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-primary sm:px-4 sm:text-base"
-                            />
-
-                            <button
-                                onClick={handleSend}
-                                disabled={!inputText.trim() || isLoading}
-                                className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-orange-600 px-4 text-white transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
-                            >
-                                <Send className="h-5 w-5" />
-                                <span className="hidden font-medium sm:inline">
-                                    {isLoading ? 'Sending...' : 'Send'}
-                                </span>
-                            </button>
-                        </div>
-                    </div>
+                    <div ref={bottomRef} />
                 </div>
-            </main>
+            </div>
+
+            {/* ── Input Bar ── */}
+            <div className="shrink-0 border-t border-orange-100/60 bg-white/95 px-3 py-3 backdrop-blur sm:px-6 sm:py-4 dark:border-[#7a2800]/30 dark:bg-[#1f1a17]/95">
+                <div className="mx-auto flex max-w-3xl items-center gap-2 rounded-2xl border border-orange-200/60 bg-[#f8f6f1] p-2 shadow-sm dark:border-[#7a2800]/40 dark:bg-[#241b16]">
+                    <input type="text" value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}
+                        placeholder="Ask about savings, budgeting, transactions..."
+                        className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-[#1f1a17] outline-none placeholder:text-[#1f1a17]/50 dark:text-white dark:placeholder:text-white/50" />
+                    <button onClick={handleSend} disabled={!inputText.trim() || isLoading}
+                        className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-orange-600 px-4 text-white shadow-sm transition hover:bg-[#7a2800] disabled:cursor-not-allowed disabled:opacity-50">
+                        <Send className="h-4 w-4" />
+                        <span className="hidden text-sm font-semibold sm:inline">{isLoading ? 'Sending…' : 'Send'}</span>
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

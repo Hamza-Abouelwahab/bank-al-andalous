@@ -17,16 +17,16 @@ export default function Profile() {
 
     return (
         <div
-            className="flex min-h-screen bg-[#FFFCF9]"
+            className="flex min-h-screen bg-[#f8f6f1] dark:bg-[#0f0d0b]"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
-            <div className="relative hidden w-[260px] flex-shrink-0 flex-col justify-between overflow-hidden bg-[#0F0D0B] p-8 lg:flex">
-                <div className="absolute top-0 right-0 h-64 w-64 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E8632A] opacity-10" />
-                <div className="absolute bottom-0 left-0 h-48 w-48 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#E8632A] opacity-[0.07]" />
+            <div className="relative hidden w-[260px] flex-shrink-0 flex-col justify-between overflow-hidden bg-[#1f1a17] p-8 lg:flex dark:bg-[#0f0d0b]">
+                <div className="absolute top-0 right-0 h-64 w-64 translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-600 opacity-10" />
+                <div className="absolute bottom-0 left-0 h-48 w-48 -translate-x-1/2 translate-y-1/2 rounded-full bg-orange-600 opacity-[0.07]" />
 
                 <div className="relative z-10 flex items-center gap-3">
                     <div
-                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E8632A] text-base font-bold text-white"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-600 text-base font-bold text-white"
                         style={{ fontFamily: "'Syne', sans-serif" }}
                     >
                         B
@@ -40,7 +40,7 @@ export default function Profile() {
                 </div>
 
                 <div className="relative z-10">
-                    <div className="mb-5 text-[10px] font-medium tracking-[2.5px] text-[#E8632A] uppercase">
+                    <div className="mb-5 text-[10px] font-medium tracking-[2.5px] text-orange-600 uppercase">
                         Account setup
                     </div>
                     {[
@@ -72,7 +72,7 @@ export default function Profile() {
                                 {s.label}
                             </span>
                             {s.state === 'active' && (
-                                <div className="ml-auto h-1.5 w-1.5 rounded-full bg-[#E8632A]" />
+                                <div className="ml-auto h-1.5 w-1.5 rounded-full bg-orange-600" />
                             )}
                         </div>
                     ))}
@@ -86,20 +86,20 @@ export default function Profile() {
             </div>
 
             <div className="flex flex-1 flex-col overflow-y-auto p-8 lg:p-12">
-                <div className="mb-10 h-0.5 w-full overflow-hidden rounded-full bg-[#EDE8E0]">
+                <div className="mb-10 h-0.5 w-full overflow-hidden rounded-full bg-orange-100/60 dark:bg-[#7a2800]/30">
                     <div
-                        className="h-full rounded-full bg-[#E8632A] transition-all duration-500"
+                        className="h-full rounded-full bg-orange-600 transition-all duration-500"
                         style={{ width: '33%' }}
                     />
                 </div>
 
                 <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
                     <div className="mb-8 flex items-center gap-2 lg:hidden">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E8632A] text-sm font-bold text-white">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-600 text-sm font-bold text-white">
                             B
                         </div>
                         <span
-                            className="font-bold text-[#0F0D0B]"
+                            className="font-bold text-[#1f1a17] dark:text-white"
                             style={{ fontFamily: "'Syne', sans-serif" }}
                         >
                             BankCo
@@ -107,18 +107,18 @@ export default function Profile() {
                     </div>
 
                     <div className="mb-8">
-                        <div className="mb-2 text-[10px] font-medium tracking-[2.5px] text-[#E8632A] uppercase">
+                        <div className="mb-2 text-[10px] font-medium tracking-[2.5px] text-orange-600 uppercase">
                             Step 1 of 3
                         </div>
                         <h1
-                            className="mb-2 text-[28px] leading-tight font-extrabold tracking-tight text-[#0F0D0B]"
+                            className="mb-2 text-[28px] leading-tight font-extrabold tracking-tight text-[#1f1a17] dark:text-white"
                             style={{ fontFamily: "'Syne', sans-serif" }}
                         >
                             Personal
                             <br />
                             details
                         </h1>
-                        <p className="text-sm text-[#9C978F]">
+                        <p className="text-sm text-[#1f1a17]/60 dark:text-white/60">
                             We need a few details to verify your identity.
                         </p>
                     </div>
@@ -128,7 +128,7 @@ export default function Profile() {
                         className="flex flex-1 flex-col gap-5"
                     >
                         <div>
-                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#9C978F] uppercase">
+                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#1f1a17]/60 dark:text-white/60 uppercase">
                                 CIN
                             </label>
 
@@ -144,7 +144,7 @@ export default function Profile() {
                                     setData('cin', value);
                                 }}
                                 placeholder="AB123456"
-                                className="h-11 w-full rounded-xl border-[1.5px] border-[#E8E3DA] bg-white px-4 text-sm text-[#0F0D0B] placeholder-[#C5BFB6] transition-colors focus:border-[#E8632A] focus:outline-none"
+                                className="h-11 w-full rounded-xl border-[1.5px] border-orange-200/60 bg-white px-4 text-sm text-[#1f1a17] placeholder-[#1f1a17]/40 transition-colors focus:border-orange-600 focus:outline-none dark:border-[#7a2800]/40 dark:bg-[#1f1a17] dark:text-white dark:placeholder-white/40"
                             />
 
                             {errors.cin && (
@@ -155,7 +155,7 @@ export default function Profile() {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#9C978F] uppercase">
+                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#1f1a17]/60 dark:text-white/60 uppercase">
                                 Phone number
                             </label>
                             <input
@@ -165,7 +165,7 @@ export default function Profile() {
                                     setData('phone', e.target.value)
                                 }
                                 placeholder="+212 6XX XXX XXX"
-                                className="h-11 w-full rounded-xl border-[1.5px] border-[#E8E3DA] bg-white px-4 text-sm text-[#0F0D0B] placeholder-[#C5BFB6] transition-colors focus:border-[#E8632A] focus:outline-none"
+                                className="h-11 w-full rounded-xl border-[1.5px] border-orange-200/60 bg-white px-4 text-sm text-[#1f1a17] placeholder-[#1f1a17]/40 transition-colors focus:border-orange-600 focus:outline-none dark:border-[#7a2800]/40 dark:bg-[#1f1a17] dark:text-white dark:placeholder-white/40"
                             />
                             {errors.phone && (
                                 <p className="mt-1.5 text-xs text-red-500">
@@ -174,7 +174,7 @@ export default function Profile() {
                             )}
                         </div>
                         <div>
-                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#9C978F] uppercase">
+                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#1f1a17]/60 dark:text-white/60 uppercase">
                                 Date of birth
                             </label>
                             <input
@@ -183,7 +183,7 @@ export default function Profile() {
                                 onChange={(e) =>
                                     setData('date_of_birth', e.target.value)
                                 }
-                                className="h-11 w-full rounded-xl border-[1.5px] border-[#E8E3DA] bg-white px-4 text-sm text-[#0F0D0B] transition-colors focus:border-[#E8632A] focus:outline-none"
+                                className="h-11 w-full rounded-xl border-[1.5px] border-orange-200/60 bg-white px-4 text-sm text-[#1f1a17] transition-colors focus:border-orange-600 focus:outline-none dark:border-[#7a2800]/40 dark:bg-[#1f1a17] dark:text-white"
                             />
                             {errors.date_of_birth && (
                                 <p className="mt-1.5 text-xs text-red-500">
@@ -193,7 +193,7 @@ export default function Profile() {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#9C978F] uppercase">
+                            <label className="mb-2 block text-[10px] font-medium tracking-[2px] text-[#1f1a17]/60 dark:text-white/60 uppercase">
                                 Address
                             </label>
                             <textarea
@@ -203,7 +203,7 @@ export default function Profile() {
                                 }
                                 rows={3}
                                 placeholder="Your full residential address"
-                                className="w-full resize-none rounded-xl border-[1.5px] border-[#E8E3DA] bg-white px-4 py-3 text-sm text-[#0F0D0B] placeholder-[#C5BFB6] transition-colors focus:border-[#E8632A] focus:outline-none"
+                                className="w-full resize-none rounded-xl border-[1.5px] border-orange-200/60 bg-white px-4 py-3 text-sm text-[#1f1a17] placeholder-[#1f1a17]/40 transition-colors focus:border-orange-600 focus:outline-none dark:border-[#7a2800]/40 dark:bg-[#1f1a17] dark:text-white dark:placeholder-white/40"
                             />
                             {errors.address && (
                                 <p className="mt-1.5 text-xs text-red-500">
@@ -216,14 +216,14 @@ export default function Profile() {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="h-11 w-full rounded-xl bg-[#E8632A] text-sm font-bold text-white transition-colors hover:bg-[#C4501F] disabled:opacity-50"
+                                className="h-11 w-full rounded-xl bg-orange-600 text-sm font-bold text-white transition-colors hover:bg-[#7a2800] disabled:opacity-50"
                                 style={{ fontFamily: "'Syne', sans-serif" }}
                             >
                                 {processing
                                     ? 'Saving...'
                                     : 'Continue to step 2 →'}
                             </button>
-                            <p className="mt-4 text-center text-[10px] text-[#C5BFB6]">
+                            <p className="mt-4 text-center text-[10px] text-[#1f1a17]/50 dark:text-white/50">
                                 🔒 Protected by 256-bit encryption
                             </p>
                         </div>
