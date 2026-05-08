@@ -15,7 +15,7 @@ export function UserInfo({
     return (
         <>
             {user.avatar ? (
-                <Avatar className="h-10 w-10 overflow-hidden rounded-xl border border-slate-200">
+                <Avatar className="h-10 w-10 overflow-hidden rounded-full ">
                     <AvatarImage
                         src={`/storage/${user.avatar}`}
                         alt={user.name}

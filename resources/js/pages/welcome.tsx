@@ -1300,7 +1300,7 @@ export default function Welcome({
                                         </g>
                                     </svg>
                                 </div>
-                                <span className="text-xl font-extrabold">
+                                <span className="text-xl text-black font-extrabold">
                                     Bank{' '}
                                     <span className="text-orange-500">
                                         Al-Andalous{' '}

@@ -24,7 +24,7 @@ export function AppSidebarHeader({
                     title={
                         isDark ? 'Switch to light mode' : 'Switch to dark mode'
                     }
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-sidebar-foreground/60 transition hover:bg-sidebar-accent hover:text-orange-500"
+                    className="flex h-9 w-9 items-center justify-center cursor-pointer rounded-xl text-sidebar-foreground/60 transition hover:bg-sidebar-accent hover:text-orange-500"
                 >
                     {isDark ? (
                         <Sun className="h-4 w-4" />

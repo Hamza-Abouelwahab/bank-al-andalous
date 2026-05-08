@@ -14,6 +14,9 @@ class DepositController extends Controller
     {
         $account = Auth::user()->bankAccount;
 
+        if(auth()->user()->role !== 'admin'){
+            return abort(403);
+        }
         return Inertia::render('Banking/Deposit', [
             'balance'        => $account->balance,
             'account_number' => $account->account_number,
@@ -22,6 +25,9 @@ class DepositController extends Controller
 
     public function store(Request $request)
     {
+        if(auth()->user()->role !== 'admin'){
+            return abort(403) ;
+        }
         $request->validate([
             'amount'      => 'required|numeric|min:100|max:100000',
             'source'      => 'required|string',

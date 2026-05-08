@@ -61,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('appointments/Create');
     });
 
-    // for simulation 
+    // for simulation
     // 🔥 Simulation UI
     Route::get('/simulation', function () {
         return Inertia::render('Simulation/Loan');
@@ -98,6 +98,9 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::inertia('/admin', 'Admin/Dashboard')->name('admin.dashboard');
     Route::delete('/admin/users/{user}', [DashboardController::class, 'destroy'])->name('admin.users.destroy');
+
+    Route::get('/deposit',      [DepositController::class,     'create'])->name('deposit');
+    Route::post('/deposit',     [DepositController::class,     'store'])->name('deposit.store');
 });
 
 // Account card
@@ -108,8 +111,6 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
     Route::get('/withdraw',     [WithdrawController::class,    'create'])->name('withdraw');
     Route::post('/withdraw',    [WithdrawController::class,    'store'])->name('withdraw.store');
 
-    Route::get('/deposit',      [DepositController::class,     'create'])->name('deposit');
-    Route::post('/deposit',     [DepositController::class,     'store'])->name('deposit.store');
 
     Route::get('/transfer',     [TransferController::class,    'create'])->name('transfer');
     Route::post('/transfer',    [TransferController::class,    'store'])->name('transfer.store');

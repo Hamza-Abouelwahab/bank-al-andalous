@@ -9,7 +9,7 @@ const SOURCES = [
     { value: 'cash',          label: 'Cash',            icon: '💵' },
     { value: 'cheque',        label: 'Cheque',          icon: '📄' },
     { value: 'bank_transfer', label: 'Bank Transfer',   icon: '🏦' },
-    { value: 'mobile',        label: 'Mobile Transfer', icon: '📱' },
+
 ];
 
 export default function Deposit() {
@@ -19,6 +19,7 @@ export default function Deposit() {
     const [success, setSuccess] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
+        account_number : '',
         amount: '',
         source: '',
         description: '',
@@ -53,14 +54,14 @@ export default function Deposit() {
                                 <ArrowDownToLine className="h-6 w-6 text-orange-600" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Deposit Money</h1>
+                                <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Admin Cash Deposit</h1>
                                 <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
-                                    Add funds to your account securely
+                                    Credit a verified customer account
                                 </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-xs font-medium text-orange-600 dark:text-orange-400 mt-3">
-                            <ShieldCheck className="h-4 w-4" /> 
+                            <ShieldCheck className="h-4 w-4" />
                             <span>Secure session • 256-bit encryption</span>
                         </div>
                     </div>
@@ -71,6 +72,17 @@ export default function Deposit() {
                         <div className="lg:col-span-8 order-2 lg:order-1">
                             <div className="fintech-card rounded-3xl border border-[#EDE8E0] bg-white p-8 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
                                 <form onSubmit={submit} className="space-y-7">
+                                    <div className="">
+                                        <label className="mb-3 block text-xs font-bold uppercase tracking-widest text-[#1f1a17] dark:text-white">Customer Account Number</label>
+                                        <div className="relative group">
+                                            <input type="number" value={data.account_number}
+                                                onChange={(e) => setData('account_number', e.target.value)}
+                                                placeholder="Account Number"
+                                                className="h-16 w-full rounded-2xl border border-orange-200 focus:border-orange-600 bg-white px-5 pr-20 text-2xl font-bold text-[#1f1a17] outline-none transition-all duration-200 dark:border-[#2A2520] focus:dark:border-orange-600 dark:bg-[#1f1a17] dark:text-white" />
+                                            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">MAD</span>
+                                        </div>
+                                        {errors.account_number && <p className="mt-2.5 text-xs font-medium text-red-600 dark:text-red-400">{errors.account_number}</p>}
+                                    </div>
 
                                     {/* Quick amounts - Enhanced */}
                                     <div>
@@ -118,7 +130,7 @@ export default function Deposit() {
                                                     }`}>
                                                     <div className="absolute inset-0 bg-orange-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                                                     <div className="relative flex items-center gap-3">
-                                                        <span className="text-lg">{s.icon}</span> 
+                                                        <span className="text-lg">{s.icon}</span>
                                                         <span>{s.label}</span>
                                                     </div>
                                                 </button>
@@ -228,7 +240,7 @@ export default function Deposit() {
                                     <p className="text-xs text-[#1f1a17]/60 dark:text-white/60">Review before proceeding</p>
                                 </div>
                             </div>
-                            <button onClick={() => setReview(false)} 
+                            <button onClick={() => setReview(false)}
                                 className="flex h-8 w-8 items-center justify-center rounded-lg text-[#1f1a17]/60 hover:bg-orange-50 hover:text-[#7a2800] transition dark:text-white/60 dark:hover:bg-orange-900/20">
                                 <X className="h-5 w-5" />
                             </button>

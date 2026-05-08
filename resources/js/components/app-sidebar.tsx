@@ -37,9 +37,8 @@ import {
 } from '@/routes';
 
 // ─── Nav Groups ───────────────────────────────────────────────────
-const bankingNav = [
+const baseBankingNav = [
     { title: 'Dashboard', href: dashboard.definition.url, icon: LayoutGrid },
-    { title: 'Deposit', href: deposit.definition.url, icon: ArrowDownToLine },
     { title: 'Withdraw', href: withdraw.definition.url, icon: ArrowUpFromLine },
     { title: 'Transactions', href: transactions.definition.url, icon: History },
     { title: 'Transfer', href: transfer.definition.url, icon: Send },
@@ -60,7 +59,7 @@ const supportNav = [
 
 // ─── Bank Logo (reusable inline SVG) ─────────────────────────────
 function BankLogo({
-    
+
     className = '',
 }: {
     size?: number;
@@ -138,7 +137,14 @@ function BankLogo({
 export function AppSidebar() {
     const page = usePage();
     const { auth } = page.props as any;
-
+    const bankingNav =
+    auth.user.role === 'admin'
+        ? [
+              { title: 'Dashboard', href: dashboard.definition.url, icon: LayoutGrid },
+              { title: 'Deposit', href: deposit.definition.url, icon: ArrowDownToLine },
+              ...baseBankingNav.slice(1),
+          ]
+        : baseBankingNav;
     return (
         <Sidebar collapsible="icon" variant="inset">
             {/* ── Header / Logo ── */}
