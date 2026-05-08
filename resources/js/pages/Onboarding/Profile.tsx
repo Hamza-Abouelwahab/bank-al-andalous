@@ -1,18 +1,26 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 
 export default function Profile() {
-    const {profile} = usePage().props as any
+    const { profile } = usePage().props as any
     const { data, setData, post, processing, errors } = useForm({
         date_of_birth: profile?.date_of_birth ?? '',
-        cin: profile?.cin?? '',
+        cin: profile?.cin ?? '',
         phone: profile?.phone ?? '',
         address: profile?.address ?? '',
     });
 
     const submit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post('/onboarding/profile');
+
+        post('/onboarding/profile', {
+            preserveScroll: true,
+            onSuccess: () => {
+                router.visit('/onboarding/bank', {
+                    replace: true,
+                });
+            },
+        });
     };
 
     return (
@@ -57,11 +65,10 @@ export default function Profile() {
                             className="mb-4 flex items-center gap-3"
                         >
                             <div
-                                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                                    s.state === 'active'
+                                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${s.state === 'active'
                                         ? 'bg-white text-[#0F0D0B]'
                                         : 'border border-white/10 bg-white/[0.07] text-white/20'
-                                }`}
+                                    }`}
                                 style={{ fontFamily: "'Syne', sans-serif" }}
                             >
                                 {s.num}

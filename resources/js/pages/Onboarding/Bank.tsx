@@ -1,4 +1,4 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 
 export default function Bank() {
@@ -12,9 +12,17 @@ export default function Bank() {
     });
 
     const submit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        post('/onboarding/bank');
-    };
+    e.preventDefault();
+
+    post('/onboarding/bank', {
+        preserveScroll: true,
+        onSuccess: () => {
+            router.visit('/onboarding/confirm', {
+                replace: true,
+            });
+        },
+    });
+};
 
     const selectStyle = {
         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%239C978F' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,

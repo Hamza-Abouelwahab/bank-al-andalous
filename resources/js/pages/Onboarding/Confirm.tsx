@@ -1,9 +1,9 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 interface Props {
-    profile: {cin:string ; date_of_birth: string; phone: string; address: string };
+    profile: { cin: string; date_of_birth: string; phone: string; address: string };
     bank: {
         account_type: string; employment_status: string;
         occupation: string; monthly_income: string; source_of_funds: string;
@@ -23,7 +23,7 @@ const labels: Record<string, string> = {
 };
 
 function fmt(v: string) {
- return labels[v] ?? v ?? '—';
+    return labels[v] ?? v ?? '—';
 }
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -44,10 +44,17 @@ export default function Confirm() {
         e.preventDefault();
 
         if (!agreed) {
-return;
-}
+            return;
+        }
 
-        post('/onboarding/confirm');
+        post('/onboarding/confirm', {
+            preserveScroll: true,
+            onSuccess: () => {
+                router.visit('/dashboard', {
+                    replace: true,
+                });
+            },
+        });
     };
 
     return (
@@ -71,9 +78,8 @@ return;
                         { num: '03', label: 'Confirmation', state: 'active' },
                     ].map((s, i) => (
                         <div key={i} className="flex items-center  gap-3 mb-4">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                                s.state === 'done' ? 'bg-[#E8632A] text-white' : 'bg-white text-[#0F0D0B]'
-                            }`} style={{ fontFamily: "'Syne', sans-serif" }}>{s.num}</div>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${s.state === 'done' ? 'bg-[#E8632A] text-white' : 'bg-white text-[#0F0D0B]'
+                                }`} style={{ fontFamily: "'Syne', sans-serif" }}>{s.num}</div>
                             <span className={`text-sm ${s.state === 'done' ? 'text-[#E8632A]' : 'text-white font-medium'}`}>{s.label}</span>
                             {s.state === 'active' && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#E8632A]" />}
                         </div>
