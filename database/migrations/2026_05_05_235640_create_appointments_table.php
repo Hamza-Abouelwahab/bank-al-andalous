@@ -17,7 +17,8 @@ return new class extends Migration
             $table->date('date');
             $table->time('time');
             $table->string('type'); // consultation, loan, support...
-            $table->string('status')->default('pending'); // pending, confirmed, completed, cancelled
+            $table->string('status')->default('pending');// pending, confirmed, completed, cancelled
+            $table->unique(['date', 'time']); 
             $table->timestamps();
         });
     }

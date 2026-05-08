@@ -55,11 +55,14 @@ Route::middleware(['auth'])->group(function () {
 
     // for book an Appointment
 
-    Route::post('/appointments', [AppointmentController::class, 'store']);
+    Route::get('/appointments/create', [AppointmentController::class, 'create'])
+        ->name('appointments.create');
 
-    Route::get('/appointments/create', function () {
-        return Inertia::render('appointments/Create');
-    });
+    Route::post('/appointments', [AppointmentController::class, 'store'])
+        ->name('appointments.store');
+
+    Route::put('/appointments/{appointment}', [AppointmentController::class, 'update'])
+        ->name('appointments.update');
 
     // for simulation
     // 🔥 Simulation UI
@@ -96,11 +99,26 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
 
 // Admin
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::inertia('/admin', 'Admin/Dashboard')->name('admin.dashboard');
-    Route::delete('/admin/users/{user}', [DashboardController::class, 'destroy'])->name('admin.users.destroy');
+    Route::get('/admin', [DashboardController::class, 'index'])
+        ->name('admin.dashboard');
 
-    Route::get('/deposit',      [DepositController::class,     'create'])->name('deposit');
-    Route::post('/deposit',     [DepositController::class,     'store'])->name('deposit.store');
+    Route::get('/admin/users', [DashboardController::class, 'users'])
+        ->name('admin.users');
+
+    Route::get('/admin/appointments', [DashboardController::class, 'appointments'])
+        ->name('admin.appointments');
+
+    Route::get('/admin/security', [DashboardController::class, 'security'])
+        ->name('admin.security');
+
+    Route::delete('/admin/users/{user}', [DashboardController::class, 'destroy'])
+        ->name('admin.users.destroy');
+
+    Route::get('/deposit', [DepositController::class, 'create'])
+        ->name('deposit');
+
+    Route::post('/deposit', [DepositController::class, 'store'])
+        ->name('deposit.store');
 });
 
 // Account card

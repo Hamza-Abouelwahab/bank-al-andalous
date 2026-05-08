@@ -76,12 +76,12 @@ const alertIcons: Record<string, any> = {
 };
 
 const quickActions = [
-    { label: 'Deposit',   href: '/deposit',   icon: ArrowDownToLine, bg: 'bg-gradient-to-br from-orange-50 to-[#f8f6f1] dark:from-orange-900/15 dark:to-[#7a2800]/10',  color: 'text-orange-600 dark:text-orange-400' },
-    { label: 'Withdraw',  href: '/withdraw',  icon: ArrowUpFromLine, bg: 'bg-gradient-to-br from-[#f8f6f1] to-orange-50 dark:from-[#7a2800]/10 dark:to-orange-900/15',    color: 'text-[#7a2800] dark:text-orange-500' },
-    { label: 'Transfer',  href: '/transfer',  icon: Send,            bg: 'bg-gradient-to-br from-orange-50 to-[#f8f6f1] dark:from-orange-900/15 dark:to-[#7a2800]/10',        color: 'text-orange-600 dark:text-orange-400' },
-    { label: 'Pay Bills', href: '/bills',     icon: FileText,        bg: 'bg-gradient-to-br from-[#f8f6f1] to-orange-50 dark:from-[#7a2800]/10 dark:to-orange-900/15',    color: 'text-[#7a2800] dark:text-orange-500' },
-    { label: 'My Card',   href: '/account',   icon: CreditCard,      bg: 'bg-gradient-to-br from-orange-50 to-[#f8f6f1] dark:from-orange-900/15 dark:to-[#7a2800]/10',    color: 'text-orange-600 dark:text-orange-400' },
-    { label: 'AI Advisor',href: '/ai-chat',   icon: Bot,             bg: 'bg-gradient-to-br from-[#f8f6f1] to-orange-50 dark:from-[#7a2800]/10 dark:to-orange-900/15',        color: 'text-[#7a2800] dark:text-orange-500' },
+    { label: 'Deposit', href: '/deposit', icon: ArrowDownToLine, bg: 'bg-gradient-to-br from-orange-50 to-[#f8f6f1] dark:from-orange-900/15 dark:to-[#7a2800]/10', color: 'text-orange-600 dark:text-orange-400' },
+    { label: 'Withdraw', href: '/withdraw', icon: ArrowUpFromLine, bg: 'bg-gradient-to-br from-[#f8f6f1] to-orange-50 dark:from-[#7a2800]/10 dark:to-orange-900/15', color: 'text-[#7a2800] dark:text-orange-500' },
+    { label: 'Transfer', href: '/transfer', icon: Send, bg: 'bg-gradient-to-br from-orange-50 to-[#f8f6f1] dark:from-orange-900/15 dark:to-[#7a2800]/10', color: 'text-orange-600 dark:text-orange-400' },
+    { label: 'Pay Bills', href: '/bills', icon: FileText, bg: 'bg-gradient-to-br from-[#f8f6f1] to-orange-50 dark:from-[#7a2800]/10 dark:to-orange-900/15', color: 'text-[#7a2800] dark:text-orange-500' },
+    { label: 'My Card', href: '/account', icon: CreditCard, bg: 'bg-gradient-to-br from-orange-50 to-[#f8f6f1] dark:from-orange-900/15 dark:to-[#7a2800]/10', color: 'text-orange-600 dark:text-orange-400' },
+    { label: 'AI Advisor', href: '/ai-chat', icon: Bot, bg: 'bg-gradient-to-br from-[#f8f6f1] to-orange-50 dark:from-[#7a2800]/10 dark:to-orange-900/15', color: 'text-[#7a2800] dark:text-orange-500' },
 ];
 
 export default function Dashboard() {
@@ -102,10 +102,10 @@ export default function Dashboard() {
 
     const [balanceVisible, setBalanceVisible] = useState(true);
 
-    const balance  = Number(account?.balance ?? 0);
-    const income   = Number(summary?.total_credit ?? 0);
+    const balance = Number(account?.balance ?? 0);
+    const income = Number(summary?.total_credit ?? 0);
     const expenses = Number(summary?.total_debit ?? 0);
-    const savings  = Math.max(income - expenses, 0);
+    const savings = Math.max(income - expenses, 0);
 
     const firstName = user.name.split(' ')[0];
 
@@ -113,95 +113,95 @@ export default function Dashboard() {
         `${Number(value).toLocaleString('en-MA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MAD`;
 
     const statCards = [
-        { label: 'Total Balance', value: balanceVisible ? formatMoney(balance) : '•••••• MAD', icon: Wallet,         bg: 'bg-orange-50 dark:bg-orange-500/10',  iconColor: 'text-orange-500', change: '+12.5%', positive: true },
-        { label: 'Income',        value: formatMoney(income),                                   icon: ArrowDownToLine, bg: 'bg-emerald-50 dark:bg-emerald-500/10', iconColor: 'text-emerald-500', change: '+8.2%', positive: true },
-        { label: 'Expenses',      value: formatMoney(expenses),                                 icon: ArrowUpFromLine, bg: 'bg-red-50 dark:bg-red-500/10',         iconColor: 'text-red-500',     change: '+3.7%', positive: false },
-        { label: 'Savings',       value: formatMoney(savings),                                  icon: PiggyBank,       bg: 'bg-purple-50 dark:bg-purple-500/10',   iconColor: 'text-purple-500',  change: '+15.3%', positive: true },
+        { label: 'Total Balance', value: balanceVisible ? formatMoney(balance) : '•••••• MAD', icon: Wallet, bg: 'bg-orange-50 dark:bg-orange-500/10', iconColor: 'text-orange-500', change: '+12.5%', positive: true },
+        { label: 'Income', value: formatMoney(income), icon: ArrowDownToLine, bg: 'bg-emerald-50 dark:bg-emerald-500/10', iconColor: 'text-emerald-500', change: '+8.2%', positive: true },
+        { label: 'Expenses', value: formatMoney(expenses), icon: ArrowUpFromLine, bg: 'bg-red-50 dark:bg-red-500/10', iconColor: 'text-red-500', change: '+3.7%', positive: false },
+        { label: 'Savings', value: formatMoney(savings), icon: PiggyBank, bg: 'bg-purple-50 dark:bg-purple-500/10', iconColor: 'text-purple-500', change: '+15.3%', positive: true },
     ];
-        // logo 
+    // logo 
     function BankLogo({
-    
-    className = '',
-}: {
-    size?: number;
-    className?: string;
-}) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 64 84"
-            width={24}
-            height={24}
-            className={className}
-            fill="none"
-        >
-            <path
-                d="M11 78 V30 C11 26.5 12.3 23.7 14.8 21.5 L19.4 17.4 L22.8 13.2 L26.1 9.1 L29.1 5.8 L32 3.5 L34.9 5.8 L37.9 9.1 L41.2 13.2 L44.6 17.4 L49.2 21.5 C51.7 23.7 53 26.5 53 30 V78"
-                stroke="#F97316"
-                strokeWidth="2.3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M17 29 C17 26.4 18 24.2 19.9 22.5 L24 18.8 L26.8 15.2 L29.2 12.1 L32 9.8 L34.8 12.1 L37.2 15.2 L40 18.8 L44.1 22.5 C46 24.2 47 26.4 47 29"
-                stroke="#F97316"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M18 78 V33 C18 30.6 18.9 28.6 20.6 27 L24.4 23.4 L27 20.2 L29.2 17.6 L32 15.4 L34.8 17.6 L37 20.2 L39.6 23.4 L43.4 27 C45.1 28.6 46 30.6 46 33 V78"
-                stroke="#F97316"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M18 34.5H21.2"
-                stroke="#F97316"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-            />
-            <path
-                d="M42.8 34.5H46"
-                stroke="#F97316"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-            />
-            <path
-                d="M32 20.2 L33.1 22.6 L35.7 21.9 L35 24.5 L37.4 25.6 L35 26.7 L35.7 29.3 L33.1 28.6 L32 31 L30.9 28.6 L28.3 29.3 L29 26.7 L26.6 25.6 L29 24.5 L28.3 21.9 L30.9 22.6 Z"
-                fill="#F97316"
-            />
-            <g transform="translate(32 53)">
-                {[0, 45, 90, 135, 180, 225, 270, 315].map((r) => (
-                    <path
-                        key={r}
-                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                        stroke="#F97316"
-                        strokeWidth="1.6"
-                        fill="none"
-                        transform={`rotate(${r})`}
-                    />
-                ))}
-                <circle
-                    cx="0"
-                    cy="0"
-                    r="2.2"
+
+        className = '',
+    }: {
+        size?: number;
+        className?: string;
+    }) {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 64 84"
+                width={24}
+                height={24}
+                className={className}
+                fill="none"
+            >
+                <path
+                    d="M11 78 V30 C11 26.5 12.3 23.7 14.8 21.5 L19.4 17.4 L22.8 13.2 L26.1 9.1 L29.1 5.8 L32 3.5 L34.9 5.8 L37.9 9.1 L41.2 13.2 L44.6 17.4 L49.2 21.5 C51.7 23.7 53 26.5 53 30 V78"
                     stroke="#F97316"
-                    strokeWidth="1.4"
-                    fill="none"
+                    strokeWidth="2.3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                 />
-            </g>
-        </svg>
-    );
-}
+                <path
+                    d="M17 29 C17 26.4 18 24.2 19.9 22.5 L24 18.8 L26.8 15.2 L29.2 12.1 L32 9.8 L34.8 12.1 L37.2 15.2 L40 18.8 L44.1 22.5 C46 24.2 47 26.4 47 29"
+                    stroke="#F97316"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+                <path
+                    d="M18 78 V33 C18 30.6 18.9 28.6 20.6 27 L24.4 23.4 L27 20.2 L29.2 17.6 L32 15.4 L34.8 17.6 L37 20.2 L39.6 23.4 L43.4 27 C45.1 28.6 46 30.6 46 33 V78"
+                    stroke="#F97316"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+                <path
+                    d="M18 34.5H21.2"
+                    stroke="#F97316"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                />
+                <path
+                    d="M42.8 34.5H46"
+                    stroke="#F97316"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                />
+                <path
+                    d="M32 20.2 L33.1 22.6 L35.7 21.9 L35 24.5 L37.4 25.6 L35 26.7 L35.7 29.3 L33.1 28.6 L32 31 L30.9 28.6 L28.3 29.3 L29 26.7 L26.6 25.6 L29 24.5 L28.3 21.9 L30.9 22.6 Z"
+                    fill="#F97316"
+                />
+                <g transform="translate(32 53)">
+                    {[0, 45, 90, 135, 180, 225, 270, 315].map((r) => (
+                        <path
+                            key={r}
+                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                            stroke="#F97316"
+                            strokeWidth="1.6"
+                            fill="none"
+                            transform={`rotate(${r})`}
+                        />
+                    ))}
+                    <circle
+                        cx="0"
+                        cy="0"
+                        r="2.2"
+                        stroke="#F97316"
+                        strokeWidth="1.4"
+                        fill="none"
+                    />
+                </g>
+            </svg>
+        );
+    }
 
     return (
         <>
             <Head title="Dashboard" />
 
             <div className="min-h-screen bg-[#F8F6F1] dark:bg-[#0F0D0B]">
-                <main className="px-4 py-6 sm:px-6 lg:px-8">
+                <main className="px-3 py-5 sm:px-6 lg:px-8">
 
                     {/* ── Welcome Banner ── */}
                     <div className="mb-6 animate-fade-in">
@@ -214,23 +214,39 @@ export default function Dashboard() {
                     </div>
 
                     {/* ── Stat Cards ── */}
-                    <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 stagger animate-fade-in">
+                    <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4 stagger animate-fade-in">
                         {statCards.map((card) => {
                             const Icon = card.icon;
                             const Trend = card.positive ? TrendingUp : TrendingDown;
+
                             return (
-                                <div key={card.label}
-                                    className="fintech-card rounded-2xl border border-[#EDE8E0] bg-white p-5 dark:border-[#2A2520] dark:bg-[#1A1714]">
-                                    <div className="mb-4 flex items-start justify-between">
-                                        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.bg}`}>
+                                <div
+                                    key={card.label}
+                                    className="fintech-card rounded-[26px] border border-[#EDE8E0] bg-white p-4 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714] sm:p-5"
+                                >
+                                    <div className="mb-4 flex items-start justify-between gap-2">
+                                        <div
+                                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${card.bg} sm:h-12 sm:w-12`}
+                                        >
                                             <Icon className={`h-5 w-5 ${card.iconColor}`} />
                                         </div>
-                                        <span className={`flex items-center gap-1 text-xs font-semibold ${card.positive ? 'text-emerald-600' : 'text-red-500'}`}>
-                                            <Trend className="h-3 w-3" /> {card.change}
+
+                                        <span
+                                            className={`flex shrink-0 items-center gap-1 text-[10px] font-bold sm:text-xs ${card.positive ? 'text-emerald-600' : 'text-red-500'
+                                                }`}
+                                        >
+                                            <Trend className="h-3 w-3" />
+                                            {card.change}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">{card.label}</p>
-                                    <p className="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">{card.value}</p>
+
+                                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 sm:text-sm">
+                                        {card.label}
+                                    </p>
+
+                                    <p className="mt-1 break-words text-[17px] font-extrabold leading-tight text-slate-900 dark:text-white sm:text-xl">
+                                        {card.value}
+                                    </p>
                                 </div>
                             );
                         })}
@@ -254,11 +270,11 @@ export default function Dashboard() {
                                 <svg viewBox="0 0 700 220" className="h-full w-full" preserveAspectRatio="none">
                                     <defs>
                                         <linearGradient id="chartArea" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%"   stopColor="#F97316" stopOpacity="0.25" />
+                                            <stop offset="0%" stopColor="#F97316" stopOpacity="0.25" />
                                             <stop offset="100%" stopColor="#F97316" stopOpacity="0" />
                                         </linearGradient>
                                     </defs>
-                                    {[30,70,110,150,190].map((y) => (
+                                    {[30, 70, 110, 150, 190].map((y) => (
                                         <line key={y} x1="0" y1={y} x2="700" y2={y} stroke="currentColor" strokeWidth="0.5" className="text-slate-100 dark:text-slate-800" />
                                     ))}
                                     <path d="M0 180 C70 100, 110 120, 160 130 C230 140, 250 60, 310 80 C370 105, 390 150, 450 110 C500 75, 540 100, 580 50 C630 10, 660 110, 700 90 L700 220 L0 220 Z"
@@ -334,7 +350,7 @@ export default function Dashboard() {
                                 <div className="relative">
                                     <div className="mb-8 flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <BankLogo className=''/>
+                                            <BankLogo className='' />
                                             <span className="text-m font-bold tracking-widest text-orange-100 uppercase">Al-Andalous</span>
                                         </div>
                                         <CreditCard className="h-5 w-5 text-white/60" />
@@ -435,7 +451,7 @@ export default function Dashboard() {
                             <div className="grid gap-4 sm:grid-cols-2">
                                 {goals.length > 0 ? (
                                     goals.slice(0, 4).map((goal: any) => {
-                                        const saved  = Number(goal.saved_amount ?? 0);
+                                        const saved = Number(goal.saved_amount ?? 0);
                                         const target = Number(goal.target_amount ?? 0);
                                         const progress = target > 0 ? Math.min((saved / target) * 100, 100) : 0;
                                         return (
@@ -516,11 +532,11 @@ export default function Dashboard() {
                         </div>
                         <iframe
                             src={
-                                activeModal === 'Deposit'   ? '/deposit?modal=1'   :
-                                activeModal === 'Withdraw'  ? '/withdraw?modal=1'  :
-                                activeModal === 'Transfer'  ? '/transfer?modal=1'  :
-                                activeModal === 'Pay Bills' ? '/bills?modal=1'     :
-                                activeModal === 'Account'   ? '/account?modal=1'   : '/'
+                                activeModal === 'Deposit' ? '/deposit?modal=1' :
+                                    activeModal === 'Withdraw' ? '/withdraw?modal=1' :
+                                        activeModal === 'Transfer' ? '/transfer?modal=1' :
+                                            activeModal === 'Pay Bills' ? '/bills?modal=1' :
+                                                activeModal === 'Account' ? '/account?modal=1' : '/'
                             }
                             className="w-full border-0"
                             style={{ height: 'calc(85vh - 64px)' }}
