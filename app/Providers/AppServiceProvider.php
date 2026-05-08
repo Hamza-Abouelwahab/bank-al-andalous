@@ -5,7 +5,7 @@ namespace App\Providers;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Fortify\Contracts\RegisterResponse;
@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(RegisterResponse::class, function () {
             return new class implements RegisterResponse {
-                public function toResponse($request)  
+                public function toResponse($request)
                 {
                     return redirect()->route('onboarding.profile');
                 }
@@ -32,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         $this->configureDefaults();
     }
 
@@ -49,11 +53,11 @@ class AppServiceProvider extends ServiceProvider
         Password::defaults(
             fn(): ?Password => app()->isProduction()
                 ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
                 : null,
         );
     }
