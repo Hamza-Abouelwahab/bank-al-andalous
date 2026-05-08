@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
+     * maybe her 
      */
     public function register(): void
     {
@@ -41,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Configure default behaviors for production-ready applications.
+     * her 
+     * or there 
+     * mamamamamamam
      */
     protected function configureDefaults(): void
     {
