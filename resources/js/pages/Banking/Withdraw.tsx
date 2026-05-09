@@ -385,7 +385,7 @@ export default function Withdraw() {
                                     <button
                                         type="submit"
                                         disabled={codeForm.processing}
-                                        className="rounded-2xl bg-gradient-to-r from-[#1f1a17] to-[#7a2800] py-3.5 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-900/20 disabled:opacity-50 sm:col-span-2 dark:from-orange-600 dark:to-[#7a2800]"
+                                        className="rounded-2xl bg-orange-600 py-3.5 hover:bg-[#7a2800] cursor-pointer text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-900/20 disabled:opacity-50 sm:col-span-2 dark:from-orange-600 dark:to-[#7a2800]"
                                     >
                                         {codeForm.processing
                                             ? 'Checking Code…'

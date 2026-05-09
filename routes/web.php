@@ -43,9 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/ai-chat/ask', [AIChatController::class, 'ask'])
             ->name('ai.chat.ask');
-
     });
-
 });
 
 // Onboarding
@@ -71,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/appointments/{appointment}', [AppointmentController::class, 'update'])
         ->name('appointments.update');
 
+    Route::middleware(['auth'])->get('/appointments/verify/{token}', [AppointmentController::class, 'verify'])
+        ->name('appointments.verify');
+
+    Route::middleware(['auth'])->post('/appointments/check-in/{appointment}', [AppointmentController::class, 'checkIn'])
+        ->name('appointments.check-in');
     // for simulation
     // 🔥 Simulation UI
     Route::get('/simulation', function () {
@@ -128,7 +131,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('deposit.store');
 
     Route::post('/deposit/find-customer', [DepositController::class, 'findCustomer'])
-    ->name('deposit.find-customer');
+        ->name('deposit.find-customer');
 });
 
 // Account card
@@ -139,9 +142,9 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
     Route::get('/withdraw',     [WithdrawController::class,    'create'])->name('withdraw');
     Route::post('/withdraw',    [WithdrawController::class,    'store'])->name('withdraw.store');
     Route::post('/withdraw/{withdrawalRequest}/cancel', [WithdrawController::class, 'cancel'])
-    ->name('withdraw.cancel');
+        ->name('withdraw.cancel');
     Route::post('/withdraw/use-code', [WithdrawController::class, 'useCode'])
-    ->name('withdraw.use-code');
+        ->name('withdraw.use-code');
 
     Route::get('/transfer',     [TransferController::class,    'create'])->name('transfer');
     Route::post('/transfer',    [TransferController::class,    'store'])->name('transfer.store');
@@ -153,11 +156,11 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
 
     Route::get('savings/index', [SavingsController::class, 'index'])->name('saving.index');
     Route::post('/saving-goals', [SavingGoalController::class, 'store'])->name('saving-goals.store');
-    // Route::get('/saving-goals', [GoalController::class, 'index']);
+
     // * auto saving
     Route::post('/saving-goals/{goal}/run-auto-saving', [SavingGoalController::class, 'runAutoSavingForGoal'])
         ->name('saving-goals.run-one');
-        // * delete challenge
+    // * delete challenge
     Route::delete('/saving-goals/{goal}', [SavingGoalController::class, 'destroy'])
         ->name('saving-goals.destroy');
     // * pause

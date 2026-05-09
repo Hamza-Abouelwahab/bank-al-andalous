@@ -7,27 +7,18 @@ import {
     ShieldCheck,
     UserRound,
     Bell,
+    Mail,
+    CheckCircle2,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import 'react-day-picker/dist/style.css';
+import CustomSelect from '@/components/CustomSelect';
 
-const timeSlots = [
-    '09:00',
-    '09:30',
-    '10:00',
-    '10:30',
-    '11:00',
-    '11:30',
-    '13:00',
-    '13:30',
-    '14:00',
-    '14:30',
-    '15:00',
-    '15:30',
-    '16:00',
-    '16:30',
-    '17:00',
-];
+type Agent = {
+    id: number;
+    name: string;
+    email: string;
+};
 
 type AppointmentReminder = {
     id?: number;
@@ -36,31 +27,33 @@ type AppointmentReminder = {
     type: string;
     status?: string;
     can_update?: boolean;
+    agent_id?: number | null;
+    agent?: Agent | null;
+    qr_token?: string | null;
 };
 
+type BookedSlots = Record<string, Record<string, string[]>>;
+
 type CreateAppointmentProps = {
-    bookedSlots: Record<string, string[]>;
+    bookedSlots: BookedSlots;
+    workingSlots: string[];
+    agents: Agent[];
     myAppointment: AppointmentReminder | null;
 };
 
 export default function CreateAppointment({
     bookedSlots = {},
+    workingSlots = [],
+    agents = [],
     myAppointment = null,
 }: CreateAppointmentProps) {
-    const {
-        data,
-        setData,
-        post,
-        put,
-        processing,
-        errors,
-        reset,
-        clearErrors,
-    } = useForm({
-        date: '',
-        time: '',
-        type: '',
-    });
+    const { data, setData, post, put, processing, errors, reset, clearErrors } =
+        useForm({
+            date: '',
+            time: '',
+            type: '',
+            agent_id: '',
+        });
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
     const [success, setSuccess] = useState(false);
@@ -69,26 +62,81 @@ export default function CreateAppointment({
     );
     const [timeLeft, setTimeLeft] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+    const [dateMessage, setDateMessage] = useState('');
 
     useEffect(() => {
         setReminder(myAppointment);
     }, [myAppointment]);
 
-    const chooseDate = (date?: Date) => {
-        setSelectedDate(date);
+    const safeWorkingSlots =
+        workingSlots.length > 0
+            ? workingSlots
+            : [
+                  '09:00',
+                  '09:30',
+                  '10:00',
+                  '10:30',
+                  '11:00',
+                  '11:30',
+                  '14:00',
+                  '14:30',
+                  '15:00',
+                  '15:30',
+                  '16:00',
+              ];
 
-        if (date) {
-            setData('date', format(date, 'yyyy-MM-dd'));
-            setData('time', '');
-        } else {
+    const selectedAgent = useMemo(() => {
+        return agents.find(
+            (agent) => String(agent.id) === String(data.agent_id),
+        );
+    }, [agents, data.agent_id]);
+
+    const reminderAgent = useMemo(() => {
+        if (!reminder?.agent_id) {
+            return null;
+        }
+
+        return agents.find((agent) => agent.id === reminder.agent_id) ?? null;
+    }, [agents, reminder]);
+
+    const isWeekend = (date: Date) => {
+        const day = date.getDay();
+
+        return day === 0 || day === 6;
+    };
+
+    const chooseDate = (date?: Date) => {
+        clearErrors();
+        setDateMessage('');
+
+        if (!date) {
+            setSelectedDate(undefined);
             setData('date', '');
             setData('time', '');
+            return;
         }
+
+        if (isWeekend(date)) {
+            setSelectedDate(undefined);
+            setData('date', '');
+            setData('time', '');
+            setDateMessage(
+                'Appointments are not available on Saturday or Sunday.',
+            );
+            return;
+        }
+
+        setSelectedDate(date);
+        setData('date', format(date, 'yyyy-MM-dd'));
+        setData('time', '');
     };
 
     const getAppointmentDateTime = (appointment: AppointmentReminder) => {
         const [year, month, day] = appointment.date.split('-').map(Number);
-        const [hours, minutes] = appointment.time.slice(0, 5).split(':').map(Number);
+        const [hours, minutes] = appointment.time
+            .slice(0, 5)
+            .split(':')
+            .map(Number);
 
         return new Date(year, month - 1, day, hours, minutes, 0);
     };
@@ -120,12 +168,16 @@ export default function CreateAppointment({
 
     const formatService = (service: string) => {
         switch (service) {
-            case 'consultation':
-                return 'Consultation';
-            case 'loan':
+            case 'account_opening':
+                return 'Account Opening';
+            case 'loan_request':
                 return 'Loan Request';
-            case 'support':
+            case 'card_service':
+                return 'Card Service';
+            case 'customer_support':
                 return 'Customer Support';
+            case 'financial_advice':
+                return 'Financial Advice';
             default:
                 return service || 'Not selected';
         }
@@ -163,21 +215,23 @@ export default function CreateAppointment({
 
     const safeBookedSlots = bookedSlots ?? {};
 
-    const bookedTimesForSelectedDate = data.date
-        ? safeBookedSlots[data.date] || []
-        : [];
+    const bookedTimesForSelectedDateAndAgent =
+        data.date && data.agent_id
+            ? safeBookedSlots?.[data.date]?.[String(data.agent_id)] || []
+            : [];
 
     const isSlotBooked = (slot: string) => {
         if (
             isEditing &&
             reminder &&
             data.date === reminder.date &&
+            String(data.agent_id) === String(reminder.agent_id) &&
             slot === reminder.time.slice(0, 5)
         ) {
             return false;
         }
 
-        return bookedTimesForSelectedDate.includes(slot);
+        return bookedTimesForSelectedDateAndAgent.includes(slot);
     };
 
     const startEditing = () => {
@@ -185,7 +239,8 @@ export default function CreateAppointment({
             return;
         }
 
-        const date = new Date(reminder.date);
+        const [year, month, day] = reminder.date.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
 
         setIsEditing(true);
         setSelectedDate(date);
@@ -194,9 +249,19 @@ export default function CreateAppointment({
             date: reminder.date,
             time: reminder.time.slice(0, 5),
             type: reminder.type,
+            agent_id: reminder.agent_id ? String(reminder.agent_id) : '',
         });
 
         clearErrors();
+        setDateMessage('');
+    };
+
+    const cancelEditing = () => {
+        setIsEditing(false);
+        reset('date', 'time', 'type', 'agent_id');
+        setSelectedDate(undefined);
+        clearErrors();
+        setDateMessage('');
     };
 
     const submit = (e: React.FormEvent) => {
@@ -209,9 +274,10 @@ export default function CreateAppointment({
                     setSuccess(true);
                     setIsEditing(false);
 
-                    reset('date', 'time', 'type');
+                    reset('date', 'time', 'type', 'agent_id');
                     setSelectedDate(undefined);
                     clearErrors();
+                    setDateMessage('');
 
                     router.reload({
                         only: ['bookedSlots', 'myAppointment'],
@@ -222,22 +288,15 @@ export default function CreateAppointment({
             return;
         }
 
-        const bookedAppointment: AppointmentReminder = {
-            date: data.date,
-            time: data.time,
-            type: data.type,
-            status: 'pending',
-        };
-
         post('/appointments', {
             preserveScroll: true,
             onSuccess: () => {
                 setSuccess(true);
-                setReminder(bookedAppointment);
 
-                reset('date', 'time', 'type');
+                reset('date', 'time', 'type', 'agent_id');
                 setSelectedDate(undefined);
                 clearErrors();
+                setDateMessage('');
 
                 router.reload({
                     only: ['bookedSlots', 'myAppointment'],
@@ -247,7 +306,6 @@ export default function CreateAppointment({
     };
 
     return (
-
         <>
             <Head title="Schedule an Appointment" />
 
@@ -263,13 +321,15 @@ export default function CreateAppointment({
                         </h1>
 
                         <p className="mt-2 text-[#1f1a17]/60 dark:text-white/60">
-                            Choose a convenient date and time to meet with your advisor.
+                            Choose a convenient date, advisor, and time to visit
+                            your branch.
                         </p>
                     </div>
 
                     {success && (
                         <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50 p-4 font-bold text-orange-700 dark:border-orange-500/30 dark:bg-orange-900/20 dark:text-orange-400">
-                            ✅ Appointment booked successfully
+                            ✅ Appointment saved successfully. Please check your
+                            email for the appointment confirmation.
                         </div>
                     )}
 
@@ -287,19 +347,23 @@ export default function CreateAppointment({
                                                 mode="single"
                                                 selected={selectedDate}
                                                 onSelect={chooseDate}
-                                                disabled={{ before: new Date() }}
+                                                disabled={[
+                                                    { before: new Date() },
+                                                    { dayOfWeek: [0, 6] },
+                                                ]}
                                                 weekStartsOn={1}
                                                 modifiersClassNames={{
                                                     today: 'bank-today',
                                                     selected: 'bank-selected',
+                                                    disabled: 'bank-disabled',
                                                 }}
                                                 className="bank-calendar"
                                             />
                                         </div>
 
-                                        {errors.date && (
+                                        {(errors.date || dateMessage) && (
                                             <p className="mt-2 text-sm text-red-500">
-                                                {errors.date}
+                                                {errors.date || dateMessage}
                                             </p>
                                         )}
 
@@ -311,15 +375,15 @@ export default function CreateAppointment({
 
                                             <span className="flex items-center gap-2">
                                                 <span className="h-3 w-3 rounded-full bg-[#1f1a17]/30 dark:bg-white/30" />
-                                                Not available
+                                                Weekend / Not available
                                             </span>
                                         </div>
 
                                         {reminder && (
-                                            <div className="space-y-5 mt-6 rounded-3xl border border-orange-200 bg-orange-50 p-5 shadow-sm dark:border-orange-500/20 dark:bg-orange-900/10">
+                                            <div className="mt-6 space-y-5 rounded-3xl border border-orange-200 bg-orange-50 p-5 shadow-sm dark:border-orange-500/20 dark:bg-orange-900/10">
                                                 <div className="mb-4 flex items-center gap-3">
-                                                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-100 dark:bg-orange-500/10">
-                                                        <Bell className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-100 dark:bg-orange-500/10">
+                                                        <Bell className="h-5 w-5 shrink-0 text-orange-600 dark:text-orange-400" />
                                                     </div>
 
                                                     <div>
@@ -328,7 +392,11 @@ export default function CreateAppointment({
                                                         </h3>
 
                                                         <p className="text-xs text-[#1f1a17]/60 dark:text-white/60">
-                                                            This reminder updates from your database and disappears after expiry.
+                                                            This reminder
+                                                            updates from your
+                                                            database and
+                                                            disappears after
+                                                            expiry.
                                                         </p>
                                                     </div>
                                                 </div>
@@ -341,7 +409,9 @@ export default function CreateAppointment({
 
                                                         <span className="font-bold text-[#1f1a17] dark:text-white">
                                                             {format(
-                                                                getAppointmentDateTime(reminder),
+                                                                getAppointmentDateTime(
+                                                                    reminder,
+                                                                ),
                                                                 'EEEE, MMM dd, yyyy',
                                                             )}
                                                         </span>
@@ -353,7 +423,10 @@ export default function CreateAppointment({
                                                         </span>
 
                                                         <span className="font-bold text-[#1f1a17] dark:text-white">
-                                                            {reminder.time.slice(0, 5)}
+                                                            {reminder.time.slice(
+                                                                0,
+                                                                5,
+                                                            )}
                                                         </span>
                                                     </div>
 
@@ -363,7 +436,22 @@ export default function CreateAppointment({
                                                         </span>
 
                                                         <span className="font-bold text-[#1f1a17] dark:text-white">
-                                                            {formatService(reminder.type)}
+                                                            {formatService(
+                                                                reminder.type,
+                                                            )}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between rounded-2xl bg-white px-4 py-3 dark:bg-[#241b16]">
+                                                        <span className="text-sm text-[#1f1a17]/60 dark:text-white/60">
+                                                            Branch
+                                                        </span>
+
+                                                        <span className="text-[14px] font-bold text-[#1f1a17] dark:text-white">
+                                                            {reminderAgent?.name ||
+                                                                reminder.agent
+                                                                    ?.name ||
+                                                                'Bank Advisor'}
                                                         </span>
                                                     </div>
 
@@ -372,13 +460,14 @@ export default function CreateAppointment({
                                                             Status
                                                         </span>
 
-                                                        <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-extrabold uppercase text-orange-700 dark:bg-orange-500/10 dark:text-orange-400">
-                                                            {reminder.status || 'pending'}
+                                                        <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-extrabold text-orange-700 uppercase dark:bg-orange-500/10 dark:text-orange-400">
+                                                            {reminder.status ||
+                                                                'pending'}
                                                         </span>
                                                     </div>
 
                                                     <div className="rounded-2xl border border-orange-200 bg-orange-100/70 px-4 py-3 text-center dark:border-orange-500/20 dark:bg-orange-500/10">
-                                                        <p className="text-xs font-medium uppercase tracking-wide text-orange-700 dark:text-orange-300">
+                                                        <p className="text-xs font-medium tracking-wide text-orange-700 uppercase dark:text-orange-300">
                                                             Time left
                                                         </p>
 
@@ -387,29 +476,71 @@ export default function CreateAppointment({
                                                         </p>
                                                     </div>
                                                 </div>
+
                                                 {reminder.can_update ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={startEditing}
-                                                        className="w-full rounded-2xl bg-orange-600 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#7a2800]"
-                                                    >
-                                                        Change Appointment
-                                                    </button>
+                                                    <div className="grid gap-3">
+                                                        <button
+                                                            type="button"
+                                                            onClick={
+                                                                startEditing
+                                                            }
+                                                            className="w-full rounded-2xl bg-orange-600 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#7a2800]"
+                                                        >
+                                                            Change Appointment
+                                                        </button>
+
+                                                        {isEditing && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={
+                                                                    cancelEditing
+                                                                }
+                                                                className="w-full rounded-2xl border border-orange-200 bg-white px-4 py-3 text-sm font-extrabold text-orange-700 transition hover:bg-orange-50 dark:border-orange-500/20 dark:bg-[#241b16] dark:text-orange-400"
+                                                            >
+                                                                Cancel Editing
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 ) : (
                                                     <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-bold text-red-600 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
-                                                        You can no longer change this appointment because it is less than 48 hours away.
+                                                        You can no longer change
+                                                        this appointment because
+                                                        it is less than 48 hours
+                                                        away.
                                                     </div>
                                                 )}
-
                                             </div>
-
-
                                         )}
                                     </div>
 
                                     <div>
                                         <h2 className="mb-2 text-xl font-extrabold text-[#1f1a17] dark:text-white">
-                                            2. Select a Time
+                                            2. Select a Branch
+                                        </h2>
+
+                                        <p className="mb-4 text-sm text-[#1f1a17]/60 dark:text-white/60">
+                                            Choose the nearest branch for your
+                                            appointment.
+                                        </p>
+
+                                        <CustomSelect
+                                            label="Branch"
+                                            value={data.agent_id}
+                                            placeholder="Select a branch"
+                                            options={agents.map((agent) => ({
+                                                value: agent.id,
+                                                label: agent.name,
+                                                description: agent.email,
+                                            }))}
+                                            error={errors.agent_id}
+                                            onChange={(value) => {
+                                                setData('agent_id', value);
+                                                setData('time', '');
+                                                clearErrors();
+                                            }}
+                                        />
+                                        <h2 className="mb-2 text-xl font-extrabold text-[#1f1a17] dark:text-white">
+                                            3. Select a Time
                                         </h2>
 
                                         <p className="mb-4 text-sm text-[#1f1a17]/60 dark:text-white/60">
@@ -417,33 +548,45 @@ export default function CreateAppointment({
                                             <span className="font-bold text-orange-600 dark:text-orange-400">
                                                 {selectedDate
                                                     ? format(
-                                                        selectedDate,
-                                                        'EEEE, MMM dd, yyyy',
-                                                    )
+                                                          selectedDate,
+                                                          'EEEE, MMM dd, yyyy',
+                                                      )
                                                     : 'selected date'}
                                             </span>
                                         </p>
 
                                         <div className="grid grid-cols-3 gap-3">
-                                            {timeSlots.map((slot) => {
-                                                const booked = isSlotBooked(slot);
+                                            {safeWorkingSlots.map((slot) => {
+                                                const booked =
+                                                    isSlotBooked(slot);
+                                                const disabled =
+                                                    booked ||
+                                                    !selectedDate ||
+                                                    !data.agent_id;
 
                                                 return (
                                                     <button
                                                         key={slot}
                                                         type="button"
-                                                        disabled={booked || !selectedDate}
+                                                        disabled={disabled}
                                                         onClick={() => {
-                                                            if (!booked) {
-                                                                setData('time', slot);
+                                                            if (!disabled) {
+                                                                setData(
+                                                                    'time',
+                                                                    slot,
+                                                                );
                                                             }
                                                         }}
-                                                        className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${booked
-                                                            ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 line-through dark:border-white/10 dark:bg-white/5 dark:text-white/30'
-                                                            : data.time === slot
-                                                                ? 'border-orange-600 bg-orange-600 text-white shadow-sm'
-                                                                : 'border-orange-200/60 bg-white hover:bg-orange-50 dark:border-[#7a2800]/40 dark:bg-[#241b16] dark:text-white dark:hover:bg-orange-900/10'
-                                                            }`}
+                                                        className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${
+                                                            booked
+                                                                ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 line-through dark:border-white/10 dark:bg-white/5 dark:text-white/30'
+                                                                : data.time ===
+                                                                    slot
+                                                                  ? 'border-orange-600 bg-orange-600 text-white shadow-sm'
+                                                                  : disabled
+                                                                    ? 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300 dark:border-white/10 dark:bg-white/5 dark:text-white/20'
+                                                                    : 'border-orange-200/60 bg-white hover:bg-orange-50 dark:border-[#7a2800]/40 dark:bg-[#241b16] dark:text-white dark:hover:bg-orange-900/10'
+                                                        }`}
                                                     >
                                                         {slot}
                                                     </button>
@@ -452,7 +595,9 @@ export default function CreateAppointment({
                                         </div>
 
                                         <p className="mt-3 text-xs text-[#1f1a17]/50 dark:text-white/50">
-                                            Booked times are disabled automatically.
+                                            Select an advisor and a date first.
+                                            Booked times are disabled
+                                            automatically.
                                         </p>
 
                                         {errors.time && (
@@ -487,10 +632,21 @@ export default function CreateAppointment({
                                         <p className="mt-1 font-extrabold text-orange-600 dark:text-orange-400">
                                             {selectedDate
                                                 ? format(
-                                                    selectedDate,
-                                                    'EEEE, MMM dd, yyyy',
-                                                )
+                                                      selectedDate,
+                                                      'EEEE, MMM dd, yyyy',
+                                                  )
                                                 : 'Not selected'}
+                                        </p>
+                                    </div>
+
+                                    <div className="border-b border-[#EDE8E0] pb-4 dark:border-[#2A2520]">
+                                        <p className="text-sm font-bold text-[#1f1a17] dark:text-white">
+                                            Advisor
+                                        </p>
+
+                                        <p className="mt-1 font-extrabold text-orange-600 dark:text-orange-400">
+                                            {selectedAgent?.name ||
+                                                'Not selected'}
                                         </p>
                                     </div>
 
@@ -505,26 +661,38 @@ export default function CreateAppointment({
                                     </div>
 
                                     <div className="border-b border-[#EDE8E0] pb-4 dark:border-[#2A2520]">
-                                        <p className="text-sm font-bold text-[#1f1a17] dark:text-white">
-                                            Service
-                                        </p>
-
-                                        <select
+                                        <CustomSelect
+                                            label="Service"
                                             value={data.type}
-                                            onChange={(e) =>
-                                                setData('type', e.target.value)
-                                            }
-                                            className="mt-2 w-full rounded-xl border border-[#EDE8E0] bg-white p-3 text-[#1f1a17] transition focus:ring-2 focus:ring-orange-500 dark:border-[#7a2800]/30 dark:bg-[#241b16] dark:text-white"
-                                        >
-                                            <option value="">Select service</option>
-                                            <option value="consultation">
-                                                Consultation
-                                            </option>
-                                            <option value="loan">Loan Request</option>
-                                            <option value="support">
-                                                Customer Support
-                                            </option>
-                                        </select>
+                                            placeholder="Select service"
+                                            options={[
+                                                {
+                                                    value: 'account_opening',
+                                                    label: 'Account Opening',
+                                                },
+                                                {
+                                                    value: 'loan_request',
+                                                    label: 'Loan Request',
+                                                },
+                                                {
+                                                    value: 'card_service',
+                                                    label: 'Card Service',
+                                                },
+                                                {
+                                                    value: 'customer_support',
+                                                    label: 'Customer Support',
+                                                },
+                                                {
+                                                    value: 'financial_advice',
+                                                    label: 'Financial Advice',
+                                                },
+                                            ]}
+                                            error={errors.type}
+                                            onChange={(value) => {
+                                                setData('type', value);
+                                                clearErrors();
+                                            }}
+                                        />
 
                                         {errors.type && (
                                             <p className="mt-2 text-sm text-red-500">
@@ -540,11 +708,12 @@ export default function CreateAppointment({
 
                                         <div>
                                             <p className="font-bold text-[#1f1a17] dark:text-white">
-                                                Bank Advisor
+                                                Selected Branch
                                             </p>
 
                                             <p className="text-sm text-[#9C978F] dark:text-white/50">
-                                                Personal Banking Advisor
+                                                {selectedAgent?.name ||
+                                                    'Branch Appointment Desk'}
                                             </p>
                                         </div>
                                     </div>
@@ -552,7 +721,13 @@ export default function CreateAppointment({
 
                                 <button
                                     type="submit"
-                                    disabled={processing || !data.date || !data.time || !data.type}
+                                    disabled={
+                                        processing ||
+                                        !data.date ||
+                                        !data.time ||
+                                        !data.type ||
+                                        !data.agent_id
+                                    }
                                     className="mt-8 w-full rounded-2xl bg-orange-600 py-4 font-extrabold text-white transition hover:bg-[#7a2800] disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {processing
@@ -560,8 +735,8 @@ export default function CreateAppointment({
                                             ? 'Updating...'
                                             : 'Booking...'
                                         : isEditing
-                                            ? 'Update Appointment →'
-                                            : 'Confirm Appointment →'}
+                                          ? 'Update Appointment →'
+                                          : 'Confirm Appointment →'}
                                 </button>
 
                                 <div className="mt-6 flex items-center justify-center gap-2 text-center text-sm text-[#1f1a17]/60 dark:text-white/60">
@@ -574,7 +749,5 @@ export default function CreateAppointment({
                 </div>
             </div>
         </>
-
-        
     );
 }
