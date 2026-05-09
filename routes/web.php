@@ -34,12 +34,19 @@ Route::inertia('/', 'welcome', [
 
 // her for chat ai
 
-Route::middleware(['auth'])->post('/ai-chat/ask', [AIChatController::class, 'ask'])
-    ->name('ai.chat.ask');
+Route::middleware(['auth'])->group(function () {
 
-Route::middleware(['auth', 'onboarding'])->get('/ai-chat', function () {
-    return Inertia::render('Banking/chat/AIChat');
-})->name('ai-chat');
+    Route::middleware(['onboarding'])->group(function () {
+
+        Route::get('/ai-chat', [AIChatController::class, 'create'])
+            ->name('ai-chat');
+
+        Route::post('/ai-chat/ask', [AIChatController::class, 'ask'])
+            ->name('ai.chat.ask');
+
+    });
+
+});
 
 // Onboarding
 Route::middleware(['auth'])->group(function () {
@@ -119,6 +126,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::post('/deposit', [DepositController::class, 'store'])
         ->name('deposit.store');
+
+    Route::post('/deposit/find-customer', [DepositController::class, 'findCustomer'])
+    ->name('deposit.find-customer');
 });
 
 // Account card
@@ -128,7 +138,10 @@ Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])
 Route::middleware(['auth', 'onboarding'])->group(function () {
     Route::get('/withdraw',     [WithdrawController::class,    'create'])->name('withdraw');
     Route::post('/withdraw',    [WithdrawController::class,    'store'])->name('withdraw.store');
-
+    Route::post('/withdraw/{withdrawalRequest}/cancel', [WithdrawController::class, 'cancel'])
+    ->name('withdraw.cancel');
+    Route::post('/withdraw/use-code', [WithdrawController::class, 'useCode'])
+    ->name('withdraw.use-code');
 
     Route::get('/transfer',     [TransferController::class,    'create'])->name('transfer');
     Route::post('/transfer',    [TransferController::class,    'store'])->name('transfer.store');
@@ -144,7 +157,7 @@ Route::middleware(['auth', 'onboarding'])->group(function () {
     // * auto saving
     Route::post('/saving-goals/{goal}/run-auto-saving', [SavingGoalController::class, 'runAutoSavingForGoal'])
         ->name('saving-goals.run-one');
-    // * delete challenge
+        // * delete challenge
     Route::delete('/saving-goals/{goal}', [SavingGoalController::class, 'destroy'])
         ->name('saving-goals.destroy');
     // * pause

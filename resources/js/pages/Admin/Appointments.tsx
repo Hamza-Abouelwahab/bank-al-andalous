@@ -120,7 +120,7 @@ export default function AdminAppointments() {
 
         return 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20';
     };
-    
+
 
     return (
         <>
@@ -255,7 +255,7 @@ export default function AdminAppointments() {
                                         </span>
                                     </div>
 
-                                    <div className="divide-y divide-[#F2EEEA] dark:divide-[#2A2520]">
+                                    <div className="divide-y  divide-[#F2EEEA] dark:divide-[#2A2520]">
                                         {items.map((appointment) => {
                                             const account =
                                                 appointment.user?.bank_account ??
@@ -264,7 +264,7 @@ export default function AdminAppointments() {
                                             return (
                                                 <div
                                                     key={appointment.id}
-                                                    className="grid gap-4 px-6 py-5 transition hover:bg-orange-50/30 dark:hover:bg-orange-500/5 xl:grid-cols-[1.2fr_0.8fr_0.8fr_0.7fr]"
+                                                    className="grid gap-4 px-6 py-5 transition  hover:bg-orange-50/30 dark:hover:bg-orange-500/5 xl:grid-cols-[1.2fr_0.8fr_0.8fr_0.7fr]"
                                                 >
                                                     {/* User */}
                                                     <div className="flex items-center gap-4">
@@ -277,7 +277,7 @@ export default function AdminAppointments() {
                                                                 {appointment.user?.name ?? 'Unknown user'}
                                                             </p>
 
-                                                            <div className="mt-1 flex flex-col gap-1 text-xs text-[#8A837A] dark:text-[#AFA49A] sm:flex-row sm:items-center sm:gap-3">
+                                                            <div className="mt-1 flex md:flex-col md:items-start  md:gap-1 text-xs text-[#8A837A] dark:text-[#AFA49A] flex-row items-center gap-3">
                                                                 <span className="inline-flex items-center gap-1">
                                                                     <Mail className="h-3.5 w-3.5" />
                                                                     {appointment.user?.email ?? 'No email'}
