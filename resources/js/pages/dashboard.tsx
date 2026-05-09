@@ -356,11 +356,10 @@ export default function Dashboard() {
                                         </div>
 
                                         <span
-                                            className={`flex shrink-0 items-center gap-1 text-[10px] font-bold sm:text-xs ${
-                                                card.positive
+                                            className={`flex shrink-0 items-center gap-1 text-[10px] font-bold sm:text-xs ${card.positive
                                                     ? 'text-emerald-600'
                                                     : 'text-red-500'
-                                            }`}
+                                                }`}
                                         >
                                             <Trend className="h-3 w-3" />
                                             {card.change}
@@ -721,9 +720,9 @@ export default function Dashboard() {
                                         const progress =
                                             target > 0
                                                 ? Math.min(
-                                                      (saved / target) * 100,
-                                                      100,
-                                                  )
+                                                    (saved / target) * 100,
+                                                    100,
+                                                )
                                                 : 0;
                                         return (
                                             <div
@@ -859,16 +858,16 @@ export default function Dashboard() {
                                 activeModal === 'Deposit'
                                     ? `/deposit?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
                                     : activeModal === 'Withdraw'
-                                      ? `/withdraw?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                      : activeModal === 'Transfer'
-                                        ? `/transfer?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                        : activeModal === 'Pay Bills'
-                                          ? `/bills?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                          : activeModal === 'My Card'
-                                            ? `/account?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                            : activeModal === 'AI Advisor'
-                                              ? `/ai-chat?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                              : '/'
+                                        ? `/withdraw?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                        : activeModal === 'Transfer'
+                                            ? `/transfer?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                            : activeModal === 'Pay Bills'
+                                                ? `/bills?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                                : activeModal === 'My Card'
+                                                    ? `/account?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                                    : activeModal === 'AI Advisor'
+                                                        ? `/ai-chat?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                                        : '/'
                             }
                             className="w-full border-0 bg-[#F8F6F1] dark:bg-[#0F0D0B]"
                             style={{ height: 'calc(85vh - 64px)' }}
@@ -876,6 +875,8 @@ export default function Dashboard() {
                     </div>
                 </div>
             )}
+
+            
         </>
     );
 }

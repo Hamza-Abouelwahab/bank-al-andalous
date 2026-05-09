@@ -19,6 +19,7 @@ use App\Http\Controllers\Banking\TransactionController;
 use App\Http\Controllers\Banking\SavingsController;
 use App\Http\Controllers\LoanSimulationController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\StatementController;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -52,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/onboarding/profile', [ProfileController::class, 'store'])->name('onboarding.profile.store');
 
     Route::post('/onboarding/profile/scan', [ProfileController::class, 'scan'])
-    ->name('onboarding.profile.scan');
+        ->name('onboarding.profile.scan');
 
     Route::get('/onboarding/bank',     [BankController::class, 'create'])->name('onboarding.bank');
     Route::post('/onboarding/bank',    [BankController::class, 'store'])->name('onboarding.bank.store');
@@ -142,6 +143,10 @@ Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])
 
 // Banking
 Route::middleware(['auth', 'onboarding'])->group(function () {
+    Route::get('/account/statement', [StatementController::class, 'download'])
+        ->name('account.statement');
+
+
     Route::get('/withdraw',     [WithdrawController::class,    'create'])->name('withdraw');
     Route::post('/withdraw',    [WithdrawController::class,    'store'])->name('withdraw.store');
     Route::post('/withdraw/{withdrawalRequest}/cancel', [WithdrawController::class, 'cancel'])

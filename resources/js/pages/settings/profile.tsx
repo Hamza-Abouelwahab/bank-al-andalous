@@ -10,6 +10,8 @@ import {
     Save,
     Shield,
     User,
+    Download,
+    FileText,
 } from 'lucide-react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
@@ -70,6 +72,71 @@ export default function Profile({
                         <p className="text-sm text-[#1f1a17]/55 dark:text-white/55">
                             Manage your personal and account details
                         </p>
+                    </div>
+                </div>
+
+                {/* Account statement download */}
+                <div className="overflow-hidden rounded-2xl border border-[#EDE8E0] bg-white shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
+                    <div className="relative p-6">
+                        <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-orange-500/10" />
+
+                        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex gap-4">
+                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 ring-1 ring-orange-500/20">
+                                    <FileText size={22} className="text-orange-500" />
+                                </div>
+
+                                <div>
+                                    <div className="mb-1 flex items-center gap-2">
+                                        <h3 className="text-base font-bold text-[#1f1a17] dark:text-white">
+                                            Account Statement
+                                        </h3>
+
+                                        <span className="rounded-full bg-orange-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-600 dark:text-orange-400">
+                                            PDF
+                                        </span>
+                                    </div>
+
+                                    <p className="max-w-xl text-sm leading-relaxed text-[#1f1a17]/55 dark:text-white/55">
+                                        Download your official Bank Al-Andalous account statement with your
+                                        account details, RIP, balance, and recent transactions.
+                                    </p>
+
+                                    <div className="mt-4 grid grid-cols-1 gap-3 text-xs text-[#1f1a17]/55 sm:grid-cols-3 dark:text-white/55">
+                                        <div className="rounded-xl border border-[#EDE8E0] bg-[#F8F6F1] px-3 py-2 dark:border-[#2A2520] dark:bg-[#241b16]">
+                                            <span className="block font-semibold text-[#1f1a17] dark:text-white">
+                                                Account
+                                            </span>
+                                            {bankAccount?.account_number ?? 'Not available'}
+                                        </div>
+
+                                        <div className="rounded-xl border border-[#EDE8E0] bg-[#F8F6F1] px-3 py-2 dark:border-[#2A2520] dark:bg-[#241b16]">
+                                            <span className="block font-semibold text-[#1f1a17] dark:text-white">
+                                                Type
+                                            </span>
+                                            <span className="capitalize">
+                                                {bankAccount?.account_type ?? 'Not available'}
+                                            </span>
+                                        </div>
+
+                                        <div className="rounded-xl border border-[#EDE8E0] bg-[#F8F6F1] px-3 py-2 dark:border-[#2A2520] dark:bg-[#241b16]">
+                                            <span className="block font-semibold text-[#1f1a17] dark:text-white">
+                                                Format
+                                            </span>
+                                            Secure PDF
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a
+                                href="/account/statement"
+                                className="inline-flex h-11 flex-shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FF4B00] px-5 text-sm font-bold text-white shadow-sm transition hover:bg-[#D83A00] focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                            >
+                                <Download size={16} />
+                                Download PDF
+                            </a>
+                        </div>
                     </div>
                 </div>
 
