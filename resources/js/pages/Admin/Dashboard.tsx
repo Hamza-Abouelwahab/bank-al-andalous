@@ -626,7 +626,7 @@ export default function AdminDashboard() {
 
                                         <tbody>
                                             {filteredUsers.length > 0 ? (
-                                                filteredUsers.map((u, index) => {
+                                                filteredUsers.slice(0, 5).map((u, index) => {
                                                     const account = u.bank_account ?? u.bankAccount;
                                                     const isAdmin = u.role === 'admin';
 
