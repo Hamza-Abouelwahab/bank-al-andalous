@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Banking;
 use App\Http\Controllers\Controller;
 use App\Models\BankAccount;
 use App\Models\Transaction;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -98,6 +99,27 @@ class TransferController extends Controller
                 'status'            => 'completed',
             ]);
         });
+
+        // Notify sender
+        NotificationService::create(
+            userId: Auth::id(),
+            title: 'Transfer Sent',
+            message: 'You sent ' . number_format($amount, 2) . ' MAD to account ' . substr($recipientAccount, -4) . '.',
+            type: 'transfer',
+            icon: 'send',
+            actionUrl: '/transactions'
+        );
+
+        // Notify receiver
+        NotificationService::create(
+            userId: $recipient->user_id,
+            title: 'Transfer Received',
+            message: 'You received ' . number_format($amount, 2) . ' MAD from account ' . substr($sender->account_number, -4) . '.',
+            type: 'transfer',
+            icon: 'arrow-down-to-line',
+            actionUrl: '/transactions'
+        );
+
         return redirect()->route('dashboard')->with('success', 'Transfer completed successfully.');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Banking;
 
 use App\Http\Controllers\Controller;
 use App\Models\SavingGoal;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,6 +53,15 @@ class SavingGoalController extends Controller
             'color' => '#E8632A',
         ]);
 
+        NotificationService::create(
+            userId: Auth::id(),
+            title: 'Saving Goal Created',
+            message: 'Your saving goal "' . $validated['name'] . '" has been created successfully.',
+            type: 'saving',
+            icon: 'target',
+            actionUrl: '/savings/index'
+        );
+
         return back()->with('success', 'Saving goal created successfully.');
     }
 
@@ -90,6 +100,15 @@ class SavingGoalController extends Controller
                 'status' => 'completed',
             ]);
 
+            NotificationService::create(
+                userId: Auth::id(),
+                title: 'Saving Goal Completed! 🎉',
+                message: 'Congratulations! You completed your "' . $goal->name . '" saving goal.',
+                type: 'saving',
+                icon: 'check-circle',
+                actionUrl: '/savings/index'
+            );
+
             return back()->with('success', 'Goal completed.');
         }
 
@@ -111,6 +130,24 @@ class SavingGoalController extends Controller
         if ($goal->saved_amount >= $goal->target_amount) {
             $goal->saved_amount = $goal->target_amount;
             $goal->status = 'completed';
+
+            NotificationService::create(
+                userId: Auth::id(),
+                title: 'Saving Goal Completed! 🎉',
+                message: 'Congratulations! You completed your "' . $goal->name . '" saving goal.',
+                type: 'saving',
+                icon: 'check-circle',
+                actionUrl: '/savings/index'
+            );
+        } else {
+            NotificationService::create(
+                userId: Auth::id(),
+                title: 'Daily Saving Deducted',
+                message: number_format($amountToSave, 2) . ' MAD saved for "' . $goal->name . '". Keep going!',
+                type: 'saving',
+                icon: 'target',
+                actionUrl: '/savings/index'
+            );
         }
 
         $goal->save();
@@ -192,6 +229,15 @@ return back()->with(
             'status' => 'paused',
         ]);
 
+        NotificationService::create(
+            userId: Auth::id(),
+            title: 'Saving Goal Paused',
+            message: 'Your saving goal "' . $goal->name . '" has been paused.',
+            type: 'saving',
+            icon: 'alert-circle',
+            actionUrl: '/savings/index'
+        );
+
         return back()->with('success', 'Goal paused successfully.');
     }
 
@@ -204,6 +250,15 @@ return back()->with(
         $goal->update([
             'status' => 'active',
         ]);
+
+        NotificationService::create(
+            userId: Auth::id(),
+            title: 'Saving Goal Resumed',
+            message: 'Your saving goal "' . $goal->name . '" has been resumed.',
+            type: 'saving',
+            icon: 'target',
+            actionUrl: '/savings/index'
+        );
 
         return back()->with('success', 'Goal resumed successfully.');
     }
@@ -253,6 +308,24 @@ return back()->with(
         if ($goal->saved_amount >= $goal->target_amount) {
             $goal->saved_amount = $goal->target_amount;
             $goal->status = 'completed';
+
+            NotificationService::create(
+                userId: Auth::id(),
+                title: 'Challenge Completed! 🎉',
+                message: 'Congratulations! You completed your "' . $goal->name . '" challenge.',
+                type: 'saving',
+                icon: 'check-circle',
+                actionUrl: '/savings/index'
+            );
+        } else {
+            NotificationService::create(
+                userId: Auth::id(),
+                title: 'Challenge Progress Added',
+                message: number_format($amountToAdd, 2) . ' MAD added to "' . $goal->name . '". Keep it up!',
+                type: 'saving',
+                icon: 'target',
+                actionUrl: '/savings/index'
+            );
         }
 
         $goal->save();

@@ -7,6 +7,7 @@ use App\Models\BankAccount;
 use App\Models\GroupJoinRequest;
 use App\Models\GroupMember;
 use App\Models\SavingGroup;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,6 +51,15 @@ class SavingGroupController extends Controller
             'has_won'  => false,
         ]);
 
+        NotificationService::create(
+            userId: Auth::id(),
+            title: 'Group Saving Created',
+            message: 'Your group "' . $validated['name'] . '" has been created successfully.',
+            type: 'group',
+            icon: 'users',
+            actionUrl: '/savings/index'
+        );
+
         return back()->with('success', 'Group created successfully.');
     }
 
@@ -82,6 +92,15 @@ class SavingGroupController extends Controller
             'status'       => 'pending',
             'requested_at' => now(),
         ]);
+
+        NotificationService::create(
+            userId: $group->owner_id,
+            title: 'New Join Request',
+            message: Auth::user()->name . ' wants to join your group "' . $group->name . '".',
+            type: 'group',
+            icon: 'users',
+            actionUrl: '/savings/index'
+        );
 
         return back()->with('success', 'Join request sent successfully.');
     }
@@ -121,6 +140,15 @@ class SavingGroupController extends Controller
         $group->refresh();
         $group->checkReadiness();
 
+        NotificationService::create(
+            userId: $request->user_id,
+            title: 'Join Request Accepted',
+            message: 'Your request to join "' . $group->name . '" has been accepted!',
+            type: 'group',
+            icon: 'check-circle',
+            actionUrl: '/savings/index'
+        );
+
         return back()->with('success', 'Request approved successfully.');
     }
 
@@ -140,6 +168,15 @@ class SavingGroupController extends Controller
             'status'       => 'rejected',
             'responded_at' => now(),
         ]);
+
+        NotificationService::create(
+            userId: $request->user_id,
+            title: 'Join Request Rejected',
+            message: 'Your request to join "' . $group->name . '" has been rejected.',
+            type: 'group',
+            icon: 'alert-circle',
+            actionUrl: '/savings/index'
+        );
 
         return back()->with('success', 'Request rejected.');
     }
@@ -190,6 +227,15 @@ class SavingGroupController extends Controller
             'requested_at' => now(),
         ]);
 
+        NotificationService::create(
+            userId: $user->id,
+            title: 'Group Invitation',
+            message: 'You have been invited to join "' . $group->name . '" group.',
+            type: 'group',
+            icon: 'users',
+            actionUrl: '/savings/index'
+        );
+
         return back()->with('success', 'Invitation sent successfully.');
     }
 
@@ -231,6 +277,15 @@ class SavingGroupController extends Controller
 
         $group->refresh();
         $group->checkReadiness();
+
+        NotificationService::create(
+            userId: $group->owner_id,
+            title: 'Invitation Accepted',
+            message: Auth::user()->name . ' accepted your invitation to join "' . $group->name . '".',
+            type: 'group',
+            icon: 'check-circle',
+            actionUrl: '/savings/index'
+        );
 
         return back()->with('success', 'Invitation accepted successfully.');
     }
@@ -333,6 +388,28 @@ class SavingGroupController extends Controller
                     'next_draw_date'    => now()->addDays($group->cycle_days)->toDateString(),
                 ]
         );
+
+        NotificationService::create(
+            userId: $winner->user_id,
+            title: 'You Won the Draw! 🎉',
+            message: 'Congratulations! You received ' . number_format($winnerAmount, 2) . ' MAD from "' . $group->name . '".',
+            type: 'group',
+            icon: 'check-circle',
+            actionUrl: '/transactions'
+        );
+
+        foreach ($group->members as $member) {
+            if ($member->user_id !== $winner->user_id) {
+                NotificationService::create(
+                    userId: $member->user_id,
+                    title: 'Group Draw Completed',
+                    message: $winner->user->name . ' won the draw in "' . $group->name . '". Next draw: ' . ($remaining > 0 ? $group->next_draw_date : 'Group completed') . '.',
+                    type: 'group',
+                    icon: 'users',
+                    actionUrl: '/savings/index'
+                );
+            }
+        }
 
         return back()->with('success', '🎉 ' . $winner->user->name . ' receives ' . $winnerAmount . ' MAD');
     }

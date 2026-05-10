@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Banking;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -112,6 +113,16 @@ class DepositController extends Controller
             'reference'       => Transaction::generateReference('DEP'),
             'status'          => 'completed',
         ]);
+
+        // Notify customer about deposit
+        NotificationService::create(
+            userId: $customer->id,
+            title: 'Deposit Received',
+            message: 'Your account has received ' . number_format($request->amount, 2) . ' MAD.',
+            type: 'deposit',
+            icon: 'wallet',
+            actionUrl: '/transactions'
+        );
 
         return back();
     }

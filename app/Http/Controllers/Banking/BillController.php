@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Banking;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,16 @@ class BillController extends Controller
             'status'          => 'completed',
         ]);
     });
+
+    // Notify user about bill payment
+    NotificationService::create(
+        userId: Auth::id(),
+        title: 'Bill Payment Completed',
+        message: 'Your ' . strtolower($labels[$request->bill_type] ?? $request->bill_type) . ' payment of ' . number_format($request->amount, 2) . ' MAD was successful.',
+        type: 'bill',
+        icon: 'check-circle',
+        actionUrl: '/transactions'
+    );
 
         return back();
     }

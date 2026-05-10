@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Banking;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\WithdrawalRequest;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -101,6 +102,15 @@ class WithdrawController extends Controller
             );
         });
 
+        // Notify user about withdrawal request and PIN sent
+        NotificationService::create(
+            userId: $user->id,
+            title: 'Withdrawal PIN Sent',
+            message: 'Your withdrawal PIN code has been sent to your email. Valid for 24 hours.',
+            type: 'withdrawal',
+            icon: 'shield-alert',
+            actionUrl: '/withdraw'
+        );
 
         session()->flash('success', 'Withdrawal PIN code sent to your email address.');
 
@@ -146,6 +156,16 @@ class WithdrawController extends Controller
                 'status' => 'failed',
             ]);
         });
+
+        // Notify user about cancellation
+        NotificationService::create(
+            userId: $user->id,
+            title: 'Withdrawal Cancelled',
+            message: 'Your withdrawal request has been cancelled. Amount refunded: ' . number_format($withdrawalRequest->amount, 2) . ' MAD.',
+            type: 'withdrawal',
+            icon: 'alert-circle',
+            actionUrl: '/transactions'
+        );
 
         return back()->with('success', 'Withdrawal request cancelled successfully. The reserved amount has been refunded.');
     }
@@ -205,6 +225,16 @@ class WithdrawController extends Controller
                 'status' => 'completed',
             ]);
         });
+
+        // Notify user about successful withdrawal
+        NotificationService::create(
+            userId: $withdrawalRequest->user_id,
+            title: 'Withdrawal Completed',
+            message: 'Your withdrawal of ' . number_format($withdrawalRequest->amount, 2) . ' MAD has been processed successfully.',
+            type: 'withdrawal',
+            icon: 'banknote',
+            actionUrl: '/transactions'
+        );
 
         return back()->with('success', 'Withdrawal code used successfully.');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use App\Models\LoanSimulation;
 use Illuminate\Support\Facades\Auth;
@@ -89,6 +90,16 @@ class LoanSimulationController extends Controller
             'total_interest' => $interest,
             'status' => 'pending',
         ]);
+
+        // Notify user about loan application
+        NotificationService::create(
+            userId: auth()->id(),
+            title: 'Loan Application Submitted',
+            message: 'Your loan application for ' . number_format($P, 2) . ' MAD has been submitted and is under review.',
+            type: 'loan',
+            icon: 'info',
+            actionUrl: '/loans'
+        );
 
         return response()->json([
             'message' => 'Loan request submitted',

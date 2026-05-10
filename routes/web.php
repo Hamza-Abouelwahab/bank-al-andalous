@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\RiskController as AdminRiskController;
 use App\Http\Controllers\AIChatController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Onboarding\ProfileController;
@@ -167,6 +168,18 @@ Route::middleware(['auth'])->get('/account', [AccountController::class, 'show'])
 Route::middleware(['auth', 'onboarding'])->group(function () {
     Route::get('/account/statement', [StatementController::class, 'download'])
         ->name('account.statement');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.read-all');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
+        ->name('notifications.destroy');
+    Route::delete('/notifications/clear-all', [NotificationController::class, 'clearAll'])
+        ->name('notifications.clear-all');
 
 
     Route::get('/withdraw',     [WithdrawController::class,    'create'])->name('withdraw');

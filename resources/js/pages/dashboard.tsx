@@ -190,8 +190,7 @@ export default function Dashboard() {
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 64 84"
-                width={24}
-                height={24}
+
                 className={className}
                 fill="none"
             >
@@ -356,10 +355,11 @@ export default function Dashboard() {
                                         </div>
 
                                         <span
-                                            className={`flex shrink-0 items-center gap-1 text-[10px] font-bold sm:text-xs ${card.positive
+                                            className={`flex shrink-0 items-center gap-1 text-[10px] font-bold sm:text-xs ${
+                                                card.positive
                                                     ? 'text-emerald-600'
                                                     : 'text-red-500'
-                                                }`}
+                                            }`}
                                         >
                                             <Trend className="h-3 w-3" />
                                             {card.change}
@@ -539,58 +539,82 @@ export default function Dashboard() {
 
                     {/* ── Bottom Grid ── */}
                     <div className="mt-6 grid gap-6 xl:grid-cols-3">
-                        {/* Virtual Bank Card */}
-                        <div className="animate-fade-in rounded-2xl border border-[#EDE8E0] bg-white p-6 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
-                            <div className="mb-4 flex items-center justify-between">
-                                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                                    Account Summary
-                                </h3>
-                                <button
-                                    onClick={() =>
-                                        setBalanceVisible(!balanceVisible)
-                                    }
-                                    className="cursor-pointer rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-700 dark:hover:bg-white/5"
-                                >
-                                    {balanceVisible ? (
-                                        <EyeOff className="h-5 w-5" />
-                                    ) : (
-                                        <Eye className="h-5 w-5 text-orange-600" />
-                                    )}
-                                </button>
-                            </div>
+                     {/* Card Visual */}
+<div className="relative mx-auto aspect-[1.45/1] w-full max-w-[520px] overflow-hidden rounded-[1.7rem] border border-white/10 bg-gradient-to-br from-[#1f1a17] via-[#3b1608] to-[#8a2a00] p-5 text-white shadow-2xl shadow-orange-900/30 sm:aspect-[1.586/1] sm:p-6">
+    {/* Background decoration */}
+    <div className="absolute -top-28 -right-20 h-72 w-72 rounded-full border-[42px] border-white/5" />
+    <div className="absolute top-20 right-0 h-52 w-52 rounded-full border-[30px] border-orange-200/10" />
+    <div className="absolute -bottom-16 -left-14 h-44 w-44 rounded-full bg-orange-500/15 blur-3xl" />
 
-                            {/* Card Visual */}
-                            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1f1a17] via-[#7a2800] to-orange-600 p-5 text-white shadow-lg shadow-orange-900/30">
-                                <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-white/10" />
-                                <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-white/5" />
-                                <div className="relative">
-                                    <div className="mb-8 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <BankLogo className="" />
-                                            <span className="text-m font-bold tracking-widest text-orange-100 uppercase">
-                                                Al-Andalous
-                                            </span>
-                                        </div>
-                                        <CreditCard className="h-5 w-5 text-white/60" />
-                                    </div>
-                                    <p className="font-mono text-sm tracking-[0.2em] text-white/80">
-                                        **** **** ****{' '}
-                                        {account?.account_number?.slice(-4) ??
-                                            '4242'}
-                                    </p>
-                                    <div className="mt-5">
-                                        <p className="text-[10px] tracking-widest text-white/50 uppercase">
-                                            Balance
-                                        </p>
-                                        <p className="mt-1 text-2xl font-extrabold">
-                                            {balanceVisible
-                                                ? formatMoney(balance)
-                                                : '•••••• MAD'}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div className="relative flex h-full flex-col justify-between">
+        {/* Top */}
+        <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2.5">
+                <BankLogo className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
+
+                <div className="min-w-0">
+                    <p className="truncate text-lg leading-none font-black tracking-[0.1em] text-orange-100 uppercase sm:text-xl">
+                        AL-ANDALOUS
+                    </p>
+                    <p className="mt-1 text-[10px] font-bold text-orange-200/80 sm:text-[11px]">
+                        Secure Banking
+                    </p>
+                </div>
+            </div>
+
+            <CreditCard className="mt-1 h-5 w-5 shrink-0 text-white/60" />
+        </div>
+
+        {/* Number + chip */}
+        <div className="space-y-3">
+            <p className="font-mono text-[10px] font-bold tracking-[0.26em] text-white/85 sm:text-xs sm:tracking-[0.28em]">
+                **** **** **** {account?.account_number?.slice(-4) ?? '4242'}
+            </p>
+
+            <div className="flex items-center gap-3">
+                <div className="flex h-8 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-300 to-orange-500 shadow-lg shadow-orange-900/20 sm:h-10 sm:w-13">
+                    <div className="grid h-5 w-7 grid-cols-2 gap-1 rounded-lg border border-yellow-700/30 p-1 sm:h-6 sm:w-8">
+                        <span className="rounded bg-yellow-700/20" />
+                        <span className="rounded bg-yellow-700/20" />
+                        <span className="rounded bg-yellow-700/20" />
+                        <span className="rounded bg-yellow-700/20" />
+                    </div>
+                </div>
+
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/10 sm:h-8 sm:w-8">
+                    <ShieldCheck className="h-3.5 w-3.5 text-orange-200 sm:h-4 sm:w-4" />
+                </div>
+            </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="grid grid-cols-[1fr_auto] items-end gap-4">
+            <div className="min-w-0">
+                <p className="text-[8px] font-black tracking-[0.2em] text-white/40 uppercase sm:text-[10px]">
+                    Card Holder
+                </p>
+
+                <p className="mt-1 truncate text-sm font-black uppercase sm:text-base">
+                    {auth?.user?.name ?? 'Account Holder'}
+                </p>
+            </div>
+
+            <div className="shrink-0 text-right">
+                <p className="text-[8px] font-black tracking-[0.2em] text-white/40 uppercase sm:text-[10px]">
+                    Type
+                </p>
+
+                <p className="mt-1 text-sm font-black uppercase sm:text-base">
+                    {account?.account_type ?? 'Savings'}
+                </p>
+
+                <p className="mt-3 text-3xl leading-none font-black text-white/80 italic sm:text-4xl">
+                    VISA
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
                         {/* Smart Alerts */}
                         <div className="animate-fade-in rounded-2xl border border-orange-100 bg-white p-6 shadow-sm dark:border-orange-500/15 dark:bg-[#1A1714]">
@@ -603,7 +627,7 @@ export default function Dashboard() {
                                         Real-time insights
                                     </p>
                                 </div>
-                                <div className="flex h-9 w-9 items-center shrink-0 justify-center rounded-xl bg-orange-50 dark:bg-orange-500/10">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-50 dark:bg-orange-500/10">
                                     <Bell className="h-4 w-4 text-orange-500" />
                                 </div>
                             </div>
@@ -720,9 +744,9 @@ export default function Dashboard() {
                                         const progress =
                                             target > 0
                                                 ? Math.min(
-                                                    (saved / target) * 100,
-                                                    100,
-                                                )
+                                                      (saved / target) * 100,
+                                                      100,
+                                                  )
                                                 : 0;
                                         return (
                                             <div
@@ -858,16 +882,16 @@ export default function Dashboard() {
                                 activeModal === 'Deposit'
                                     ? `/deposit?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
                                     : activeModal === 'Withdraw'
-                                        ? `/withdraw?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                        : activeModal === 'Transfer'
-                                            ? `/transfer?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                            : activeModal === 'Pay Bills'
-                                                ? `/bills?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                                : activeModal === 'My Card'
-                                                    ? `/account?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                                    : activeModal === 'AI Advisor'
-                                                        ? `/ai-chat?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
-                                                        : '/'
+                                      ? `/withdraw?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                      : activeModal === 'Transfer'
+                                        ? `/transfer?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                        : activeModal === 'Pay Bills'
+                                          ? `/bills?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                          : activeModal === 'My Card'
+                                            ? `/account?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                            : activeModal === 'AI Advisor'
+                                              ? `/ai-chat?modal=1&theme=${isDarkMode ? 'dark' : 'light'}`
+                                              : '/'
                             }
                             className="w-full border-0 bg-[#F8F6F1] dark:bg-[#0F0D0B]"
                             style={{ height: 'calc(85vh - 64px)' }}
@@ -875,8 +899,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             )}
-
-            
         </>
     );
 }

@@ -1,6 +1,9 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import {
+    CalendarDays,
     Check,
+    ChevronLeft,
+    ChevronRight,
     Coins,
     Copy,
     FastForward,
@@ -640,12 +643,13 @@ function CreateGoalModal({ savingType, onClose }) {
                     error={errors.target_amount}
                     placeholder="10000"
                 />
-                <Input
+                <DatePickerInput
                     label="Deadline"
-                    type="date"
                     value={data.end_date}
                     onChange={(v) => setData('end_date', v)}
                     error={errors.end_date}
+                    min={new Date().toISOString().split('T')[0]}
+                    placeholder="Choose deadline"
                 />
                 {estimatedDailyAmount && (
                     <div className="rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-orange-50/50 dark:border-orange-900/30 dark:from-orange-900/10 dark:to-orange-900/5 p-4">
@@ -748,12 +752,13 @@ function CreateGroupModal({ onClose }) {
                     min={2}
                     max={12}
                 />
-                <Input
+                <DatePickerInput
                     label="Start Date"
-                    type="date"
                     value={data.start_date}
                     onChange={(v) => setData('start_date', v)}
                     error={errors.start_date}
+                    min={new Date().toISOString().split('T')[0]}
+                    placeholder="Choose start date"
                 />
                 <div>
                     <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-white">
@@ -1427,3 +1432,281 @@ function Input({
         </div>
     );
 }
+
+function DatePickerInput({
+    label,
+    value,
+    onChange,
+    error,
+    placeholder = 'Choose date',
+    min,
+    max,
+}) {
+    const selectedDate = value ? new Date(value + 'T00:00:00') : null;
+
+    const [open, setOpen] = useState(false);
+    const [currentMonth, setCurrentMonth] = useState(
+        selectedDate ? selectedDate.getMonth() : new Date().getMonth(),
+    );
+    const [currentYear, setCurrentYear] = useState(
+        selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(),
+    );
+
+    const monthName = new Date(currentYear, currentMonth).toLocaleDateString(
+        'en-US',
+        {
+            month: 'long',
+            year: 'numeric',
+        },
+    );
+
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const startDay = firstDay.getDay();
+    const totalDays = lastDay.getDate();
+    const previousMonthLastDay = new Date(
+        currentYear,
+        currentMonth,
+        0,
+    ).getDate();
+
+    const days = [];
+
+    for (let i = startDay - 1; i >= 0; i--) {
+        days.push({
+            day: previousMonthLastDay - i,
+            current: false,
+            date: new Date(
+                currentYear,
+                currentMonth - 1,
+                previousMonthLastDay - i,
+            ),
+        });
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+        days.push({
+            day,
+            current: true,
+            date: new Date(currentYear, currentMonth, day),
+        });
+    }
+
+    while (days.length < 42) {
+        const nextDay = days.length - startDay - totalDays + 1;
+
+        days.push({
+            day: nextDay,
+            current: false,
+            date: new Date(currentYear, currentMonth + 1, nextDay),
+        });
+    }
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function displayDate(dateValue) {
+        if (!dateValue) return '';
+
+        return new Date(dateValue + 'T00:00:00').toLocaleDateString('en-US', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        });
+    }
+
+    function isSameDay(dateA, dateB) {
+        if (!dateA || !dateB) return false;
+
+        return (
+            dateA.getFullYear() === dateB.getFullYear() &&
+            dateA.getMonth() === dateB.getMonth() &&
+            dateA.getDate() === dateB.getDate()
+        );
+    }
+
+    function isDisabled(date) {
+        const dateString = formatDate(date);
+
+        if (min && dateString < min) return true;
+        if (max && dateString > max) return true;
+
+        return false;
+    }
+
+    function selectDate(date) {
+        if (isDisabled(date)) return;
+
+        onChange(formatDate(date));
+        setOpen(false);
+    }
+
+    function goPreviousMonth() {
+        if (currentMonth === 0) {
+            setCurrentMonth(11);
+            setCurrentYear(currentYear - 1);
+        } else {
+            setCurrentMonth(currentMonth - 1);
+        }
+    }
+
+    function goNextMonth() {
+        if (currentMonth === 11) {
+            setCurrentMonth(0);
+            setCurrentYear(currentYear + 1);
+        } else {
+            setCurrentMonth(currentMonth + 1);
+        }
+    }
+
+    return (
+        <div className="relative">
+            <label className="mb-2 block text-sm font-medium text-[#1f1a17]/80 dark:text-white/80">
+                {label}
+            </label>
+
+            <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                className={`flex h-12 w-full items-center justify-between rounded-xl border bg-white px-4 text-left text-sm font-semibold text-[#1f1a17] outline-none transition hover:border-orange-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 dark:bg-[#0F0D0B] dark:text-white ${
+                    error
+                        ? 'border-red-400'
+                        : 'border-[#EDE8E0] dark:border-[#2A2520]'
+                }`}
+            >
+                <span
+                    className={
+                        value
+                            ? 'text-[#1f1a17] dark:text-white'
+                            : 'text-[#1f1a17]/35 dark:text-white/30'
+                    }
+                >
+                    {value ? displayDate(value) : placeholder}
+                </span>
+
+                <CalendarDays className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            </button>
+
+            {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+
+            {open && (
+                <>
+                    <button
+                        type="button"
+                        aria-label="Close calendar"
+                        onClick={() => setOpen(false)}
+                        className="fixed inset-0 z-40 cursor-default"
+                    />
+
+                    <div className="absolute left-0 top-[calc(100%+10px)] z-50 w-full max-w-[360px] overflow-hidden rounded-3xl border border-orange-100 bg-white p-4 shadow-2xl shadow-orange-900/15 dark:border-[#7a2800]/40 dark:bg-[#1A1714]">
+                        <div className="mb-4 flex items-center justify-between">
+                            <button
+                                type="button"
+                                onClick={goPreviousMonth}
+                                className="grid h-10 w-10 place-items-center rounded-2xl text-[#1f1a17]/60 transition hover:bg-orange-50 hover:text-orange-600 dark:text-white/60 dark:hover:bg-orange-500/10 dark:hover:text-orange-300"
+                            >
+                                <ChevronLeft className="h-5 w-5" />
+                            </button>
+
+                            <h3 className="text-sm font-black text-[#1f1a17] dark:text-white">
+                                {monthName}
+                            </h3>
+
+                            <button
+                                type="button"
+                                onClick={goNextMonth}
+                                className="grid h-10 w-10 place-items-center rounded-2xl text-[#1f1a17]/60 transition hover:bg-orange-50 hover:text-orange-600 dark:text-white/60 dark:hover:bg-orange-500/10 dark:hover:text-orange-300"
+                            >
+                                <ChevronRight className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <div className="mb-2 grid grid-cols-7 gap-1 text-center">
+                            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(
+                                (day) => (
+                                    <div
+                                        key={day}
+                                        className="py-2 text-xs font-black text-[#1f1a17]/40 dark:text-white/35"
+                                    >
+                                        {day}
+                                    </div>
+                                ),
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-1">
+                            {days.map((item, index) => {
+                                const selected = isSameDay(
+                                    item.date,
+                                    selectedDate,
+                                );
+                                const today = isSameDay(item.date, new Date());
+                                const disabled = isDisabled(item.date);
+
+                                return (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        disabled={disabled}
+                                        onClick={() => selectDate(item.date)}
+                                        className={`grid h-10 place-items-center rounded-xl text-sm font-bold transition ${
+                                            selected
+                                                ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/25'
+                                                : today
+                                                  ? 'bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300'
+                                                  : item.current
+                                                    ? 'text-[#1f1a17]/80 hover:bg-orange-50 hover:text-orange-700 dark:text-white/80 dark:hover:bg-orange-500/10 dark:hover:text-orange-300'
+                                                    : 'text-[#1f1a17]/25 dark:text-white/20'
+                                        } ${
+                                            disabled
+                                                ? 'cursor-not-allowed opacity-30 hover:bg-transparent hover:text-inherit'
+                                                : ''
+                                        }`}
+                                    >
+                                        {item.day}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="mt-4 flex items-center justify-between border-t border-orange-100 pt-4 dark:border-white/10">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    onChange('');
+                                    setOpen(false);
+                                }}
+                                className="text-sm font-bold text-[#1f1a17]/45 transition hover:text-red-500 dark:text-white/40"
+                            >
+                                Clear
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const today = new Date();
+
+                                    if (isDisabled(today)) return;
+
+                                    onChange(formatDate(today));
+                                    setCurrentMonth(today.getMonth());
+                                    setCurrentYear(today.getFullYear());
+                                    setOpen(false);
+                                }}
+                                className="rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-orange-600/20 transition hover:bg-[#7a2800]"
+                            >
+                                Today
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+

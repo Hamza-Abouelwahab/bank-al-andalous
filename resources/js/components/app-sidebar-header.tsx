@@ -4,6 +4,7 @@ import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { NavUser } from '@/components/nav-user';
 import { useDarkMode } from '@/hooks/use-dark-mode';
 import { Moon, Sun } from 'lucide-react';
+import { NotificationBell } from './NotificationBell';
 
 export function AppSidebarHeader({
     breadcrumbs = [],
@@ -32,6 +33,8 @@ export function AppSidebarHeader({
                         <Moon className="h-4 w-4" />
                     )}
                 </button>
+
+                <NotificationBell />
 
                 <NavUser />
             </div>
