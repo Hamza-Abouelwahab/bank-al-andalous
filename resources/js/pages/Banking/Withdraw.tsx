@@ -481,7 +481,7 @@ export default function Withdraw() {
                             {/* Security Info */}
                             <div className="group rounded-3xl border border-orange-200/70 bg-gradient-to-br from-orange-50 to-[#f8f6f1] p-5 transition-all duration-200 hover:shadow-md dark:border-[#7a2800]/40 dark:from-orange-900/15 dark:to-[#7a2800]/10">
                                 <div className="flex items-start gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 px-2 dark:bg-orange-900/30">
+                                    <div className="flex h-10 w-10 items-center shrink-0 justify-center rounded-full bg-orange-100 px-2 dark:bg-orange-900/30">
                                         <Smartphone className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                                     </div>
 
@@ -502,8 +502,10 @@ export default function Withdraw() {
                             {/* Recent Requests */}
                             <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
                                 <div className="mb-4 flex items-center gap-2">
+                                    <div className="flex h-8 w-8 items-center shrink-0 justify-center rounded-full bg-orange-100 px-2 dark:bg-orange-900/30">
                                     <Clock3 className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-                                    <h3 className="text-sm font-extrabold text-[#1f1a17] dark:text-white">
+                                    </div>
+                                    <h3 className="text-md font-extrabold text-[#1f1a17] dark:text-white">
                                         Recent Requests
                                     </h3>
                                 </div>

@@ -13,11 +13,9 @@ use App\Models\Appointment;
 use App\Models\Transaction;
 
 
-
-
 class DashboardController extends Controller
 {
-    
+
 
     public function index()
     {
@@ -216,15 +214,8 @@ class DashboardController extends Controller
     public function appointments()
     {
         $appointments = Appointment::query()
-            ->with(['user.profile', 'user.bankAccount'])
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->where(function ($query) {
-                $query->whereDate('date', '>', now()->toDateString())
-                    ->orWhere(function ($query) {
-                        $query->whereDate('date', now()->toDateString())
-                            ->whereTime('time', '>=', now()->format('H:i'));
-                    });
-            })
+            ->with(['user.profile', 'user.bankAccount', 'agent'])
+            ->whereDate('date', '>=', now()->toDateString())
             ->orderBy('date')
             ->orderBy('time')
             ->get();
@@ -238,8 +229,64 @@ class DashboardController extends Controller
 
             'stats' => [
                 'future_appointments' => $appointments->count(),
-                'pending_appointments' => $appointments->where('status', 'pending')->count(),
-                'confirmed_appointments' => $appointments->where('status', 'confirmed')->count(),
+                'today_appointments' => $appointments
+                    ->where('date', now()->toDateString())
+                    ->count(),
+                'pending_appointments' => $appointments
+                    ->where('status', 'pending')
+                    ->count(),
+                'confirmed_appointments' => $appointments
+                    ->where('status', 'confirmed')
+                    ->count(),
+                'completed_appointments' => $appointments
+                    ->where('status', 'completed')
+                    ->count(),
+                'cancelled_appointments' => $appointments
+                    ->where('status', 'cancelled')
+                    ->count(),
+            ],
+        ]);
+    }
+
+    //  Agent Appointments
+        public function agentAppointments()
+    {
+        if (Auth::user()->role !== 'agent') {
+            abort(403);
+        }
+
+        $appointments = Appointment::query()
+            ->with(['user.profile', 'user.bankAccount', 'agent'])
+            ->whereDate('date', '>=', now()->toDateString())
+            ->where('agent_id', Auth::id())
+            ->orderBy('date')
+            ->orderBy('time')
+            ->get();
+
+        return Inertia::render('Agent/Appointments', [
+            'auth' => [
+                'user' => Auth::user(),
+            ],
+
+            'appointments' => $appointments,
+
+            'stats' => [
+                'future_appointments' => $appointments->count(),
+                'today_appointments' => $appointments
+                    ->where('date', now()->toDateString())
+                    ->count(),
+                'pending_appointments' => $appointments
+                    ->where('status', 'pending')
+                    ->count(),
+                'confirmed_appointments' => $appointments
+                    ->where('status', 'confirmed')
+                    ->count(),
+                'completed_appointments' => $appointments
+                    ->where('status', 'completed')
+                    ->count(),
+                'cancelled_appointments' => $appointments
+                    ->where('status', 'cancelled')
+                    ->count(),
             ],
         ]);
     }

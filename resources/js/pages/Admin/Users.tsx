@@ -16,8 +16,10 @@ import {
     Users,
     Wallet,
     XCircle,
+    Building2,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import CustomSelect from '@/components/CustomSelect';
 
 interface User {
     id: number;
@@ -53,27 +55,49 @@ interface PageProps extends InertiaPageProps {
     };
 }
 
+type RoleFilter = 'user' | 'agent' | 'admin' | 'all';
+
 export default function AdminUsers() {
     const { users = [] } = usePage<PageProps>().props;
 
     const [search, setSearch] = useState('');
+    const [roleFilter, setRoleFilter] = useState<RoleFilter>('user');
     const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+
+    const totalUsers = users.filter((u) => u.role === 'user').length;
+    const totalAgents = users.filter((u) => u.role === 'agent').length;
+    const totalAdmins = users.filter((u) => u.role === 'admin').length;
+    const usersWithAccounts = users.filter(
+        (u) => u.bank_account ?? u.bankAccount,
+    ).length;
 
     const filteredUsers = useMemo(() => {
         return users.filter((u) => {
             const account = u.bank_account ?? u.bankAccount;
+            const searchValue = search.toLowerCase();
 
-            return (
-                u.name.toLowerCase().includes(search.toLowerCase()) ||
-                u.email.toLowerCase().includes(search.toLowerCase()) ||
-                (account?.account_number ?? '').toLowerCase().includes(search.toLowerCase())
-            );
+            const matchesRole =
+                roleFilter === 'all' || u.role === roleFilter;
+
+            const matchesSearch =
+                u.name?.toLowerCase().includes(searchValue) ||
+                u.email?.toLowerCase().includes(searchValue) ||
+                u.profile?.phone?.toLowerCase().includes(searchValue) ||
+                (account?.account_number ?? '')
+                    .toLowerCase()
+                    .includes(searchValue);
+
+            return matchesRole && matchesSearch;
         });
-    }, [users, search]);
+    }, [users, search, roleFilter]);
 
-    const totalAdmins = users.filter((u) => u.role === 'admin').length;
-    const totalCustomers = users.filter((u) => u.role !== 'admin').length;
-    const usersWithAccounts = users.filter((u) => u.bank_account ?? u.bankAccount).length;
+    const currentCountLabel = () => {
+        if (roleFilter === 'user') return `${filteredUsers.length} users`;
+        if (roleFilter === 'agent') return `${filteredUsers.length} agents`;
+        if (roleFilter === 'admin') return `${filteredUsers.length} admins`;
+
+        return `${filteredUsers.length} accounts`;
+    };
 
     const formatMoney = (value: number) =>
         `${Number(value).toLocaleString('en-MA', {
@@ -106,6 +130,33 @@ export default function AdminUsers() {
         });
     };
 
+    const roleBadgeClass = (role: string) => {
+        if (role === 'admin') {
+            return 'bg-[#171412] text-white dark:bg-white dark:text-[#171412]';
+        }
+
+        if (role === 'agent') {
+            return 'bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400';
+        }
+
+        return 'bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400';
+    };
+
+    const roleIcon = (role: string) => {
+        if (role === 'admin') return <Crown className="h-3.5 w-3.5" />;
+        if (role === 'agent') return <Building2 className="h-3.5 w-3.5" />;
+
+        return <UserCog className="h-3.5 w-3.5" />;
+    };
+
+    const emptyMessage = () => {
+        if (roleFilter === 'user') return 'No users found';
+        if (roleFilter === 'agent') return 'No agents found';
+        if (roleFilter === 'admin') return 'No admins found';
+
+        return 'No accounts found';
+    };
+
     return (
         <>
             <Head title="Admin Users" />
@@ -120,7 +171,7 @@ export default function AdminUsers() {
                             <div>
                                 <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10">
                                     <Users className="h-3.5 w-3.5" />
-                                    Customer Directory
+                                    Account Directory
                                 </div>
 
                                 <h1 className="text-2xl font-black tracking-tight text-[#171412] dark:text-[#F5F0EA] md:text-3xl">
@@ -128,7 +179,9 @@ export default function AdminUsers() {
                                 </h1>
 
                                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[#7B756E] dark:text-[#AFA49A]">
-                                    Monitor customer profiles, linked bank accounts, balances, and administrative roles from one secure workspace.
+                                    Monitor users, branch agents, admins, linked
+                                    accounts, balances, and roles from one
+                                    secure workspace.
                                 </p>
                             </div>
 
@@ -138,23 +191,73 @@ export default function AdminUsers() {
                                     <input
                                         type="text"
                                         value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        placeholder="Search name, email, account..."
+                                        onChange={(e) =>
+                                            setSearch(e.target.value)
+                                        }
+                                        placeholder="Search name, email, phone, account..."
                                         className="w-full bg-transparent text-sm font-semibold text-[#171412] outline-none placeholder:text-[#A8A098] dark:text-white"
                                     />
                                 </div>
 
+                                <div className="min-w-[190px]">
+                                    <CustomSelect
+                                        value={roleFilter}
+                                        placeholder="Filter by role"
+                                        options={[
+                                            {
+                                                value: 'user',
+                                                label: `Users (${totalUsers})`,
+                                            },
+                                            {
+                                                value: 'agent',
+                                                label: `Agents (${totalAgents})`,
+                                            },
+                                            {
+                                                value: 'admin',
+                                                label: `Admins (${totalAdmins})`,
+                                            },
+                                            {
+                                                value: 'all',
+                                                label: `All accounts (${users.length})`,
+                                            },
+                                        ]}
+                                        onChange={(value) =>
+                                            setRoleFilter(value as RoleFilter)
+                                        }
+                                    />
+                                </div>
+
                                 <div className="flex items-center justify-center rounded-2xl border border-[#ECE7DF] bg-white px-5 py-3 text-sm font-black text-[#171412] shadow-sm dark:border-[#2A2520] dark:bg-[#252118] dark:text-white">
-                                    {filteredUsers.length} users
+                                    {currentCountLabel()}
                                 </div>
                             </div>
                         </div>
 
                         <div className="relative mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                            <StatCard label="Total Users" value={users.length} icon={<Users className="h-6 w-6" />} tone="orange" />
-                            <StatCard label="Admins" value={totalAdmins} icon={<Crown className="h-6 w-6" />} tone="blue" />
-                            <StatCard label="Customers" value={totalCustomers} icon={<UserRound className="h-6 w-6" />} tone="green" />
-                            <StatCard label="Linked Accounts" value={usersWithAccounts} icon={<CreditCard className="h-6 w-6" />} tone="amber" />
+                            <StatCard
+                                label="Users"
+                                value={totalUsers}
+                                icon={<UserRound className="h-6 w-6" />}
+                                tone="green"
+                            />
+                            <StatCard
+                                label="Agents"
+                                value={totalAgents}
+                                icon={<Building2 className="h-6 w-6" />}
+                                tone="orange"
+                            />
+                            <StatCard
+                                label="Admins"
+                                value={totalAdmins}
+                                icon={<Crown className="h-6 w-6" />}
+                                tone="blue"
+                            />
+                            <StatCard
+                                label="Linked Accounts"
+                                value={usersWithAccounts}
+                                icon={<CreditCard className="h-6 w-6" />}
+                                tone="amber"
+                            />
                         </div>
                     </div>
 
@@ -162,7 +265,15 @@ export default function AdminUsers() {
                         <table className="min-w-full border-collapse">
                             <thead>
                                 <tr className="bg-[#FCFBF9] dark:bg-[#201C18]">
-                                    {['Customer', 'Contact', 'Account', 'Balance', 'Role', 'Joined', 'Actions'].map((head) => (
+                                    {[
+                                        'Customer',
+                                        'Contact',
+                                        'Account',
+                                        'Balance',
+                                        'Role',
+                                        'Joined',
+                                        'Actions',
+                                    ].map((head) => (
                                         <th
                                             key={head}
                                             className="whitespace-nowrap px-6 py-4 text-left text-[11px] font-black uppercase tracking-[0.18em] text-[#9A948C]"
@@ -176,14 +287,17 @@ export default function AdminUsers() {
                             <tbody>
                                 {filteredUsers.length > 0 ? (
                                     filteredUsers.map((u, index) => {
-                                        const account = u.bank_account ?? u.bankAccount;
+                                        const account =
+                                            u.bank_account ?? u.bankAccount;
                                         const isAdmin = u.role === 'admin';
 
                                         return (
                                             <tr
                                                 key={u.id}
                                                 className={`border-t border-[#F2EEEA] transition duration-200 hover:bg-orange-50/40 dark:border-[#2A2520] dark:hover:bg-orange-500/5 ${
-                                                    index % 2 === 0 ? 'bg-white dark:bg-[#1A1714]' : 'bg-[#FFFCFA] dark:bg-[#181511]'
+                                                    index % 2 === 0
+                                                        ? 'bg-white dark:bg-[#1A1714]'
+                                                        : 'bg-[#FFFCFA] dark:bg-[#181511]'
                                                 }`}
                                             >
                                                 <td className="px-6 py-5">
@@ -196,7 +310,9 @@ export default function AdminUsers() {
                                                             />
                                                         ) : (
                                                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-[#7a2800] text-sm font-black text-white shadow-lg shadow-orange-900/20">
-                                                                {getInitials(u.name)}
+                                                                {getInitials(
+                                                                    u.name,
+                                                                )}
                                                             </div>
                                                         )}
 
@@ -206,7 +322,9 @@ export default function AdminUsers() {
                                                                     {u.name}
                                                                 </p>
 
-                                                                {isAdmin && <BadgeCheck className="h-4 w-4 text-blue-600" />}
+                                                                {isAdmin && (
+                                                                    <BadgeCheck className="h-4 w-4 text-blue-600" />
+                                                                )}
                                                             </div>
 
                                                             <p className="mt-1 text-xs font-bold text-[#A8A098]">
@@ -220,12 +338,18 @@ export default function AdminUsers() {
                                                     <div className="space-y-2">
                                                         <div className="flex items-center gap-2 text-sm font-semibold text-[#4D4944] dark:text-[#D8D0C8]">
                                                             <Mail className="h-4 w-4 text-[#A8A098]" />
-                                                            <span className="max-w-[230px] truncate">{u.email}</span>
+                                                            <span className="max-w-[230px] truncate">
+                                                                {u.email}
+                                                            </span>
                                                         </div>
 
                                                         <div className="flex items-center gap-2 text-sm text-[#7B756E] dark:text-[#AFA49A]">
                                                             <Phone className="h-4 w-4 text-[#A8A098]" />
-                                                            <span>{u.profile?.phone ?? 'No phone'}</span>
+                                                            <span>
+                                                                {u.profile
+                                                                    ?.phone ??
+                                                                    'No phone'}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -234,11 +358,15 @@ export default function AdminUsers() {
                                                     {account ? (
                                                         <div>
                                                             <p className="font-mono text-sm font-black text-[#171412] dark:text-white">
-                                                                {account.account_number}
+                                                                {
+                                                                    account.account_number
+                                                                }
                                                             </p>
 
                                                             <span className="mt-2 inline-flex rounded-full bg-orange-50 px-3 py-1 text-xs font-black capitalize text-orange-600 dark:bg-orange-500/10">
-                                                                {account.account_type}
+                                                                {
+                                                                    account.account_type
+                                                                }
                                                             </span>
                                                         </div>
                                                     ) : (
@@ -257,27 +385,33 @@ export default function AdminUsers() {
 
                                                             <div>
                                                                 <p className="text-sm font-black text-[#171412] dark:text-white">
-                                                                    {formatMoney(Number(account.balance ?? 0))}
+                                                                    {formatMoney(
+                                                                        Number(
+                                                                            account.balance ??
+                                                                                0,
+                                                                        ),
+                                                                    )}
                                                                 </p>
                                                                 <p className="text-xs font-medium text-[#A8A098]">
-                                                                    Available balance
+                                                                    Available
+                                                                    balance
                                                                 </p>
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                        <span className="text-sm text-[#9A948C]">—</span>
+                                                        <span className="text-sm text-[#9A948C]">
+                                                            —
+                                                        </span>
                                                     )}
                                                 </td>
 
                                                 <td className="px-6 py-5">
                                                     <span
-                                                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black capitalize ${
-                                                            isAdmin
-                                                                ? 'bg-[#171412] text-white dark:bg-white dark:text-[#171412]'
-                                                                : 'bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400'
-                                                        }`}
+                                                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black capitalize ${roleBadgeClass(
+                                                            u.role,
+                                                        )}`}
                                                     >
-                                                        {isAdmin ? <Crown className="h-3.5 w-3.5" /> : <UserCog className="h-3.5 w-3.5" />}
+                                                        {roleIcon(u.role)}
                                                         {u.role}
                                                     </span>
                                                 </td>
@@ -285,7 +419,9 @@ export default function AdminUsers() {
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center gap-2 text-sm font-bold text-[#4D4944] dark:text-[#D8D0C8]">
                                                         <CalendarDays className="h-4 w-4 text-[#A8A098]" />
-                                                        {formatDate(u.created_at)}
+                                                        {formatDate(
+                                                            u.created_at,
+                                                        )}
                                                     </div>
                                                 </td>
 
@@ -310,9 +446,13 @@ export default function AdminUsers() {
                                                         {!isAdmin ? (
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setDeleteConfirm(u.id)}
+                                                                onClick={() =>
+                                                                    setDeleteConfirm(
+                                                                        u.id,
+                                                                    )
+                                                                }
                                                                 className="rounded-xl border border-red-200 p-2 text-red-600 transition hover:bg-red-50 dark:border-red-500/20 dark:hover:bg-red-500/10"
-                                                                title="Delete user"
+                                                                title="Delete account"
                                                             >
                                                                 <Trash2 className="h-4 w-4" />
                                                             </button>
@@ -333,17 +473,21 @@ export default function AdminUsers() {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-20 text-center">
+                                        <td
+                                            colSpan={7}
+                                            className="px-6 py-20 text-center"
+                                        >
                                             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-orange-50 text-orange-600 dark:bg-orange-500/10">
                                                 <Search className="h-7 w-7" />
                                             </div>
 
                                             <h3 className="mt-4 text-lg font-black text-[#171412] dark:text-white">
-                                                No users found
+                                                {emptyMessage()}
                                             </h3>
 
                                             <p className="mt-2 text-sm text-[#9A948C]">
-                                                Try another name, email, or account number.
+                                                Try another name, email, phone,
+                                                account number, or role filter.
                                             </p>
                                         </td>
                                     </tr>
@@ -362,12 +506,17 @@ export default function AdminUsers() {
                         </div>
 
                         <h3 className="text-center text-2xl font-extrabold text-[#171412] dark:text-white">
-                            Delete User
+                            Delete Account
                         </h3>
 
                         <p className="mt-3 text-center text-sm leading-6 text-[#7B756E] dark:text-[#AFA49A]">
-                            Are you sure you want to delete this user? This will also remove appointments, bank account, profile, and related transactions.
-                            <span className="font-semibold text-red-600"> This action cannot be undone.</span>
+                            Are you sure you want to delete this account? This
+                            will also remove related profile, appointments, bank
+                            account, and transactions when they exist.
+                            <span className="font-semibold text-red-600">
+                                {' '}
+                                This action cannot be undone.
+                            </span>
                         </p>
 
                         <div className="mt-6 flex gap-3">
@@ -424,7 +573,9 @@ function StatCard({
                     </p>
                 </div>
 
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${tones[tone]}`}>
+                <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${tones[tone]}`}
+                >
                     {icon}
                 </div>
             </div>

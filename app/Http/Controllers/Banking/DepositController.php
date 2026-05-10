@@ -33,14 +33,14 @@ class DepositController extends Controller
             'identifier' => 'required|string|max:50',
         ]);
 
-        $identifier = strtoupper(trim($request->identifier));
+        $identifier = strtoupper(str_replace(' ', '', trim($request->identifier)));
 
         $customer = User::with(['bankAccount', 'profile'])
             ->whereHas('bankAccount', function ($q) use ($identifier) {
-                $q->where('account_number', $identifier);
+                $q->whereRaw("REPLACE(UPPER(account_number), ' ', '') = ?", [$identifier]);
             })
             ->orWhereHas('profile', function ($q) use ($identifier) {
-                $q->where('cin', $identifier);
+                $q->whereRaw("REPLACE(UPPER(cin), ' ', '') = ?", [$identifier]);
             })
             ->first();
 
@@ -56,13 +56,15 @@ class DepositController extends Controller
             'customer' => [
                 'id' => $customer->id,
                 'name' => $customer->name,
+                'email' => $customer->email,
+                'phone' => $customer->profile?->phone,
                 'account_number' => $customer->bankAccount->account_number,
+                'account_type' => $customer->bankAccount->account_type,
                 'balance' => $customer->bankAccount->balance,
                 'cin' => $customer->profile?->cin,
             ],
         ]);
     }
-
     public function store(Request $request)
     {
         if (auth()->user()->role !== 'admin') {

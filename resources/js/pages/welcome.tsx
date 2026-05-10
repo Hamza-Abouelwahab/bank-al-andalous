@@ -30,6 +30,7 @@ import {
     Linkedin,
     ArrowDownToLine,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 // import { dashboard, login, register } from '@/routes';
 import logo from '../assets/sucerity-logo.png';
 import { useState } from 'react';
@@ -94,7 +95,6 @@ export default function Welcome({
                     <div className="absolute right-1/4 bottom-0 h-[400px] w-[400px] rounded-full bg-orange-600/10 blur-[100px]" />
                 </div>
 
-                {/* Navbar */}
                 {/* Navbar */}
                 <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-xl">
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
@@ -458,9 +458,12 @@ export default function Welcome({
 
                             <a
                                 href="#features"
-                                className="group rounded-xl border flex gap-2 items-center border-slate-200 px-6 py-4 font-bold text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
+                                className="group flex items-center gap-2 rounded-xl border border-slate-200 px-6 py-4 font-bold text-slate-600 transition hover:border-orange-400 hover:text-orange-500"
                             >
-                                <Landmark size={16} className="text-slate-900 transition group-hover:text-orange-500 " />
+                                <Landmark
+                                    size={16}
+                                    className="text-slate-900 transition group-hover:text-orange-500"
+                                />
                                 Explore Features
                             </a>
                         </div>
@@ -489,24 +492,32 @@ export default function Welcome({
                     </div>
 
                     {/* Hero visual */}
-                    <div className="relative flex min-h-[520px] items-center justify-center px-6 py-16">
+                    <motion.div
+                        animate={{ y: [0, -18, 0] }}
+                        transition={{
+                            duration: 4,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                        }}
+                        className="relative flex min-h-[520px] items-center justify-center px-6 py-16"
+                    >
                         {/* Soft background glow */}
                         <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-orange-400/10 blur-3xl" />
 
                         {/* CARD */}
                         <div className="absolute top-44 left-0 z-10 hidden -rotate-[10deg] rounded-[2rem] bg-gradient-to-br from-[#2B1D16] via-[#1E140F] to-black p-6 text-white shadow-[0_25px_70px_rgba(0,0,0,0.35)] lg:block">
                             <div className="mb-10 flex items-center gap-3">
-                               {/* logo */}
+                                {/* logo */}
                                 <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 64 84"
-                                width="30"
-                                height="30"
-                                fill="none"
-                            >
-                                {/* OUTER ARCH */}
-                                <path
-                                    d="
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 64 84"
+                                    width="30"
+                                    height="30"
+                                    fill="none"
+                                >
+                                    {/* OUTER ARCH */}
+                                    <path
+                                        d="
             M11 78
             V30
             C11 26.5 12.3 23.7 14.8 21.5
@@ -523,15 +534,15 @@ export default function Welcome({
             C51.7 23.7 53 26.5 53 30
             V78
         "
-                                    stroke="#F28C28"
-                                    strokeWidth="2.3"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
+                                        stroke="#F28C28"
+                                        strokeWidth="2.3"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
 
-                                {/* DECORATIVE TOP INNER LINE */}
-                                <path
-                                    d="
+                                    {/* DECORATIVE TOP INNER LINE */}
+                                    <path
+                                        d="
             M17 29
             C17 26.4 18 24.2 19.9 22.5
             L24 18.8
@@ -544,15 +555,15 @@ export default function Welcome({
             L44.1 22.5
             C46 24.2 47 26.4 47 29
         "
-                                    stroke="#F28C28"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
+                                        stroke="#F28C28"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
 
-                                {/* INNER ARCH */}
-                                <path
-                                    d="
+                                    {/* INNER ARCH */}
+                                    <path
+                                        d="
             M18 78
             V33
             C18 30.6 18.9 28.6 20.6 27
@@ -567,29 +578,29 @@ export default function Welcome({
             C45.1 28.6 46 30.6 46 33
             V78
         "
-                                    stroke="#F28C28"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
+                                        stroke="#F28C28"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
 
-                                {/* LITTLE SHOULDER DETAILS */}
-                                <path
-                                    d="M18 34.5H21.2"
-                                    stroke="#F28C28"
-                                    strokeWidth="1.6"
-                                    strokeLinecap="round"
-                                />
-                                <path
-                                    d="M42.8 34.5H46"
-                                    stroke="#F28C28"
-                                    strokeWidth="1.6"
-                                    strokeLinecap="round"
-                                />
+                                    {/* LITTLE SHOULDER DETAILS */}
+                                    <path
+                                        d="M18 34.5H21.2"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        strokeLinecap="round"
+                                    />
+                                    <path
+                                        d="M42.8 34.5H46"
+                                        stroke="#F28C28"
+                                        strokeWidth="1.6"
+                                        strokeLinecap="round"
+                                    />
 
-                                {/* TOP SMALL STAR */}
-                                <path
-                                    d="
+                                    {/* TOP SMALL STAR */}
+                                    <path
+                                        d="
             M32 20.2
             L33.1 22.6
             L35.7 21.9
@@ -608,78 +619,78 @@ export default function Welcome({
             L30.9 22.6
             Z
         "
-                                    fill="#F28C28"
-                                />
-
-                                {/* FLOWER */}
-                                <g transform="translate(32 53)">
-                                    {/* 8 petals */}
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                    />
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                        transform="rotate(45)"
-                                    />
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                        transform="rotate(90)"
-                                    />
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                        transform="rotate(135)"
-                                    />
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                        transform="rotate(180)"
-                                    />
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                        transform="rotate(225)"
-                                    />
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                        transform="rotate(270)"
-                                    />
-                                    <path
-                                        d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.6"
-                                        fill="none"
-                                        transform="rotate(315)"
+                                        fill="#F28C28"
                                     />
 
-                                    {/* center ring */}
-                                    <circle
-                                        cx="0"
-                                        cy="0"
-                                        r="2.2"
-                                        stroke="#F28C28"
-                                        strokeWidth="1.4"
-                                        fill="none"
-                                    />
-                                </g>
+                                    {/* FLOWER */}
+                                    <g transform="translate(32 53)">
+                                        {/* 8 petals */}
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                        />
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                            transform="rotate(45)"
+                                        />
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                            transform="rotate(90)"
+                                        />
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                            transform="rotate(135)"
+                                        />
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                            transform="rotate(180)"
+                                        />
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                            transform="rotate(225)"
+                                        />
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                            transform="rotate(270)"
+                                        />
+                                        <path
+                                            d="M0 0 C2 -2.2 4.2 -5.2 4.2 -8.4 C4.2 -10.8 2.5 -12.6 0 -13.4 C-2.5 -12.6 -4.2 -10.8 -4.2 -8.4 C-4.2 -5.2 -2 -2.2 0 0Z"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.6"
+                                            fill="none"
+                                            transform="rotate(315)"
+                                        />
+
+                                        {/* center ring */}
+                                        <circle
+                                            cx="0"
+                                            cy="0"
+                                            r="2.2"
+                                            stroke="#F28C28"
+                                            strokeWidth="1.4"
+                                            fill="none"
+                                        />
+                                    </g>
                                 </svg>
                                 <span className="text-sm font-bold tracking-wide text-orange-200">
                                     BANK AL-ANDALOUS
@@ -697,7 +708,6 @@ export default function Welcome({
                                     <p className="text-[10px] tracking-widest text-white/40 uppercase">
                                         Card Holder
                                     </p>
-
                                 </div>
 
                                 <span className="text-2xl font-black text-white italic">
@@ -748,7 +758,7 @@ export default function Welcome({
                                 ].map(([Icon, label]) => (
                                     <div
                                         key={label}
-                                        className="rounded-2xl bg-[#FFF6EE] py-2 px-3 text-center"
+                                        className="rounded-2xl bg-[#FFF6EE] px-3 py-2 text-center"
                                     >
                                         <Icon className="mx-auto h-4 w-4 text-orange-500" />
 
@@ -815,7 +825,7 @@ export default function Welcome({
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </section>
                 {/* About */}
                 <section
@@ -982,7 +992,7 @@ export default function Welcome({
                                     is our top priority.
                                 </p>
 
-                                <div className="mt-12 grid w-full  gap-8 sm:grid-cols-3">
+                                <div className="mt-12 grid w-full gap-8 sm:grid-cols-3">
                                     {[
                                         [
                                             ShieldCheck,
@@ -1002,13 +1012,13 @@ export default function Welcome({
                                     ].map(([Icon, title, text]: any) => (
                                         <div
                                             key={title}
-                                            className="flex items-center w-full gap-4"
+                                            className="flex w-full items-center gap-4"
                                         >
-                                            <div className="flex h-12 w-15  items-center justify-center rounded-full bg-orange-100 text-orange-500">
+                                            <div className="flex h-12 w-15 items-center justify-center rounded-full bg-orange-100 text-orange-500">
                                                 <Icon size={28} />
                                             </div>
                                             <div>
-                                                <h4 className="font-extrabold w-full text-slate-950">
+                                                <h4 className="w-full font-extrabold text-slate-950">
                                                     {title}
                                                 </h4>
                                                 <p className="mt-1 text-sm text-slate-500">
@@ -1020,13 +1030,20 @@ export default function Welcome({
                                 </div>
                             </div>
 
-                            <div className="">
+                            <motion.div
+                                animate={{ y: [0, -18, 0] }}
+                                transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: 'easeInOut',
+                                }}
+                            >
                                 <img
                                     src={logo}
                                     alt=""
                                     className="mx-auto w-full max-w-md"
                                 />
-                            </div>
+                            </motion.div>
                         </div>
 
                         <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -1300,7 +1317,7 @@ export default function Welcome({
                                         </g>
                                     </svg>
                                 </div>
-                                <span className="text-xl text-black font-extrabold">
+                                <span className="text-xl font-extrabold text-black">
                                     Bank{' '}
                                     <span className="text-orange-500">
                                         Al-Andalous{' '}

@@ -55,7 +55,7 @@ export default function Transfer() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-xs font-medium text-orange-600 dark:text-orange-400 mt-3">
-                            <ShieldCheck className="h-4 w-4" /> 
+                            <ShieldCheck className="h-4 w-4" />
                             <span>Secure session • 256-bit encryption</span>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ export default function Transfer() {
                             {/* Security Info - Premium */}
                             <div className="fintech-card group rounded-3xl border border-orange-200/60 bg-gradient-to-br from-orange-50 to-[#f8f6f1] p-5 transition-all duration-200 hover:shadow-md dark:border-[#7a2800]/40 dark:from-orange-900/10 dark:to-[#7a2800]/5">
                                 <div className="flex items-start gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-900/20">
+                                    <div className="flex h-10 w-10 items-center shrink-0 justify-center rounded-xl bg-orange-100 dark:bg-orange-900/20">
                                         <ShieldCheck className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                                     </div>
                                     <div>
@@ -215,7 +215,7 @@ export default function Transfer() {
                                     <p className="text-xs text-[#1f1a17]/60 dark:text-white/60">Review before proceeding</p>
                                 </div>
                             </div>
-                            <button onClick={() => setReview(false)} 
+                            <button onClick={() => setReview(false)}
                                 className="flex h-8 w-8 items-center justify-center rounded-lg text-[#1f1a17]/60 hover:bg-orange-50 hover:text-[#7a2800] transition dark:text-white/60 dark:hover:bg-orange-900/20">
                                 <X className="h-5 w-5" />
                             </button>

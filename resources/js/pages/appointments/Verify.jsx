@@ -12,7 +12,15 @@ export default function VerifyAppointment() {
     const { appointment, errors, flash } = usePage().props;
 
     const confirmCheckIn = () => {
-        router.post(route('appointments.check-in', appointment.id));
+        router.post(`/appointments/check-in/${appointment.id}`, {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            router.reload();
+        },
+        onError: (errors) => {
+            console.log(errors);
+        },
+    });
     };
     const formatService = (service) => {
     switch (service) {
@@ -123,8 +131,8 @@ export default function VerifyAppointment() {
                         </button>
                     ) : (
                         <div className="mt-6 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-center text-sm font-bold text-orange-700">
-                            Show this appointment QR/link to the branch agent
-                            when you arrive.
+                            Show this appointment QR/link to the bank staff
+                            when you arrive at your branch.
                         </div>
                     )}
                 </div>

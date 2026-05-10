@@ -74,6 +74,17 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['auth'])->post('/appointments/check-in/{appointment}', [AppointmentController::class, 'checkIn'])
         ->name('appointments.check-in');
+
+    Route::post('/appointments/{appointment}/confirm', [AppointmentController::class, 'confirm'])
+        ->name('appointments.confirm');
+
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])
+        ->name('appointments.cancel');
+
+    // agent - Agent appointments workspace
+    Route::middleware(['auth'])->get('/agent/appointments', [DashboardController::class, 'agentAppointments'])
+        ->name('agent.appointments');
+
     // for simulation
     // 🔥 Simulation UI
     Route::get('/simulation', function () {

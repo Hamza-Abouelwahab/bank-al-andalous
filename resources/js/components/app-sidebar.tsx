@@ -68,6 +68,10 @@ const adminNav = [
     { title: 'Security Center', href: '/admin/security', icon: UserCog },
 ];
 
+const agentNav = [
+    { title: 'Appointments', href: '/agent/appointments', icon: CalendarCheck },
+];
+
 // ─── Bank Logo (reusable inline SVG) ─────────────────────────────
 function BankLogo({
 
@@ -150,6 +154,7 @@ export function AppSidebar() {
     const { auth } = page.props as any;
     const user = auth?.user;
     const isAdmin = user?.role === 'admin';
+    const isAgent = user?.role === 'agent';
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -184,6 +189,18 @@ export function AppSidebar() {
                 {isAdmin ? (
                     <>
                         <NavMain items={adminNav} groupLabel="Administration" />
+                        <SidebarSeparator className="mx-4 my-2 opacity-50" />
+                        <NavMain
+                            items={[
+                                { title: 'Support', href: '/support', icon: Headphones },
+                                { title: 'Settings', href: '/settings/profile', icon: Settings },
+                            ]}
+                            groupLabel="System"
+                        />
+                    </>
+                ) : isAgent ? (
+                    <>
+                        <NavMain items={agentNav} groupLabel="Branch Workspace" />
                         <SidebarSeparator className="mx-4 my-2 opacity-50" />
                         <NavMain
                             items={[

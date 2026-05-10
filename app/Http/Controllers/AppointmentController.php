@@ -274,10 +274,13 @@ class AppointmentController extends Controller
 
         $user = auth()->user();
 
-        $isStaff = in_array($user->role, ['agent', 'admin']);
+        $isAdmin = $user->role === 'admin';
+        $isAssignedAgent = $user->role === 'agent'
+            && $appointment->agent_id === $user->id;
+
         $isOwner = $appointment->user_id === $user->id;
 
-        if (! $isStaff && ! $isOwner) {
+        if (! $isAdmin && ! $isAssignedAgent && ! $isOwner) {
             abort(403);
         }
 
@@ -294,7 +297,7 @@ class AppointmentController extends Controller
                 'checked_in_at' => $appointment->checked_in_at,
                 'is_valid' => ! $appointment->checked_in_at
                     && in_array($appointment->status, ['pending', 'confirmed']),
-                'can_check_in' => $isStaff,
+                'can_check_in' => $isAdmin || $isAssignedAgent,
                 'qr_token' => $appointment->qr_token,
             ],
         ]);
@@ -302,7 +305,13 @@ class AppointmentController extends Controller
 
     public function checkIn(Appointment $appointment)
     {
-        if (! in_array(auth()->user()->role, ['agent', 'admin'])) {
+        $user = auth()->user();
+
+        $isAdmin = $user->role === 'admin';
+        $isAssignedAgent = $user->role === 'agent'
+            && $appointment->agent_id === $user->id;
+
+        if (! $isAdmin && ! $isAssignedAgent) {
             abort(403);
         }
 
@@ -324,5 +333,62 @@ class AppointmentController extends Controller
         ]);
 
         return back()->with('success', 'Appointment verified successfully.');
+    }
+
+    //
+    public function confirm(Appointment $appointment)
+    {
+        $user = auth()->user();
+
+        $isAdmin = $user->role === 'admin';
+        $isAssignedAgent = $user->role === 'agent'
+            && $appointment->agent_id === $user->id;
+
+        if (! $isAdmin && ! $isAssignedAgent) {
+            abort(403);
+        }
+
+        if ($appointment->status !== 'pending') {
+            return back()->withErrors([
+                'status' => 'Only pending appointments can be confirmed.',
+            ]);
+        }
+
+        $appointment->update([
+            'status' => 'confirmed',
+        ]);
+
+        return back()->with('success', 'Appointment confirmed successfully.');
+    }
+
+    public function cancel(Appointment $appointment)
+    {
+        $user = auth()->user();
+
+        $isAdmin = $user->role === 'admin';
+        $isAssignedAgent = $user->role === 'agent'
+            && $appointment->agent_id === $user->id;
+
+        if (! $isAdmin && ! $isAssignedAgent) {
+            abort(403);
+        }
+
+        if ($appointment->checked_in_at) {
+            return back()->withErrors([
+                'status' => 'Checked-in appointments cannot be cancelled.',
+            ]);
+        }
+
+        if ($appointment->status === 'cancelled') {
+            return back()->withErrors([
+                'status' => 'This appointment is already cancelled.',
+            ]);
+        }
+
+        $appointment->update([
+            'status' => 'cancelled',
+        ]);
+
+        return back()->with('success', 'Appointment cancelled successfully.');
     }
 }

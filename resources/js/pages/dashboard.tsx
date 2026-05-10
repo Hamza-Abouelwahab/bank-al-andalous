@@ -604,7 +604,7 @@ export default function Dashboard() {
                                         Real-time insights
                                     </p>
                                 </div>
-                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50 dark:bg-orange-500/10">
+                                <div className="flex h-9 w-9 items-center shrink-0 justify-center rounded-xl bg-orange-50 dark:bg-orange-500/10">
                                     <Bell className="h-4 w-4 text-orange-500" />
                                 </div>
                             </div>

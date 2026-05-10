@@ -35,10 +35,21 @@ class AdminSeeder extends Seeder
                 ['email' => $branch['email']],
                 [
                     'name' => $branch['name'],
-                    'password' => Hash::make('password'),
+                    'password' => Hash::make('20042004'),
                     'role' => 'agent',
                 ]
             );
         }
+
+        User::updateOrCreate(
+    ['email' => 'hamzaabouelwahab04@gmail.com'],
+    [
+        'name' => 'Hamza Admin',
+        'password' => Hash::make('20042004'),
+        'role' => 'admin',
+    ]
+);
+
+
     }
 }

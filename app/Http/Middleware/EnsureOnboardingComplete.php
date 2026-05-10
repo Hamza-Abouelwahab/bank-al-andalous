@@ -9,18 +9,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureOnboardingComplete
 {
-    public function handle(Request $request, Closure $next): Response
-    {
-        $user = $request->user();
+   public function handle(Request $request, Closure $next): Response
+{
+    $user = $request->user();
 
-        if ($user && !$user->profile) {
-            return redirect()->route('onboarding.profile');
-        }
-
-        if ($user && !$user->bankAccount) {
-            return redirect()->route('onboarding.confirm');
-        }
-
+    // Admin and branch agents should not pass through client onboarding
+    if ($user && in_array($user->role, ['admin', 'agent'])) {
         return $next($request);
     }
+
+    if ($user && !$user->profile) {
+        return redirect()->route('onboarding.profile');
+    }
+
+    if ($user && !$user->bankAccount) {
+        return redirect()->route('onboarding.confirm');
+    }
+
+    return $next($request);
+}
 }

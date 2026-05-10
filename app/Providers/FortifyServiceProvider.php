@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\LoginResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,24 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::twoFactorChallengeView(function () {
             return Inertia::render('auth/two-factor-challenge');
+        });
+        $this->app->singleton(LoginResponse::class, function () {
+            return new class implements LoginResponse {
+                public function toResponse($request)
+                {
+                    $user = $request->user();
+
+                    if ($user->role === 'admin') {
+                        return redirect()->route('admin.dashboard');
+                    }
+
+                    if ($user->role === 'agent') {
+                        return redirect()->route('agent.appointments');
+                    }
+
+                    return redirect()->route('dashboard');
+                }
+            };
         });
     }
 
