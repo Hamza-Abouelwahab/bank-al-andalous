@@ -53,6 +53,7 @@ const planningNav = [
     { title: 'Savings Center', href: '/savings/index', icon: Target },
     { title: 'Simulation', href: '/simulation', icon: Calculator },
     { title: 'Appointment', href: '/appointments/create', icon: CalendarCheck },
+    { title: 'Aman Score', href: '/risk-center', icon: ShieldCheck, }
 ];
 
 const supportNav = [
@@ -66,6 +67,7 @@ const adminNav = [
     { title: 'Deposit', href: deposit.definition.url, icon: ArrowDownToLine },
     { title: 'Appointments', href: '/admin/appointments', icon: CalendarCheck },
     { title: 'Security Center', href: '/admin/security', icon: UserCog },
+    { title: 'Aman Score', href: '/admin/risk-center', icon: ShieldCheck, }
 ];
 
 // ─── Bank Logo (reusable inline SVG) ─────────────────────────────

@@ -73,4 +73,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Appointment::class);
     }
+
+    public function riskScore(): HasOne
+    {
+        return $this->hasOne(RiskScore::class);
+    }
+
+    
 }

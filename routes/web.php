@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Admin\RiskController as AdminRiskController;
 use App\Http\Controllers\AIChatController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DashboardController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Banking\SavingGroupController;
 use App\Http\Controllers\Banking\TransactionController;
 use App\Http\Controllers\Banking\SavingsController;
 use App\Http\Controllers\LoanSimulationController;
+use App\Http\Controllers\RiskCenterController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\StatementController;
 use Illuminate\Support\Facades\Auth;
@@ -109,12 +111,21 @@ Route::middleware(['auth'])->group(function () {
 // User dashboard
 Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/risk-center', [RiskCenterController::class, 'index'])
+        ->name('risk.center');
+
+    Route::post('/risk-center/recalculate', [RiskCenterController::class, 'recalculate'])
+        ->name('risk.recalculate');
 });
 
 // Admin
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
+
+        Route::get('/admin/risk-center', [AdminRiskController::class, 'index'])
+        ->name('admin.risk');
 
     Route::get('/admin/users', [DashboardController::class, 'users'])
         ->name('admin.users');
