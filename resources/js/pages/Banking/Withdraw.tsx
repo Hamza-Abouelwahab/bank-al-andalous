@@ -1,3 +1,4 @@
+import { email } from '@/routes/password';
 import { useForm, usePage, Head, router } from '@inertiajs/react';
 import {
     AlertTriangle,
@@ -286,12 +287,9 @@ export default function Withdraw() {
 
                                         <p className="text-sm font-medium text-[#7a2800] dark:text-orange-300">
                                             A 6-digit withdrawal PIN will be
-                                            sent by SMS to{' '}
-                                            <span className="font-extrabold">
-                                                {maskPhone(phone)}
-                                            </span>
-                                            . The code is valid for 24 hours and
-                                            can be used only once.
+                                            sent to your email address. The code
+                                            is valid for 24 hours and can be
+                                            used only once.
                                         </p>
                                     </div>
 
@@ -385,7 +383,7 @@ export default function Withdraw() {
                                     <button
                                         type="submit"
                                         disabled={codeForm.processing}
-                                        className="rounded-2xl bg-orange-600 py-3.5 hover:bg-[#7a2800] cursor-pointer text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-900/20 disabled:opacity-50 sm:col-span-2 dark:from-orange-600 dark:to-[#7a2800]"
+                                        className="cursor-pointer rounded-2xl bg-orange-600 py-3.5 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-[#7a2800] hover:shadow-lg hover:shadow-orange-900/20 disabled:opacity-50 sm:col-span-2 dark:from-orange-600 dark:to-[#7a2800]"
                                     >
                                         {codeForm.processing
                                             ? 'Checking Code…'
@@ -481,7 +479,7 @@ export default function Withdraw() {
                             {/* Security Info */}
                             <div className="group rounded-3xl border border-orange-200/70 bg-gradient-to-br from-orange-50 to-[#f8f6f1] p-5 transition-all duration-200 hover:shadow-md dark:border-[#7a2800]/40 dark:from-orange-900/15 dark:to-[#7a2800]/10">
                                 <div className="flex items-start gap-3">
-                                    <div className="flex h-10 w-10 items-center shrink-0 justify-center rounded-full bg-orange-100 px-2 dark:bg-orange-900/30">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 px-2 dark:bg-orange-900/30">
                                         <Smartphone className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                                     </div>
 
@@ -502,8 +500,8 @@ export default function Withdraw() {
                             {/* Recent Requests */}
                             <div className="rounded-3xl border border-[#EDE8E0] bg-white p-6 shadow-sm dark:border-[#2A2520] dark:bg-[#1A1714]">
                                 <div className="mb-4 flex items-center gap-2">
-                                    <div className="flex h-8 w-8 items-center shrink-0 justify-center rounded-full bg-orange-100 px-2 dark:bg-orange-900/30">
-                                    <Clock3 className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 px-2 dark:bg-orange-900/30">
+                                        <Clock3 className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                                     </div>
                                     <h3 className="text-md font-extrabold text-[#1f1a17] dark:text-white">
                                         Recent Requests
