@@ -108,12 +108,14 @@ export default function AdminDashboard() {
                 roleFilter === 'users'
                     ? u.role === 'user'
                     : roleFilter === 'agents'
-                      ? u.role === 'agent'
-                      : u.role === 'admin';
+                        ? u.role === 'agent'
+                        : u.role === 'admin';
 
             return matchesSearch && matchesRole;
         });
     }, [users, search, roleFilter]);
+
+    const displayedUsers = filteredUsers.slice(0, 5);
 
     const recentUsers = [...users]
         .sort(
@@ -137,7 +139,7 @@ export default function AdminDashboard() {
                 console.log(errors);
                 alert(
                     errors.user ??
-                        'Delete failed. Check if your admin middleware allows this action.',
+                    'Delete failed. Check if your admin middleware allows this action.',
                 );
             },
         });
@@ -507,6 +509,7 @@ export default function AdminDashboard() {
                         </section>
                     </div>
 
+
                     {/* User Management */}
                     <section
                         id="users"
@@ -524,8 +527,8 @@ export default function AdminDashboard() {
                                         User Management
                                     </h2>
 
-                                    <p className="mt-1 max-w-2xl text-sm leading-6 text-[#1f1a17]/55 dark:text-white/55">
-                                        View all customers and admins, check linked bank accounts, and safely remove non-admin users.
+                                    <p className="mt-1 max-w-2xl text-sm leading-6 text-[#1f1a17]/50 dark:text-white/45">
+                                        Showing only the first 5 users. Use search or role filter to find more users.
                                     </p>
                                 </div>
 
@@ -551,9 +554,8 @@ export default function AdminDashboard() {
                                                 {selectedRoleOption.label} ({selectedRoleOption.count})
                                             </span>
                                             <ChevronDown
-                                                className={`h-4 w-4 text-orange-500 transition ${
-                                                    roleMenuOpen ? 'rotate-180' : ''
-                                                }`}
+                                                className={`h-4 w-4 text-orange-500 transition ${roleMenuOpen ? 'rotate-180' : ''
+                                                    }`}
                                             />
                                         </button>
 
@@ -570,11 +572,10 @@ export default function AdminDashboard() {
                                                                 setRoleFilter(option.key);
                                                                 setRoleMenuOpen(false);
                                                             }}
-                                                            className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-black transition ${
-                                                                active
+                                                            className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-black transition ${active
                                                                     ? 'bg-orange-600 text-white'
                                                                     : 'text-[#1f1a17] hover:bg-orange-50 dark:text-white dark:hover:bg-orange-500/10'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             <span>{option.label}</span>
                                                             <span>({option.count})</span>
@@ -586,7 +587,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     <div className="rounded-2xl border border-[#EDE8E0] bg-white px-5 py-3 text-sm font-black text-[#1f1a17] shadow-sm dark:border-[#2A2520] dark:bg-[#252118] dark:text-white">
-                                        {filteredUsers.length} users
+                                        {displayedUsers.length} of {filteredUsers.length} users
                                     </div>
                                 </div>
                             </div>
@@ -598,18 +599,21 @@ export default function AdminDashboard() {
                                     icon={<Users className="h-4 w-4 text-orange-600 dark:text-orange-400" />}
                                     className={toneClasses.orange.card}
                                 />
+
                                 <MiniStat
                                     label="Admins"
                                     value={totalAdmins}
                                     icon={<Shield className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
                                     className={toneClasses.blue.card}
                                 />
+
                                 <MiniStat
                                     label="Customers"
                                     value={totalCustomers}
                                     icon={<UserCog className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />}
                                     className={toneClasses.green.card}
                                 />
+
                                 <MiniStat
                                     label="With Accounts"
                                     value={usersWithAccounts}
@@ -643,19 +647,19 @@ export default function AdminDashboard() {
                                 </thead>
 
                                 <tbody>
-                                    {filteredUsers.length > 0 ? (
-                                        filteredUsers.map((u, index) => {
+                                    {displayedUsers.length > 0 ? (
+                                        displayedUsers.map((u, index) => {
                                             const account = u.bank_account ?? u.bankAccount;
                                             const isAdmin = u.role === 'admin';
+                                            const isAgent = u.role === 'agent';
 
                                             return (
                                                 <tr
                                                     key={u.id}
-                                                    className={`border-t border-[#EDE8E0] transition hover:bg-orange-50/40 dark:border-[#2A2520] dark:hover:bg-orange-500/5 ${
-                                                        index % 2 === 0
+                                                    className={`border-t border-[#EDE8E0] transition hover:bg-orange-50/40 dark:border-[#2A2520] dark:hover:bg-orange-500/5 ${index % 2 === 0
                                                             ? 'bg-white dark:bg-[#1A1714]'
                                                             : 'bg-[#FFFCFA] dark:bg-[#181511]'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     <td className="px-6 py-5">
                                                         <div className="flex items-center gap-4">
@@ -672,12 +676,9 @@ export default function AdminDashboard() {
                                                             )}
 
                                                             <div className="min-w-0">
-                                                                <div className="flex items-center gap-2">
-                                                                    <p className="truncate font-black text-[#1f1a17] dark:text-white">
-                                                                        {u.name}
-                                                                    </p>
-
-                                                                </div>
+                                                                <p className="truncate font-black text-[#1f1a17] dark:text-white">
+                                                                    {u.name}
+                                                                </p>
 
                                                                 <p className="mt-1 truncate text-xs font-medium text-[#1f1a17]/45 dark:text-white/40">
                                                                     User ID: #{u.id}
@@ -744,9 +745,20 @@ export default function AdminDashboard() {
                                                     </td>
 
                                                     <td className="px-6 py-5">
-                                                        <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
-                                                            <UserCog className="h-3.5 w-3.5" />
-                                                            User
+                                                        <span
+                                                            className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black capitalize ${isAdmin
+                                                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'
+                                                                    : isAgent
+                                                                        ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400'
+                                                                        : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+                                                                }`}
+                                                        >
+                                                            {isAdmin ? (
+                                                                <Shield className="h-3.5 w-3.5" />
+                                                            ) : (
+                                                                <UserCog className="h-3.5 w-3.5" />
+                                                            )}
+                                                            {u.role}
                                                         </span>
                                                     </td>
 
@@ -865,11 +877,10 @@ export default function AdminDashboard() {
                                             return (
                                                 <tr
                                                     key={appointment.id}
-                                                    className={`border-t border-[#EDE8E0] transition hover:bg-orange-50/40 dark:border-[#2A2520] dark:hover:bg-orange-500/5 ${
-                                                        index % 2 === 0
-                                                            ? 'bg-white dark:bg-[#1A1714]'
-                                                            : 'bg-[#FFFCFA] dark:bg-[#181511]'
-                                                    }`}
+                                                    className={`border-t border-[#EDE8E0] transition hover:bg-orange-50/40 dark:border-[#2A2520] dark:hover:bg-orange-500/5 ${index % 2 === 0
+                                                        ? 'bg-white dark:bg-[#1A1714]'
+                                                        : 'bg-[#FFFCFA] dark:bg-[#181511]'
+                                                        }`}
                                                 >
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-3">
@@ -910,11 +921,10 @@ export default function AdminDashboard() {
 
                                                     <td className="px-6 py-4">
                                                         <span
-                                                            className={`rounded-full px-3 py-1 text-xs font-bold capitalize ${
-                                                                appointment.status === 'confirmed'
-                                                                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
-                                                                    : 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'
-                                                            }`}
+                                                            className={`rounded-full px-3 py-1 text-xs font-bold capitalize ${appointment.status === 'confirmed'
+                                                                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+                                                                : 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400'
+                                                                }`}
                                                         >
                                                             {appointment.status}
                                                         </span>
@@ -983,7 +993,7 @@ export default function AdminDashboard() {
                         />
                     </div>
                 </main>
-            </div>
+            </div >
 
             {deleteConfirm !== null && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
@@ -1025,7 +1035,8 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </div>
-            )}
+            )
+            }
         </>
     );
 }
